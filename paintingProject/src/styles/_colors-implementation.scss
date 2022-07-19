@@ -1,0 +1,217 @@
+$color-icon-dark: $neutral-light;
+$color-icon-mid: $neutral-xxlight;
+$color-icon-light: $neutral-xxxxxlight;
+
+$hover-primary: $blue;
+$hover-mid: $neutral-xxxxlight;
+$hover-light: $neutral-xxxxlight;
+$hover-dark: $neutral-light;
+
+$text-color-light: $neutral-xxxxxlight;
+$text-color-mid: $neutral-light;
+$text-color-dark: $neutral-xxxdark;
+$text-color-xdark: $neutral-xxxdark;
+$text-color-pink: $pink;
+
+$bar-item-active: transparent;
+$bar-item-active-after: currentColor;
+
+$border-color-xlight: $neutral-xxxxxxlight;
+$border-color-light: $neutral-xxxlight;
+$border-color-xdark: $neutral-xxxxdark;
+$border-color-dark: $neutral-xxlight;
+$border-color-indicator: $neutral-xxxxxxlight;
+
+$border-color-nav-light: $neutral-xxxxlight;
+$border-color-nav: $neutral-xxxlight;
+
+$link-color: $blue-dark;
+$link-color-light: $neutral-xxxxxxlight;
+$link-color-mid: $neutral-xxlight;
+$link-color-dark: $neutral-light;
+$link-color-hover: $blue;
+
+$input-bg: $neutral-xxxxxxlight;
+$input-bg-disabled: darken($input-bg, 3%);
+$input-bg-disabled-dark: $neutral-xxlight;
+$input-border-disabled: $neutral-xxlight;
+$input-text-color: $text-color-xdark;
+$field-border-color: $border-color-dark;
+$field-focus-color: $blue;
+$field-focus-color-light: $blue;
+$field-highlight-color: $blue-dark;
+$field-valid-color: $green-dark;
+$field-warning-color: $orange-xxdark;
+$field-error-color: $red;
+$field-help-color: $orange-dark;
+$field-border-error-color: $red;
+$placeholder-text-color: $neutral-xlight;
+$placeholder-text-color-dark-bg: $neutral-xxlight;
+
+$footer-background: $neutral-xxdark;
+
+$error: $red;
+$success: $green;
+$warning: $orange-xxdark;
+
+$success-notify-color: $green-light;
+$error-notify-color-light: $red-xxxxlight;
+$error-notify-color: $red-xlight;
+$error-notify-content-color: $red-xxxdark;
+$warning-notify-color: $orange-xlight;
+$info-notify-color: $blue-light;
+
+$online-color: $green;
+$offline-dot-color: $neutral-xxlight;
+$offline-color: $neutral-xlight;
+
+$overlay-dark: rgba(25, 32, 45, 0.7);
+$overlay-mid: rgba(25, 32, 45, 0.6);
+$overlay-light: rgba(25, 32, 45, 0.3);
+$overlay-xlight: rgba($neutral-xxxxxxlight, 0.15);
+
+$alert-color: $red;
+
+$bg-white: $neutral-xxxxxxlight;
+$bg-gray: $neutral-xxxxlight;
+$bg-gray-light: $neutral-xxxxxlight;
+
+$highlight-text-background: $yellow-light;
+
+$tooltip-background: $neutral-xdark;
+$tooltip-light-background: $neutral-xxxxxxlight;
+
+$recruiter-color: $purple;
+
+$default-button-bg: $neutral-xxxxxlight;
+$default-button-border: $neutral-xxlight;
+$default-button-hover: $neutral-xxxxlight;
+$default-button-active: $neutral-xxxlight;
+$default-button-text: $neutral-light;
+
+$success-button-bg: $green-dark;
+$success-button-border: $green-xdark;
+$success-button-hover: $green;
+$success-button-active: $green-dark;
+
+$secondary-button-bg: $blue-dark;
+$secondary-button-border: $blue-xdark;
+$secondary-button-hover: $blue;
+$secondary-button-active: $blue-xdark;
+
+$primary-button-bg: $pink;
+$primary-button-border: $pink-dark;
+$primary-button-hover: $pink-light;
+$primary-button-active: $pink-dark;
+
+$danger-button-bg: $red-dark;
+$danger-button-border: $red-xdark;
+$danger-button-hover: $red;
+$danger-button-active: $red-xdark;
+
+$navigation-background-color: $neutral-xxxxxxlight;
+$navigation-background-color-secondary: $neutral-xxxdark;
+$navigation-background-color-tertiary: transparent;
+
+$navigation-text-color: $neutral-xxxxdark;
+$navigation-text-color-secondary: $neutral-xxxxxxlight;
+
+$child-navigation-text-color: $neutral-xxxdark;
+$child-navigation-text-color-secondary: $neutral-xxxxxlight;
+
+$navigation-itemBtn-hover: $bg-gray-light;
+
+$transparent-dark-button-bg: transparent;
+$transparent-dark-button-border: $neutral-xlight;
+
+$transparent-light-button-bg: linear-gradient(
+  to bottom,
+  transparent 0%,
+  rgba($neutral-xxxxxxlight, 0.2) 100%
+);
+$transparent-light-button-border: $neutral-xxxxxxlight;
+$transparent-light-button-hover-bg: rgba($neutral-xxxxxxlight, 0.2);
+$transparent-light-button-hover-border: $neutral-xxxlight;
+
+$transparent-secondary-button-bg: transparent;
+$transparent-secondary-button-border: $blue-dark;
+
+$transparent-pink-button-bg: transparent;
+$transparent-pink-button-border: $pink;
+$transparent-pink-button-hover: $pink;
+$transparent-pink-button-active: $pink-dark;
+
+$disabled-button-bg: $neutral-xxxxxlight;
+$disabled-button-border: $neutral-xxxxxlight;
+$disabled-button-text: $neutral-xxlight;
+
+$recruiter-button-bg: $purple;
+$recruiter-button-border: $purple-dark;
+$recruiter-button-hover: $purple-light;
+$recruiter-button-active: $purple-dark;
+
+$preferred-freelancer-color: $orange-preferred-freelancer;
+$preferred-freelancer-button-bg: $preferred-freelancer-color;
+$preferred-freelancer-button-border: $orange-xdark;
+$preferred-freelancer-button-hover: $orange;
+$preferred-freelancer-button-active: $orange-xdark;
+
+$login-signup-button: $blue-dark;
+$login-signup-button-border: $blue-dark;
+$login-signup-button-hover: $blue;
+$login-signup-button-active: $blue-xdark;
+
+$transparent-recruiter-button-bg: transparent;
+$transparent-recruiter-button-border: $recruiter-color;
+$message-mine-bg: $blue-dark;
+
+// Messaging message by logged-in user
+$message-logged-in-user-bubble-color: $blue-dark;
+$message-logged-in-user-text-color: $neutral-xxxxxxlight;
+
+$message-logged-in-user-bubble-color-sending: $neutral-xxxlight;
+$message-logged-in-user-bubble-text-color-sending: $neutral-xxxxxxlight;
+
+$message-logged-in-user-bubble-color-failed: $neutral-xxxlight;
+$message-logged-in-user-bubble-text-color-failed: $neutral-xxxxdark;
+
+// Messaging message by other user
+$message-other-user-bubble-bg: $neutral-xxxxxxlight;
+$message-other-user-bubble-border: $neutral-xxxlight;
+$message-other-user-buble-text-color: $neutral-xxxxdark;
+
+$filter-switch-color: $blue;
+
+$partner-dashboard-nav: $blue-dark;
+
+$profile-hireme-card: $neutral-dark;
+
+$stats-tile-border-color: $neutral-xxlight;
+
+$dashboard-profile-widget-header-bg: $blue-xxxdark;
+
+$on-behalf-project-info-card-bg: $blue-xxxdark;
+
+$selection-blue: rgba($blue-xlight, 0.7);
+$selection-gray: rgba($neutral-xxlight, 0.7);
+
+$postproject-header-bg: linear-gradient(55deg, $blue-xxxdark, $blue-dark);
+$postproject-sidebar-highlight: $green-dark;
+$postproject-sidebar-step-border: $neutral-xxxdark;
+
+$tab-background-light: $neutral-dark;
+$tab-background-dark: $neutral-xxdark;
+$tab-item-selected-text-color: $green;
+
+$project-status: $green;
+
+$bom-tool-header-footer: $neutral-xxxxlight;
+$bom-tool-sub-heading-color: $blue-dark;
+
+$tab-item-selected-column-color: currentColor;
+$tab-item-selected-row-color: currentColor;
+
+$search-header-bg: $neutral-xxxdark;
+
+$secondary-nav-bg: $neutral-xxxdark;
+$overlay-bg: $neutral-xxxdark;

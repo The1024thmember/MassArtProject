@@ -1,0 +1,133 @@
+@use "sass:math";
+
+/**
+ * Spacing values
+ * https://confluence.flnltd.com/display/FREEL/Spacings
+ * IMPORTANT: If you change any of these
+ * please update @freelancer/ui/base/base.component.ts
+ */
+$spacing-none: 0;
+$spacing-xxxsmall: 4px;
+$spacing-xxsmall: 8px;
+$spacing-xsmall: 12px;
+$spacing-small: 16px;
+$spacing-mid: 24px;
+$spacing-large: 32px;
+$spacing-xlarge: 48px;
+$spacing-xxlarge: 64px;
+$spacing-xxxlarge: 72px;
+$spacing-xxxxlarge: 96px;
+
+/**
+ * Spacing dedicated for the website's padding on left and right
+ */
+$spacing-gutter: $spacing-small;
+$spacing-gutter-small: $spacing-xxsmall;
+$spacing-gutter-tablet: math.div($spacing-mid, 2);
+
+/**
+ * Border radius
+ * All border radius are currently 0 but we're
+ * keepig the variables and its current usage for theming purposes
+ */
+$border-radius: 0;
+$border-radius-large: 0;
+$border-radius-xlarge: 0;
+$form-field-border-radius: 0;
+$form-field-border-radius-xxlarge: 0;
+
+/* Cards shadow */
+$card-shadow-level-1: rgba($neutral-xxxxdark, 0.08);
+$card-shadow-level-1-secondary: rgba($neutral-xxxxdark, 0.12);
+$card-shadow-level-2: rgba($neutral-xxxxdark, 0.12);
+$card-shadow-level-2-secondary: rgba($neutral-xxxxdark, 0.16);
+$card-shadow-level-3: rgba($neutral-xxxxdark, 0.16);
+$card-shadow-level-3-secondary: rgba($neutral-xxxxdark, 0.2);
+
+$box-shadow-level-1: 0 0 4px 0 $card-shadow-level-1,
+  0 2px 4px 0 $card-shadow-level-1-secondary;
+$box-shadow-level-2: 0 0 6px 0 $card-shadow-level-2,
+  0 4px 10px 0 $card-shadow-level-2-secondary;
+$box-shadow-level-3: 0 0 8px 0 $card-shadow-level-3,
+  0 10px 18px 0 $card-shadow-level-3-secondary;
+
+$drop-shadow-level-1: drop-shadow(0 0 4px $card-shadow-level-1)
+  drop-shadow(0 2px 4px $card-shadow-level-1-secondary);
+
+/* Tooltip Shadow */
+$tooltip-light-shadow: 0 0 12px 0 rgba($neutral-xxxxdark, 0.15);
+
+/* z-index Values */
+$z-index-dropdown: 900;
+$z-index-navbar: 1000;
+$z-index-popover: 1010;
+$z-index-toast: 1018;
+$z-index-chat: 1021;
+$z-index-tooltip: 1030;
+$z-index-navbar-fixed: 1030;
+$z-index-modal-background: 1040;
+$z-index-modal: 1090;
+$z-index-callout: 1100;
+$z-index-toast-alert: 1200;
+
+/* Sticky elements */
+$mobile-sticky-footer-height: calc(66px + env(safe-area-inset-bottom));
+$notifications-sidebar-width: 210px;
+
+/* navigation */
+$navigation-height-tablet: 50px;
+$navigation-height-mobile: 56px;
+
+/*
+ * Standard aspect ratio
+ * (height / width) * 100%;
+ */
+$aspect-ratio: math.div(3, 4) * 100%;
+
+/**
+ * Logo width sizes
+ * The values here matches the current logo's ratio
+ */
+$logo-width-mid: 199px;
+$logo-width-small: 133px;
+$logo-width-icon: 32px;
+
+/**
+ * Header sizes of modal on mobile
+ */
+$mobile-modal-header-height: 54px;
+
+/**
+ * Minimum height of view headers in mobile
+ */
+$view-header-height: 52px;
+
+$header-logged-out-height: 64px;
+
+/**
+ * Skills card height and width on desktop view
+ */
+$skills-card-height: 800px;
+$skills-card-width: 350px;
+$skills-content-height: 745px;
+
+/**
+ *  Navigation callouts
+ *  - Account for header and some offset
+ */
+$nav-callout-max-height: calc(100vh - 125px - env(safe-area-inset-bottom));
+$nav-callout-body-max-height: calc(100vh - 185px - env(safe-area-inset-bottom));
+
+/**
+ *  Transitions
+ */
+$all-transition: all 0.2s ease-out;
+$border-color-transition: border-color 0.3s ease-out;
+
+/**
+ * Sidebar
+ */
+$sidebar-width-mobile: 100vw;
+$sidebar-width-compact: 58px;
+$sidebar-width-tablet: 250px;
+$sidebar-width: 230px;

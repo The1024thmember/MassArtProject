@@ -1,0 +1,381 @@
+/*
+  This mixin adds ellipsis to the end of a single line of text
+  when there's not enough space.
+ */
+@mixin ellipsis() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+  To be used with ::before and ::after pseudo elements
+  These rules are always needed on those.
+ */
+@mixin pseudo($display: block, $pos: absolute, $content: "") {
+  content: $content;
+  display: $display;
+  position: $pos;
+}
+
+/*
+  Triangle mixin. It generates a triangle in css
+ */
+@mixin triangle($color, $direction, $size: 6px, $position: absolute) {
+  @include pseudo($pos: $position);
+  border-radius: 3px;
+  height: 0;
+  width: 0;
+
+  @if $direction == down {
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+    border-top: $size solid $color;
+  }
+
+  @else if $direction == up {
+    border-bottom: $size solid $color;
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+  }
+
+  @else if $direction == right {
+    border-bottom: $size solid transparent;
+    border-left: $size solid $color;
+    border-top: $size solid transparent;
+  }
+
+  @else if $direction == left {
+    border-bottom: $size solid transparent;
+    border-right: $size solid $color;
+    border-top: $size solid transparent;
+  }
+}
+
+/*
+  Vertically align the element with `transform` and absolute positioning.
+ */
+@mixin vertical-align($pos: absolute, $translateY: -50%) {
+  position: $pos;
+  top: 50%;
+  transform: translateY($translateY);
+}
+
+/*
+  Horizontally align the element with `transform` and absolute positioning.
+ */
+@mixin horizontal-align($pos: absolute) {
+  left: 50%;
+  position: $pos;
+  transform: translateX(-50%);
+}
+
+/*
+  Horizontally and Vertically  align the element with `transform` and absolute positioning.
+*/
+@mixin horizontal-vertical-align($pos: absolute) {
+  left: 50%;
+  position: $pos;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*
+  Sets the element so that it cover the parent element entirely
+*/
+@mixin absolute-cover() {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+@mixin visibly-hidden() {
+  height: 1px;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  top: auto;
+  width: 1px;
+}
+
+@mixin word-break() {
+  word-break: break-word; /* old webkit */
+  word-wrap: break-word; /* webkit */
+}
+
+@mixin text-size-generator($name: "") {
+  @if $name != "" {
+    $name: "-" + $name;
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=xxxsmall]"} {
+    @include fontTiny();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=xxsmall]"} {
+    @include fontDetail();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=xsmall]"} {
+    @include fontUi();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=small]"} {
+    @include fontLanding();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=marketing_small]"} {
+    @include fontHeading4();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=mid]"} {
+    @include fontHeading3();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=large]"} {
+    @include fontHeading2();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=xlarge]"} {
+    @include fontHeading1();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=xxlarge]"} {
+    @include fontHeroCompact();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=xxxlarge]"} {
+    @include fontHero();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=marketing_mega]"} {
+    @include fontMegaHero();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=marketing_xmega]"} {
+    @include fontXMegaHero();
+  }
+
+  #{if(&, "&", "*")}#{"[data-size" + $name + "=inherit]"} {
+    font-size: inherit;
+    line-height: inherit;
+  }
+}
+
+@mixin text-transform-generator() {
+  [data-text-transform="lowercase"] {
+    text-transform: lowercase;
+  }
+
+  [data-text-transform="capitalize"] {
+    text-transform: capitalize;
+  }
+
+  [data-text-transform="uppercase"] {
+    text-transform: uppercase;
+  }
+}
+
+@mixin text-align-generator($name: "") {
+  @if $name != "" {
+    $name: "-" + $name;
+  }
+
+  #{if(&, "&", "*")}#{"[data-text-align" + $name + "=center]"} {
+    text-align: center;
+  }
+
+  #{if(&, "&", "*")}#{"[data-text-align" + $name + "=left]"} {
+    text-align: left;
+  }
+
+  #{if(&, "&", "*")}#{"[data-text-align" + $name + "=right]"} {
+    text-align: right;
+  }
+}
+
+/**
+* Background Ripple:
+* - Adds base background
+* - Changes background on :hover
+* - Creates ripple effect on :active state (click)
+* - Setting the defaultColor to 'transparent' will
+*   change the animation to flashing the activeColor every click
+*/
+@mixin background-ripple($defaultColor, $hoverColor, $activeColor) {
+  background: $defaultColor;
+  background-position: center;
+
+  &:hover,
+  &:focus-within {
+    background: $hoverColor radial-gradient(circle, transparent 1%, $hoverColor 1%) center/15000%;
+    transition: background 0.5s, border-color 0.5s;
+
+    @media (hover: none) {
+      background: $defaultColor radial-gradient(circle, transparent 1%, $defaultColor 1%) center/15000%;
+    }
+  }
+
+  &:active {
+    background-color: $activeColor;
+    background-size: 100%;
+    transition: background 0s;
+  }
+}
+
+@mixin radial-gradient($colorFrom, $colorTo) {
+  background: $colorTo radial-gradient(circle, $colorFrom, $colorTo);
+}
+
+/*
+  - Notch support to keep elements in the safe zone.
+  - Used to disable stylelint only in one place.
+*/
+
+/* stylelint-disable */
+@mixin notch-styles($top: false) {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+
+  @if $top {
+    @supports (padding: max(0px)) {
+      padding-top: max(#{$top}, env(safe-area-inset-top));
+    }
+  }
+
+  @else {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+@mixin notch-styles-sides($horizontalPadding: false) {
+  @if $horizontalPadding {
+    @supports (padding: max(0px)) {
+      padding-left: max(#{$horizontalPadding}, env(safe-area-inset-left));
+      padding-right: max(#{$horizontalPadding}, env(safe-area-inset-right));
+    }
+  }
+
+  @else {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+@mixin notch-styles-top($top: false) {
+  @if $top {
+    @supports (padding: max(0px)) {
+      padding-top: max(#{$top}, env(safe-area-inset-top));
+    }
+  }
+
+  @else {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+@mixin notch-styles-bottom($bottom: false) {
+  @if $bottom {
+    @supports (padding: max(0px)) {
+      padding-bottom: max(#{$bottom}, env(safe-area-inset-bottom));
+    }
+  }
+
+  @else {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/**
+ * Enables vertical scrolling and user selection
+ * that's prevented by hammerjs
+ * Reference: Reference: https://github.com/hammerjs/hammer.js/issues/1014
+ */
+ @mixin hammerSwipeOverrides($scrolling: true, $selection: true) {
+  @if $scrolling {
+    touch-action: pan-y !important;
+  }
+
+  @if $selection {
+    @media (min-width: $breakpoint-tablet) {
+      user-select: auto !important;
+    }
+  }
+}
+/* stylelint-enable */
+
+@mixin generate-backdrop($translucent: true) {
+  @if $translucent {
+    background: $overlay-dark;
+
+    &[data-color="dark"] {
+      background: $overlay-mid;
+    }
+  }
+
+  @else {
+    background: $bg-white;
+
+    &[data-color="dark"] {
+      background: $neutral-xxdark;
+    }
+  }
+}
+
+@mixin sticky-action-buttons() {
+  flex: 1 1 auto;
+
+  @media (min-width: $breakpoint-tablet) {
+    flex: 0 0 auto;
+  }
+}
+
+/*
+ * We need webkit-scrollbar in a media query like we this to hide the scroll bart only in mobie.
+ * scrollbar-width is needed for firefox, since webkit-scrollbar is only for Chrome and Safari.
+ */
+
+@mixin hideScrollBarMobile() {
+  scrollbar-width: none;
+
+  @media (min-width: $breakpoint-tablet) {
+    scrollbar-width: auto;
+  }
+
+  &::-webkit-scrollbar {
+    @media (max-width: $breakpoint-tablet - 1) {
+      display: none;
+    }
+  }
+}
+
+@mixin mobile-gutter() {
+  @media (max-width: ($breakpoint-tablet - 1)) {
+    padding-left: calc(env(safe-area-inset-left) + #{$spacing-gutter});
+    padding-right: calc(env(safe-area-inset-left) + #{$spacing-gutter});
+  }
+}
+
+/**
+ * Only applies :hover on non-touch screen devices.
+ *
+ * $fallbackToFocus adds the @content to :focus state on
+ * touch screens but requires the element to have a tabIndex.
+ */
+@mixin hover($fallbackToFocus: false) {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+
+  @if $fallbackToFocus {
+    @media (hover: none) {
+      &:focus {
+        @content;
+      }
+    }
+  }
+}

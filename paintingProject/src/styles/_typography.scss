@@ -1,0 +1,85 @@
+$font-size-xmegahero: 91px;
+$font-size-megahero: 57px;
+$font-size-hero: 48px;
+$font-size-heroCompact: 41px;
+$font-size-heading1: 32px;
+$font-size-heading2: 24px;
+$font-size-heading3: 20px;
+$font-size-heading4: 18px;
+$font-size-landing: 16px;
+$font-size-ui: 14px;
+$font-size-detail: 13px;
+$font-size-tiny: 11px;
+
+$line-height-xmegahero: 1.09;
+$line-height-megahero: 1.15;
+$line-height-hero: 1.17;
+$line-height-heroCompact: 1.17;
+$line-height-heading1: 1.37;
+$line-height-heading2: 1.33;
+$line-height-heading3: 1.4;
+$line-height-heading4: 1.55;
+$line-height-landing: 1.5;
+$line-height-ui: 1.43;
+$line-height-detail: 1.2;
+$line-height-tiny: 1.45;
+
+@mixin fontXMegaHero {
+  font-size: $font-size-xmegahero;
+  line-height: $line-height-xmegahero;
+}
+
+@mixin fontMegaHero {
+  font-size: $font-size-megahero;
+  line-height: $line-height-megahero;
+}
+
+@mixin fontHero {
+  font-size: $font-size-hero;
+  line-height: $line-height-hero;
+}
+
+@mixin fontHeroCompact {
+  font-size: $font-size-heroCompact;
+  line-height: $line-height-heroCompact;
+}
+
+@mixin fontHeading1 {
+  font-size: $font-size-heading1;
+  line-height: $line-height-heading1;
+}
+
+@mixin fontHeading2 {
+  font-size: $font-size-heading2;
+  line-height: $line-height-heading2;
+}
+
+@mixin fontHeading3 {
+  font-size: $font-size-heading3;
+  line-height: $line-height-heading3;
+}
+
+@mixin fontHeading4 {
+  font-size: $font-size-heading4;
+  line-height: $line-height-heading4;
+}
+
+@mixin fontLanding {
+  font-size: $font-size-landing;
+  line-height: $line-height-landing;
+}
+
+@mixin fontUi {
+  font-size: $font-size-ui;
+  line-height: $line-height-ui;
+}
+
+@mixin fontDetail {
+  font-size: $font-size-detail;
+  line-height: $line-height-detail;
+}
+
+@mixin fontTiny {
+  font-size: $font-size-tiny;
+  line-height: $line-height-tiny;
+}
