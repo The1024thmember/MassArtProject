@@ -1,0 +1,1 @@
+export { ComponentLibraryModule } from './ComponentLibrary.module';

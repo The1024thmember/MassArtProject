@@ -1,0 +1,1 @@
+export {MyContainerComponent} from './myContainer.component';
