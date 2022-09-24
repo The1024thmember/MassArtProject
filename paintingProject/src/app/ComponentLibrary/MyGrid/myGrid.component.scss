@@ -1,4 +1,4 @@
-@import "styles/settings";
+@import "../../../styles/settings";
 :host {
     align-items: flex-start;
     display: flex;
@@ -21,16 +21,16 @@
 
     &[data-vertical-alignment="bottom"] {
         align-items: flex-end;
-    }   
-    
+    }
+
     &[data-vertical-alignment="center"] {
         align-items: center;
-    }      
+    }
 
     &[data-vertical-alignment="stretch"] {
         align-items: stretch;
-    }   
-    
+    }
+
     &[data-overflow="true"] {
         flex-flow: row nowrap;
     }
