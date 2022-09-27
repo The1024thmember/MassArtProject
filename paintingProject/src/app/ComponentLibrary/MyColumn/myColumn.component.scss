@@ -4,7 +4,6 @@
 :host {
   flex: 0 0 100%;
   max-width: 100%;
-  padding: 0 $spacing-xxsmall;
 
   &[data-col="1"] {
     flex-basis: (math.div(100%, 12) * 1);
@@ -105,7 +104,6 @@
 
   /* Tablet breakpoint columns */
   @media (min-width: $breakpoint-tablet) {
-    padding: 0 $spacing-xsmall;
 
     &[data-col-tablet="1"] {
       flex-basis: (math.div(100%, 12) * 1);

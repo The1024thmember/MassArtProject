@@ -3,13 +3,6 @@
     align-items: flex-start;
     display: flex;
     flex-flow: row wrap;
-    margin-left: -$spacing-xxsmall;
-    margin-right: -$spacing-xxsmall;
-
-    @media (min-width: $breakpoint-tablet) {
-        margin-left: -$spacing-xsmall;
-        margin-right: -$spacing-xsmall;
-    }
 
     &[data-horizontal-alignment="center"] {
         justify-content: center;

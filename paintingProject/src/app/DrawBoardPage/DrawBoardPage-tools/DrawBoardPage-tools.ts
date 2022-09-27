@@ -1,15 +1,24 @@
 import { Component } from '@angular/core';
+import { HorizontalAlignment } from 'src/app/ComponentLibrary/MyGrid';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 
 @Component({
   selector: 'drawBoardPage-tools',
   template: ` <my-container class="Tools">
-    <my-grid>
-      <my-col [col]="3"> Mass Art </my-col>
+    <my-grid [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER">
+      <my-col [col]="2"> Mass Art </my-col>
       <my-col [col]="6">
         <my-grid>
-          <my-col [col]="2"> line </my-col>
-          <my-col [col]="2"> curve</my-col>
+          <my-col [col]="2">
+            <button>
+              <img class="Icons" src="./assets/line.svg" />
+            </button>
+          </my-col>
+          <my-col [col]="2">
+            <button>
+              <img class="Icons" src="./assets/curve.svg" />
+            </button>
+          </my-col>
           <my-col [col]="2">
             <button>
               <i class="bi bi-square"></i>
@@ -27,14 +36,14 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
           </my-col>
         </my-grid>
       </my-col>
-      <my-col [col]="3">
+      <my-col [col]="2">
         <my-grid>
-          <my-col [col]="2">
+          <my-col [col]="6">
             <button>
               <i class="bi bi-border-width"></i>
             </button>
           </my-col>
-          <my-col [col]="2">
+          <my-col [col]="6">
             <button>
               <i class="bi bi-paint-bucket"></i>
             </button>
@@ -47,4 +56,5 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 })
 export class DrawBoardToolsComponent {
   HeadingType = HeadingType;
+  HorizontalAlignment = HorizontalAlignment;
 }
