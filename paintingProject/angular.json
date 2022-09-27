@@ -17,6 +17,12 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/",
+                "src/styles"
+              ]
+            },
             "outputPath": "dist/painting",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -25,12 +31,13 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
             ],
-            "scripts": []
+            "scripts": [
+            ]
           },
           "configurations": {
             "production": {
