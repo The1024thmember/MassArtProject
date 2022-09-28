@@ -5,7 +5,10 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 @Component({
   selector: 'drawBoardPage-tools',
   template: ` <my-container class="Tools">
-    <my-grid [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER">
+    <my-grid
+      [myHideTablet]="true"
+      [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER"
+    >
       <my-col [col]="2"> Mass Art </my-col>
       <my-col [col]="6">
         <my-grid>
