@@ -69,4 +69,8 @@ export class HideDirective {
   @HostBinding('attr.data-show-desktop-xlarge')
   @Input()
   myShowDesktopXLarge?: boolean;
+
+  constructor() {
+    console.log('this.myHideMobile:', this.myHideMobile);
+  }
 }

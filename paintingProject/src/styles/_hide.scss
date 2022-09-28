@@ -6,84 +6,87 @@
  *  Hide elements using max-width in order to simplify approach
  *  Note: added !important in order to have a high specificity vs encapsulated styles
  */
-[data-hide="true"] {
-  display: none !important;
-}
 
-[data-hide-mobile-small="true"] {
-  @media (max-width: $breakpoint-mobile) {
+  [data-hide="true"] {
     display: none !important;
   }
-}
 
-[data-hide-mobile="true"] {
-  @media (max-width: $breakpoint-tablet - 1) {
+  [data-hide-mobile-small="true"] {
+    @media (max-width: $breakpoint-mobile) {
+      display: none !important;
+    }
+  }
+
+  [data-hide-mobile="true"] {
+    @media (max-width: $breakpoint-tablet - 1) {
+      display: none !important;
+    }
+  }
+
+  [data-show-mobile-small="true"] {
+    @media (min-width: $breakpoint-mobile + 1) {
+      display: none !important;
+    }
+  }
+
+  [data-show-mobile="true"] {
+    @media (min-width: $breakpoint-tablet) {
+      display: none !important;
+    }
+  }
+
+  [data-hide-tablet="true"] {
+    @media (min-width: $breakpoint-tablet)
+      and (max-width: $breakpoint-desktop-small - 1) {
+      display: none !important;
+    }
+  }
+
+  [data-show-tablet="true"] {
+    @media (max-width: $breakpoint-tablet - 1), (min-width: $breakpoint-desktop-small) {
+      display: none !important;
+    }
+  }
+
+  [data-hide-desktop="true"] {
+    @media (min-width: $breakpoint-desktop-small) {
+      display: none !important;
+    }
+  }
+
+  [data-show-desktop="true"] {
+    @media (max-width: $breakpoint-desktop-small - 1) {
+      display: none !important;
+    }
+  }
+
+  [data-hide-desktop-large="true"] {
+    @media (min-width: $breakpoint-desktop-large) {
+      display: none !important;
+    }
+  }
+
+  [data-show-desktop-large="true"] {
+    @media (max-width: $breakpoint-desktop-large - 1) {
+      display: none !important;
+    }
+  }
+
+  [data-hide-desktop-xlarge="true"] {
+    @media (min-width: $breakpoint-desktop-xlarge) {
+      display: none !important;
+    }
+  }
+
+  [data-show-desktop-xlarge="true"] {
+    @media (max-width: $breakpoint-desktop-xlarge - 1) {
+      display: none !important;
+    }
+  }
+
+  [data-pwa-hide-installed="true"] {
     display: none !important;
   }
-}
 
-[data-show-mobile-small="true"] {
-  @media (min-width: $breakpoint-mobile + 1) {
-    display: none !important;
-  }
-}
 
-[data-show-mobile="true"] {
-  @media (min-width: $breakpoint-tablet) {
-    display: none !important;
-  }
-}
-
-[data-hide-tablet="true"] {
-  @media (min-width: $breakpoint-tablet)
-    and (max-width: $breakpoint-desktop-small - 1) {
-    display: none !important;
-  }
-}
-
-[data-show-tablet="true"] {
-  @media (max-width: $breakpoint-tablet - 1), (min-width: $breakpoint-desktop-small) {
-    display: none !important;
-  }
-}
-
-[data-hide-desktop="true"] {
-  @media (min-width: $breakpoint-desktop-small) {
-    display: none !important;
-  }
-}
-
-[data-show-desktop="true"] {
-  @media (max-width: $breakpoint-desktop-small - 1) {
-    display: none !important;
-  }
-}
-
-[data-hide-desktop-large="true"] {
-  @media (min-width: $breakpoint-desktop-large) {
-    display: none !important;
-  }
-}
-
-[data-show-desktop-large="true"] {
-  @media (max-width: $breakpoint-desktop-large - 1) {
-    display: none !important;
-  }
-}
-
-[data-hide-desktop-xlarge="true"] {
-  @media (min-width: $breakpoint-desktop-xlarge) {
-    display: none !important;
-  }
-}
-
-[data-show-desktop-xlarge="true"] {
-  @media (max-width: $breakpoint-desktop-xlarge - 1) {
-    display: none !important;
-  }
-}
-
-[data-pwa-hide-installed="true"] {
-  display: none !important;
-}
 /* stylelint-enable */
