@@ -6,14 +6,14 @@
   justify-content: space-around;
   flex-wrap: wrap;
   width: 55px;
-  height: 500px;
+  height: 450px;
   border-radius: 10px;
   box-shadow: 10px 10px 5px lightgrey;
 
   @media (min-width: $breakpoint-tablet) {
     display: flex;
     justify-content: center;
-    width: 600px;
+    width: 500px;
     height: 50px;
   }
 }

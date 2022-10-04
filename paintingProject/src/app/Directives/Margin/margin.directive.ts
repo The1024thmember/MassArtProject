@@ -29,33 +29,33 @@ export enum Margin {
 export class MarginDirective {
   @HostBinding('attr.data-margin-right')
   @Input()
-  flMarginRight?: Margin;
+  myMarginRight?: Margin;
 
   @HostBinding('attr.data-margin-bottom')
   @Input()
-  flMarginBottom?: Margin;
+  myMarginBottom?: Margin;
 
   @HostBinding('attr.data-margin-right-tablet')
   @Input()
-  flMarginRightTablet?: Margin;
+  myMarginRightTablet?: Margin;
 
   @HostBinding('attr.data-margin-bottom-tablet')
   @Input()
-  flMarginBottomTablet?: Margin;
+  myMarginBottomTablet?: Margin;
 
   @HostBinding('attr.data-margin-right-desktop')
   @Input()
-  flMarginRightDesktop?: Margin;
+  myMarginRightDesktop?: Margin;
 
   @HostBinding('attr.data-margin-bottom-desktop')
   @Input()
-  flMarginBottomDesktop?: Margin;
+  myMarginBottomDesktop?: Margin;
 
   @HostBinding('attr.data-margin-right-desktop-large')
   @Input()
-  flMarginRightDesktopLarge?: Margin;
+  myMarginRightDesktopLarge?: Margin;
 
   @HostBinding('attr.data-margin-bottom-desktop-large')
   @Input()
-  flMarginBottomDesktopLarge?: Margin;
+  myMarginBottomDesktopLarge?: Margin;
 }
