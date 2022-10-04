@@ -1,14 +1,27 @@
 import { Component } from '@angular/core';
-import { HorizontalAlignment } from 'src/app/ComponentLibrary/MyGrid';
+import {
+  HorizontalAlignment,
+  VerticalAlignment,
+} from 'src/app/ComponentLibrary/MyGrid';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
+import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.component';
 
 @Component({
   selector: 'drawBoardPage-tools',
   template: `
     <my-container [myHideMobile]="true" class="Tools">
-      <my-grid [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER">
-        <my-col [col]="2"> Mass Art </my-col>
-        <my-col [col]="6">
+      <my-grid
+        [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER"
+        [vAlign]="VerticalAlignment.VERTICAL_CENTER"
+      >
+        <my-col class="logo" [col]="2">
+          <button>Mass Art</button>
+        </my-col>
+        <my-vertical-bar
+          [height]="5"
+          [color]="BarColor.LIGHT"
+        ></my-vertical-bar>
+        <my-col class="pens" [col]="6">
           <my-grid>
             <my-col [col]="2">
               <button>
@@ -91,4 +104,6 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 export class DrawBoardToolsComponent {
   HeadingType = HeadingType;
   HorizontalAlignment = HorizontalAlignment;
+  VerticalAlignment = VerticalAlignment;
+  BarColor = BarColor;
 }

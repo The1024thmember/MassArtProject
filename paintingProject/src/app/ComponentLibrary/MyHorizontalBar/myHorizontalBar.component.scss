@@ -1,0 +1,66 @@
+@use "sass:math";
+@import "settings";
+
+:host {
+  width :inherit;
+
+  &[data-width="1"] {
+    width: $spacing-xxxsmall;
+    border-top-width: 2px;
+  }
+
+  &[data-width="2"] {
+    width: $spacing-xxsmall;
+    border-top-width: 2px;
+  }
+
+  &[data-width="3"] {
+    width: $spacing-xsmall;
+    border-top-width: 2px;
+  }
+
+  &[data-width="4"] {
+    width: $spacing-small;
+    border-top-width: 2px;
+  }
+
+  &[data-width="5"] {
+    width: $spacing-mid;
+    border-top-width: 2px;
+  }
+
+  &[data-width="6"] {
+    width: $spacing-large;
+    border-top-width: 2px;
+  }
+
+  &[data-width="7"] {
+    width: $spacing-xlarge;
+    border-top-width: 2px;
+  }
+
+  &[data-width="8"] {
+    width: $spacing-xxlarge;
+    border-top-width: 2px;
+  }
+
+  &[data-width="9"] {
+    width: $spacing-xxxlarge;
+    border-top-width: 2px;
+  }
+
+  &[data-width="10"] {
+    width: $spacing-xxxxlarge;
+    border-top-width: 2px;
+  }
+
+  &[data-color="light"] {
+    border-top-color: $neutral-xxxxxxlight;
+    border-top-style: solid;
+  }
+
+  &[data-color="dark"] {
+    border-top-color:$neutral-xxxxdark;
+    border-top-style: solid;
+  }
+}
