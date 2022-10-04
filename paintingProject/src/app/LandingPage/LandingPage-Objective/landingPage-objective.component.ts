@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
+import { Margin } from 'src/app/Directives/Margin/margin.directive';
 
 @Component({
   selector: 'landingPage-Objectives',
   template: ` <my-container>
     <my-grid>
       <my-col [colDesktopSmall]="6">
-        <my-heading [headingType]="HeadingType.H1"
-          >The Art of Togetherness</my-heading
-        >
+        <my-heading [headingType]="HeadingType.H1">
+          The Art of Togetherness
+        </my-heading>
       </my-col>
       <my-col [colDesktopSmall]="5" [colTablet]="12">
         <my-heading [headingType]="HeadingType.H1">2</my-heading>
@@ -18,4 +19,5 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 })
 export class LandingPageObjectiveComponent {
   HeadingType = HeadingType;
+  Margin = Margin;
 }

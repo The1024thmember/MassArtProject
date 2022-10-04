@@ -5,6 +5,7 @@ import {
 } from 'src/app/ComponentLibrary/MyGrid';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.component';
+import { Margin } from 'src/app/Directives/Margin/margin.directive';
 
 @Component({
   selector: 'drawBoardPage-tools',
@@ -48,6 +49,10 @@ import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.c
                 <i class="bi bi-triangle"></i>
               </button>
             </my-col>
+            <my-vertical-bar
+              [height]="5"
+              [color]="BarColor.LIGHT"
+            ></my-vertical-bar>
           </my-grid>
         </my-col>
         <my-col [col]="2">
@@ -69,7 +74,10 @@ import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.c
 
     <my-container class="Tools" [myShowMobile]="true">
       <button>Mass</button>
-
+      <my-horizontal-bar
+        [width]="5"
+        [color]="BarColor.LIGHT"
+      ></my-horizontal-bar>
       <button>
         <img class="Icons" src="./assets/line.svg" />
       </button>
@@ -89,7 +97,10 @@ import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.c
       <button>
         <i class="bi bi-triangle"></i>
       </button>
-
+      <my-horizontal-bar
+        [width]="5"
+        [color]="BarColor.LIGHT"
+      ></my-horizontal-bar>
       <button>
         <i class="bi bi-border-width"></i>
       </button>
@@ -106,4 +117,5 @@ export class DrawBoardToolsComponent {
   HorizontalAlignment = HorizontalAlignment;
   VerticalAlignment = VerticalAlignment;
   BarColor = BarColor;
+  Margin = Margin;
 }
