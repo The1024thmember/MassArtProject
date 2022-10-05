@@ -4,6 +4,7 @@ import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DirectivesModule } from '../Directives';
 import { DrawBoardControlsComponent } from './DrawBoardPage-controls/DrawBoardPage-controls';
 import { DrawBoardToolsComponent } from './DrawBoardPage-tools/DrawBoardPage-tools';
+import { DrawBoardUserPanelComponent } from './DrawBoardPage-userPanel/DrawBoardPage-userPanel';
 import { DrawBoardPageComponent } from './DrawBoardPage.component';
 import { DrawBoardPageRoutingModule } from './DrawBoardPage.routing.module';
 
@@ -18,6 +19,7 @@ import { DrawBoardPageRoutingModule } from './DrawBoardPage.routing.module';
     DrawBoardPageComponent,
     DrawBoardToolsComponent,
     DrawBoardControlsComponent,
+    DrawBoardUserPanelComponent,
   ],
   exports: [],
 })

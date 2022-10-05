@@ -1,15 +1,14 @@
 @import 'settings';
-.Controls {
+.UserPanel {
   background-color: #E9E9E9;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
-  width: 300px;
+  width: 200px;
   height: 50px;
   border-radius: 10px;
   box-shadow: 10px 10px 5px lightgrey;
-  margin-bottom: $spacing-mid;
 }
 
 .Icons {
