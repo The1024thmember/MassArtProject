@@ -15,7 +15,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [vAlign]="VerticalAlignment.VERTICAL_CENTER"
         [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER"
       >
-        <my-col [col]="3">
+        <my-col [col]="2">
           <button>
             <i class="bi bi-person"></i>
           </button>
