@@ -21,7 +21,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <my-vertical-bar
           [height]="5"
           [color]="BarColor.LIGHT"
-          [style.marginRight]="'20px'"
+          [myMarginRight]="Margin.XSMALL"
         ></my-vertical-bar>
         <my-col class="pens" [col]="6">
           <my-grid>
@@ -53,6 +53,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
             <my-vertical-bar
               [height]="5"
               [color]="BarColor.LIGHT"
+              [myMarginLeft]="Margin.XSMALL"
             ></my-vertical-bar>
           </my-grid>
         </my-col>
@@ -76,9 +77,9 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
     <my-container class="Tools" [myShowMobile]="true">
       <button>Mass</button>
       <my-horizontal-bar
-        [style.margin]="'0px 15px'"
         [width]="5"
         [color]="BarColor.LIGHT"
+        [myMarginLeft]="Margin.SMALL"
       ></my-horizontal-bar>
       <button>
         <img class="Icons" src="./assets/line.svg" />
@@ -100,7 +101,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <i class="bi bi-triangle"></i>
       </button>
       <my-horizontal-bar
-        [style.margin]="'0px 15px'"
+        [myMarginLeft]="Margin.SMALL"
         [width]="5"
         [color]="BarColor.LIGHT"
       ></my-horizontal-bar>

@@ -1,0 +1,112 @@
+@import "settings";
+
+/**
+ * Spacing Generator
+ * This generates data targets with it's respective spacing values
+ * for certain breakpoints
+ *
+ * IMPORTANT
+ * 1. If you change any of these please update
+ *    @freelancer/ui/base/base.component.ts
+ * 2. Do not change the order of the for loops in order for
+ *    it cascade properly from mobile > tablet > desktop
+ * 3. The index values of $spacing-name and $spacing-list are
+ *    connected with each other
+ */
+$spacing-name: "none"
+  "xxxsmall"
+  "xxsmall"
+  "xsmall"
+  "small"
+  "mid"
+  "large"
+  "xlarge"
+  "xxlarge"
+  "xxxlarge"
+  "xxxxlarge";
+
+$spacing-list: $spacing-none
+  $spacing-xxxsmall
+  $spacing-xxsmall
+  $spacing-xsmall
+  $spacing-small
+  $spacing-mid
+  $spacing-large
+  $spacing-xlarge
+  $spacing-xxlarge
+  $spacing-xxxlarge
+  $spacing-xxxxlarge;
+
+/* Generates default spacing */
+@each $spacing-item in $spacing-list {
+  $i: index($spacing-list, $spacing-item);
+
+  #{"[data-margin-left=" + nth($spacing-name, $i) + "]"} {
+    margin-left: $spacing-item;
+  }
+
+  #{"[data-margin-right=" + nth($spacing-name, $i) + "]"} {
+    margin-right: $spacing-item;
+  }
+
+  #{"[data-margin-bottom=" + nth($spacing-name, $i) + "]"} {
+    margin-bottom: $spacing-item;
+  }
+}
+
+/* Generates spacing for tablet */
+@media (min-width: $breakpoint-tablet) {
+  @each $spacing-item in $spacing-list {
+    $i: index($spacing-list, $spacing-item);
+
+    #{"[data-margin-left-tablet=" + nth($spacing-name, $i) + "]"} {
+      margin-left: $spacing-item;
+    }
+
+    #{"[data-margin-right-tablet=" + nth($spacing-name, $i) + "]"} {
+      margin-right: $spacing-item;
+    }
+
+    #{"[data-margin-bottom-tablet=" + nth($spacing-name, $i) + "]"} {
+      margin-bottom: $spacing-item;
+    }
+  }
+}
+
+/* Generates spacing for desktop */
+@media (min-width: $breakpoint-desktop-small) {
+  @each $spacing-item in $spacing-list {
+    $i: index($spacing-list, $spacing-item);
+
+    #{"[data-margin-left-desktop=" + nth($spacing-name, $i) + "]"} {
+      margin-left: $spacing-item;
+    }
+
+    #{"[data-margin-right-desktop=" + nth($spacing-name, $i) + "]"} {
+      margin-right: $spacing-item;
+    }
+
+    #{"[data-margin-bottom-desktop=" + nth($spacing-name, $i) + "]"} {
+      margin-bottom: $spacing-item;
+    }
+  }
+}
+
+/* Generates spacing for desktop large */
+@media (min-width: $breakpoint-desktop-large) {
+  @each $spacing-item in $spacing-list {
+    $i: index($spacing-list, $spacing-item);
+
+    #{"[data-margin-left-desktop-large=" + nth($spacing-name, $i) + "]"} {
+      margin-left: $spacing-item;
+    }
+
+    #{"[data-margin-right-desktop-large=" + nth($spacing-name, $i) + "]"} {
+      margin-right: $spacing-item;
+    }
+
+    #{"[data-margin-bottom-desktop-large=" + nth($spacing-name, $i) + "]"} {
+      margin-bottom: $spacing-item;
+    }
+  }
+}
