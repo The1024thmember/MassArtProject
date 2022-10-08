@@ -1,0 +1,126 @@
+@import "settings";
+
+:host {
+  @include text-align-generator();
+
+  @media (min-width: $breakpoint-tablet) {
+    @include text-align-generator(tablet);
+  }
+
+  @media (min-width: $breakpoint-desktop-small) {
+    @include text-align-generator(desktop-small);
+  }
+
+  &[data-type="paragraph"] {
+    display: block;
+
+    .NativeElement {
+      display: inline;
+    }
+  }
+
+  &[data-max-lines] {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+
+    .NativeElement {
+      display: block;
+    }
+  }
+
+  &[data-type="container"] {
+    display: block;
+  }
+
+  &[data-highlight-color="blue"] {
+    ::selection {
+      background: $selection-blue;
+    }
+
+    ::-moz-selection {
+      background: $selection-blue;
+    }
+  }
+
+  &[data-highlight-color="gray"] {
+    ::selection {
+      background: $selection-gray;
+    }
+
+    ::-moz-selection {
+      background: $selection-gray;
+    }
+  }
+}
+
+@include text-size-generator();
+@include text-weight-generator();
+
+@media (min-width: $breakpoint-tablet) {
+  @include text-size-generator(tablet);
+  @include text-weight-generator(tablet);
+}
+
+@media (min-width: $breakpoint-desktop-small) {
+  @include text-size-generator(desktop);
+  @include text-weight-generator(desktop);
+}
+
+@media (min-width: $breakpoint-desktop-xlarge) {
+  @include text-size-generator(desktop-xlarge);
+}
+
+@include text-transform-generator();
+
+[data-color="light"] {
+  color: $text-color-light;
+}
+
+[data-color="mid"] {
+  color: $text-color-mid;
+}
+
+[data-color="dark"] {
+  color: $text-color-dark;
+}
+
+[data-color="error"] {
+  color: $error;
+}
+
+[data-color="warning"] {
+  color: $warning;
+}
+
+[data-color="success"] {
+  color: $success;
+}
+
+[data-color="recruiter"] {
+  color: $recruiter-color;
+}
+
+[data-color="inherit"] {
+  color: inherit;
+}
+
+[data-color="promo"] {
+  color: $red-dark;
+}
+
+[data-style="italic"] {
+  font-style: italic;
+}
+
+[data-style="normal"] {
+  font-style: normal;
+}
+
+.Strong {
+  font-weight: $font-weight-bold;
+}
+
+[data-line-break="true"] {
+  white-space: pre-line;
+}

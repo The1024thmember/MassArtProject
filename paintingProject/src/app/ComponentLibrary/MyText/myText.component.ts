@@ -1,9 +1,380 @@
-import  {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import { ContentObserver } from '@angular/cdk/observers';
+import type {
+  AfterViewInit,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  NgZone,
+  Output,
+  Renderer2,
+  SkipSelf,
+} from '@angular/core';
+import * as Rx from 'rxjs';
+import { filter, take } from 'rxjs/operators';
+import { MaxLinesHelper } from './max-lines.helper';
+import {
+  FontColor,
+  FontStyle,
+  FontType,
+  FontWeight,
+  HighlightColor,
+  ReadMore,
+  ReadMoreColor,
+  TextAlign,
+  TextSize,
+  TextTransform,
+} from './myText.types';
 
 @Component({
-    selector: 'my-text',
-    template: `placeholder for my-text`,
-    styleUrls: ['myText.component.scss'],
+  selector: 'my-text',
+  template: `
+    <ng-container [ngSwitch]="fontType">
+      <div
+        *ngSwitchCase="FontType.PARAGRAPH"
+        class="NativeElement"
+        role="paragraph"
+        [attr.data-text-transform]="textTransform"
+        [attr.data-color]="color"
+        [attr.data-size]="size"
+        [attr.data-size-tablet]="sizeTablet"
+        [attr.data-size-desktop]="sizeDesktop"
+        [attr.data-size-desktop-xlarge]="sizeDesktopXLarge"
+        [attr.data-weight]="weight"
+        [attr.data-weight-tablet]="weightTablet"
+        [attr.data-weight-desktop]="weightDesktop"
+        [attr.data-style]="style"
+        [attr.data-line-break]="displayLineBreaks"
+      >
+        <ng-container *ngTemplateOutlet="injectedContent"></ng-container>
+      </div>
+      <span
+        *ngSwitchCase="FontType.SPAN"
+        class="NativeElement"
+        [attr.data-text-transform]="textTransform"
+        [attr.data-color]="color"
+        [attr.data-size]="size"
+        [attr.data-size-tablet]="sizeTablet"
+        [attr.data-size-desktop]="sizeDesktop"
+        [attr.data-size-desktop-xlarge]="sizeDesktopXLarge"
+        [attr.data-weight]="weight"
+        [attr.data-weight-tablet]="weightTablet"
+        [attr.data-weight-desktop]="weightDesktop"
+        [attr.data-style]="style"
+        [attr.data-line-break]="displayLineBreaks"
+      >
+        <ng-container *ngTemplateOutlet="injectedContent"></ng-container>
+      </span>
+      <strong
+        *ngSwitchCase="FontType.STRONG"
+        class="NativeElement Strong"
+        [attr.data-text-transform]="textTransform"
+        [attr.data-color]="color"
+        [attr.data-size]="size"
+        [attr.data-size-tablet]="sizeTablet"
+        [attr.data-size-desktop]="sizeDesktop"
+        [attr.data-size-desktop-xlarge]="sizeDesktopXLarge"
+        [attr.data-weight]="weight"
+        [attr.data-weight-tablet]="weightTablet"
+        [attr.data-weight-desktop]="weightDesktop"
+        [attr.data-style]="style"
+        [attr.data-line-break]="displayLineBreaks"
+      >
+        <ng-container *ngTemplateOutlet="injectedContent"></ng-container>
+      </strong>
+      <!-- this one's also a div but doesn't have paragraph semantics -->
+      <div
+        *ngSwitchCase="FontType.CONTAINER"
+        class="NativeElement"
+        [attr.data-text-transform]="textTransform"
+        [attr.data-color]="color"
+        [attr.data-size]="size"
+        [attr.data-size-tablet]="sizeTablet"
+        [attr.data-size-desktop]="sizeDesktop"
+        [attr.data-size-desktop-xlarge]="sizeDesktopXLarge"
+        [attr.data-weight]="weight"
+        [attr.data-weight-tablet]="weightTablet"
+        [attr.data-weight-desktop]="weightDesktop"
+        [attr.data-style]="style"
+        [attr.data-line-break]="displayLineBreaks"
+      >
+        <ng-container *ngTemplateOutlet="injectedContent"></ng-container>
+      </div>
+      <ng-template #injectedContent>
+        <ng-content></ng-content>
+      </ng-template>
+    </ng-container>
+  `,
+  styleUrls: ['./myText.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
+export class MyTextComponent
+  implements AfterViewInit, OnDestroy, OnChanges, OnInit
+{
+  FontType = FontType;
 
-export class MyTextComponent{}
+  @Input()
+  @HostBinding('attr.data-color')
+  color = FontColor.DARK;
+
+  /**
+   * Text selection color
+   */
+  @HostBinding('attr.data-highlight-color')
+  @Input()
+  highlightColor?: HighlightColor;
+
+  /**
+   * Font size for mobile and above
+   */
+  @Input() size: TextSize = TextSize.XSMALL;
+
+  /**
+   * Change the [size] from tablet and above
+   */
+  @Input() sizeTablet?: TextSize;
+
+  /**
+   * Change the [size] and/or [sizeTablet] from desktop and above
+   */
+  @Input() sizeDesktop?: TextSize;
+
+  /** Change the [size], [sizeTablet] and [sizeDesktop] from desktop-xlarge and above */
+  @Input() sizeDesktopXLarge?: TextSize;
+
+  @Input() style = FontStyle.NORMAL;
+
+  /** Change the text-align property (only works on fontType.PARAGRAPH) */
+  @HostBinding('attr.data-text-align')
+  @Input()
+  textAlign?: TextAlign;
+
+  @HostBinding('attr.data-text-align-tablet')
+  @Input()
+  textAlignTablet?: TextAlign;
+
+  @HostBinding('attr.data-text-align-desktop-small')
+  @Input()
+  textAlignDesktopSmall?: TextAlign;
+
+  @Input() textTransform?: TextTransform;
+
+  @Input() weight = FontWeight.NORMAL;
+  @Input() weightTablet?: FontWeight;
+  @Input() weightDesktop?: FontWeight;
+
+  /** Defines the HTML node it will use e.g (<p>, <span>, <strong>)
+   *  Note: This is for semantics usage which defaults to a <p> tag
+   */
+  @HostBinding('attr.data-type')
+  @Input()
+  fontType = FontType.PARAGRAPH;
+
+  /**
+   * Default false, true will parse the \n, <br> tags in the string to create a new line
+   * Will break the line when maxLines=false, or maxLines=true and readmore clicked
+   */
+  @Input() displayLineBreaks = false;
+
+  /*
+   * Maximum number of lines of text to display before truncating
+   */
+  @Input()
+  @HostBinding('attr.data-max-lines')
+  maxLines?: number;
+
+  /*
+   * Paired with [maxLines].
+   * Displays "Read more" link or icon.
+   */
+  @Input()
+  @HostBinding('attr.data-read-more')
+  readMore = ReadMore.NONE;
+
+  @Input() readMoreColor?: ReadMoreColor;
+
+  /**
+   * Paired with [maxLines].
+   * Limit the height to prevent UI flickering during truncation in initialization.
+   * This is an optional field when maxLines is set. However, it is recommended when using TextSize.INHERIT
+   * to supply a custom value depending on the text size and line height we inherit from.
+   */
+  @Input()
+  @HostBinding('style.max-height')
+  maxHeight?: string;
+
+  @HostBinding('style.overflow')
+  overflow: string;
+
+  @Output()
+  expand = new EventEmitter<boolean>();
+
+  private maxLinesHelper: MaxLinesHelper;
+  private container: HTMLElement;
+  private windowSize: { width?: number; height?: number } = {};
+  private originalContainer: Node;
+  private isInTransition: boolean;
+  private isExpanded: boolean;
+  private subscriptions = new Rx.Subscription();
+
+  constructor(
+    private element: ElementRef,
+    private ngZone: NgZone,
+    private obs: ContentObserver,
+    @SkipSelf() protected renderer: Renderer2
+  ) {}
+
+  ngOnInit() {
+    // Set the max height to prevent UI flickering before the text is truncated.
+    if (this.maxLines && !this.maxHeight) {
+      // FIXME: T267853 - share CSS variables with JS
+      let lineHeightUi: number;
+      let fontSizeUi: number;
+
+      switch (this.size) {
+        case TextSize.SMALL:
+          lineHeightUi = 1.5;
+          fontSizeUi = 16;
+          break;
+        case TextSize.XXSMALL:
+          lineHeightUi = 1.2;
+          fontSizeUi = 13;
+          break;
+        default:
+          lineHeightUi = 1.43;
+          fontSizeUi = 14;
+      }
+
+      this.maxHeight = `${this.maxLines * lineHeightUi * fontSizeUi}px`;
+      this.overflow = 'hidden';
+    }
+  }
+
+  ngAfterViewInit() {
+    if (this.maxLines) {
+      [this.container] = this.element.nativeElement.children;
+      this.subscriptions.add(
+        this.ngZone.onStable
+          .asObservable()
+          .pipe(
+            filter(() => !!this.container.scrollHeight),
+            take(1)
+          )
+          .subscribe(() => {
+            this.truncate();
+          })
+      );
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.maxLines && this.container && 'maxLines' in changes) {
+      this.truncate();
+    }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
+  destroyListeners() {
+    this.subscriptions.unsubscribe();
+    this.subscriptions = new Rx.Subscription();
+  }
+
+  truncate() {
+    this.isExpanded = false;
+    this.destroyListeners();
+    [this.container] = this.element.nativeElement.children;
+    // save original content
+    this.originalContainer = this.container.cloneNode(true);
+    this.maxLinesHelper = new MaxLinesHelper(this.container, (isTruncated) => {
+      // The container has been truncated or restored. The result of either
+      // actions require a transition period when we are in ReadMore.ICON mode.
+      if (this.readMore === ReadMore.ICON) {
+        this.isInTransition = true;
+      }
+
+      if (!isTruncated) {
+        this.isInTransition = true;
+        this.isExpanded = true;
+        this.renderer.setStyle(
+          this.element.nativeElement,
+          'max-height',
+          'none'
+        );
+
+        this.restoreContainer();
+      }
+
+      this.expand.emit(!isTruncated);
+
+      // This indicates that the transition is completed.
+      requestAnimationFrame(() => {
+        this.isInTransition = false;
+      });
+    });
+
+    // Check if the text content fits within the container.
+    // Truncate text if it exceeds the maximum line limit.
+    // Append a "Read more" link or toggle icon to the end of the text block if specified.
+    if (this.readMoreColor === ReadMoreColor.LIGHT && this.maxLines) {
+      this.maxLinesHelper.truncate(
+        this.maxLines,
+        this.readMore,
+        this.color,
+        ReadMoreColor.LIGHT
+      );
+    } else {
+      if (this.maxLines)
+        this.maxLinesHelper.truncate(this.maxLines, this.readMore, this.color);
+    }
+
+    // listen for changes of content
+    this.subscriptions.add(
+      this.obs.observe(this.container).subscribe(() => {
+        // do nothing if the mutation is the result of the element expanding
+        if (!this.isInTransition) {
+          // Remove read more button before re-truncation
+          this.maxLinesHelper.removeReadMoreButton();
+          this.truncate();
+        }
+      })
+    );
+  }
+
+  private restoreContainer() {
+    let lastIndex = 0;
+    const originalChildNodes = this.originalContainer.childNodes;
+    this.container.childNodes.forEach((childNode) => {
+      if (
+        originalChildNodes.length <= lastIndex ||
+        childNode.nodeType === Node.COMMENT_NODE
+      ) {
+        return;
+      }
+
+      const newChild = originalChildNodes[lastIndex].cloneNode(true);
+      this.container.replaceChild(newChild, childNode);
+      lastIndex++;
+    });
+    for (let i = lastIndex + 1; i < originalChildNodes.length; i++) {
+      this.container.appendChild(originalChildNodes[i].cloneNode(true));
+    }
+  }
+
+  private reTruncate() {
+    // Restore the original content.
+    this.restoreContainer();
+    // Perform truncation again.
+    this.truncate();
+  }
+}

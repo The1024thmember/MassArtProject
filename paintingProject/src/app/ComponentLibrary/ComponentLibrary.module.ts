@@ -5,7 +5,8 @@ import { MyContainerComponent } from './MyContainer/myContainer.component';
 import { MyGridComponent } from './MyGrid/myGrid.component';
 import { MyHeadingComponent } from './MyHeading/myHeading.component';
 import { MyHorizontalBarComponent } from './MyHorizontalBar/myHorizontalBar.component';
-import { MyTextComponent } from './MyText';
+import { MyTextComponent } from './MyText/myText.component';
+
 import { MyVerticalBarComponent } from './MyVerticalBar/myVerticalBar.component';
 
 @NgModule({

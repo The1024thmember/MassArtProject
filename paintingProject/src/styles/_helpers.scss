@@ -1,3 +1,5 @@
+@import "fonts";
+
 /*
   This mixin adds ellipsis to the end of a single line of text
   when there's not enough space.
@@ -161,6 +163,32 @@
   #{if(&, "&", "*")}#{"[data-size" + $name + "=inherit]"} {
     font-size: inherit;
     line-height: inherit;
+  }
+}
+
+@mixin text-weight-generator($name: "") {
+  @if $name != "" {
+    $name: "-" + $name;
+  }
+
+  #{"[data-weight" + $name + "=bold]"} {
+    font-weight: $font-weight-bold;
+  }
+
+  #{"[data-weight" + $name + "=medium]"} {
+    font-weight: $font-weight-medium;
+  }
+
+  #{"[data-weight" + $name + "=normal]"} {
+    font-weight: $font-weight-normal;
+  }
+
+  #{"[data-weight" + $name + "=light]"} {
+    font-weight: $font-weight-light;
+  }
+
+  #{"[data-weight" + $name + "=inherit]"} {
+    font-weight: inherit;
   }
 }
 
@@ -377,5 +405,29 @@
         @content;
       }
     }
+  }
+}
+
+@mixin scrollbar-style() {
+  // Styles only for Firefox
+  scrollbar-color: $scroll-thumb $scrollbar;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar-track {
+    background-color: $scrollbar;
+    border-radius: 10px;
+    box-shadow: inset $box-shadow-level-1;
+  }
+
+  &::-webkit-scrollbar {
+    background-color: $scrollbar;
+    height: 8px;
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scroll-thumb;
+    border-radius: 10px;
+    box-shadow: inset $box-shadow-level-1;
   }
 }
