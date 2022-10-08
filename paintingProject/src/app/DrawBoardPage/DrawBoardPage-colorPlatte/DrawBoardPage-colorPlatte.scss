@@ -1,0 +1,51 @@
+@import 'settings';
+.Color {
+  align-items: center;
+  background-color: $neutral-xxxlight;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  width: 75px;
+  max-height: 550px;
+  border-radius: 10px;
+  box-shadow: 10px 10px 5px lightgrey;
+  margin-bottom: $spacing-mid;
+  padding: 20px 0;
+
+  > * {
+    margin-top: 10px;
+  }
+
+  &-platte {
+    text-align: center;
+
+    &-selection {
+      height: 50px;
+      width: 50px;
+      background-color: $neutral-xxxxdark;
+      border: $neutral-xxlight 7px solid;
+      border-radius: 50%;
+      margin-top: -$spacing-xxsmall;
+    }
+  }
+
+  &-history {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+
+    > * {
+      margin: 5px auto 0 auto;
+    }
+  }
+}
+
+button {
+  border: none;
+  background-color: inherit;
+  display: block;
+  margin: auto;
+}

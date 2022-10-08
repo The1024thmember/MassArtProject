@@ -1,6 +1,6 @@
 @import 'settings';
 .UserPanel {
-  background-color: #E9E9E9;
+  background-color: $neutral-xxxlight;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -9,11 +9,7 @@
   height: 50px;
   border-radius: 10px;
   box-shadow: 10px 10px 5px lightgrey;
-}
-
-.Icons {
-  height: 15px;
-  width: 20px;
+  margin-bottom: $spacing-mid;
 }
 
 button {

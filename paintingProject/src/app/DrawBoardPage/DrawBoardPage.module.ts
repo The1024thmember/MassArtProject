@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DirectivesModule } from '../Directives';
+import { DrawBoardColorPlatteComponent } from './DrawBoardPage-colorPlatte/DrawBoardPage-colorPlatte';
 import { DrawBoardControlsComponent } from './DrawBoardPage-controls/DrawBoardPage-controls';
 import { DrawBoardToolsComponent } from './DrawBoardPage-tools/DrawBoardPage-tools';
 import { DrawBoardUserPanelComponent } from './DrawBoardPage-userPanel/DrawBoardPage-userPanel';
@@ -20,6 +21,7 @@ import { DrawBoardPageRoutingModule } from './DrawBoardPage.routing.module';
     DrawBoardToolsComponent,
     DrawBoardControlsComponent,
     DrawBoardUserPanelComponent,
+    DrawBoardColorPlatteComponent,
   ],
   exports: [],
 })
