@@ -1,25 +1,13 @@
-import { ContentObserver } from '@angular/cdk/observers';
-import type {
-  AfterViewInit,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import type { OnDestroy, OnInit } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   EventEmitter,
   HostBinding,
   Input,
-  NgZone,
   Output,
-  Renderer2,
-  SkipSelf,
 } from '@angular/core';
 import * as Rx from 'rxjs';
-import { filter, take } from 'rxjs/operators';
 import { MaxLinesHelper } from './max-lines.helper';
 import {
   FontColor,
@@ -116,9 +104,7 @@ import {
   styleUrls: ['./myText.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MyTextComponent
-  implements AfterViewInit, OnDestroy, OnChanges, OnInit
-{
+export class MyTextComponent implements OnDestroy, OnInit {
   FontType = FontType;
 
   @Input()
@@ -225,15 +211,8 @@ export class MyTextComponent
   private isExpanded: boolean;
   private subscriptions = new Rx.Subscription();
 
-  constructor(
-    private element: ElementRef,
-    private ngZone: NgZone,
-    private obs: ContentObserver,
-    @SkipSelf() protected renderer: Renderer2
-  ) {}
-
   ngOnInit() {
-    // Set the max height to prevent UI flickering before the text is truncated.
+    // Set the max height to prevent UI flickering before the text is.
     if (this.maxLines && !this.maxHeight) {
       // FIXME: T267853 - share CSS variables with JS
       let lineHeightUi: number;
@@ -258,29 +237,6 @@ export class MyTextComponent
     }
   }
 
-  ngAfterViewInit() {
-    if (this.maxLines) {
-      [this.container] = this.element.nativeElement.children;
-      this.subscriptions.add(
-        this.ngZone.onStable
-          .asObservable()
-          .pipe(
-            filter(() => !!this.container.scrollHeight),
-            take(1)
-          )
-          .subscribe(() => {
-            this.truncate();
-          })
-      );
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.maxLines && this.container && 'maxLines' in changes) {
-      this.truncate();
-    }
-  }
-
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
@@ -288,93 +244,5 @@ export class MyTextComponent
   destroyListeners() {
     this.subscriptions.unsubscribe();
     this.subscriptions = new Rx.Subscription();
-  }
-
-  truncate() {
-    this.isExpanded = false;
-    this.destroyListeners();
-    [this.container] = this.element.nativeElement.children;
-    // save original content
-    this.originalContainer = this.container.cloneNode(true);
-    this.maxLinesHelper = new MaxLinesHelper(this.container, (isTruncated) => {
-      // The container has been truncated or restored. The result of either
-      // actions require a transition period when we are in ReadMore.ICON mode.
-      if (this.readMore === ReadMore.ICON) {
-        this.isInTransition = true;
-      }
-
-      if (!isTruncated) {
-        this.isInTransition = true;
-        this.isExpanded = true;
-        this.renderer.setStyle(
-          this.element.nativeElement,
-          'max-height',
-          'none'
-        );
-
-        this.restoreContainer();
-      }
-
-      this.expand.emit(!isTruncated);
-
-      // This indicates that the transition is completed.
-      requestAnimationFrame(() => {
-        this.isInTransition = false;
-      });
-    });
-
-    // Check if the text content fits within the container.
-    // Truncate text if it exceeds the maximum line limit.
-    // Append a "Read more" link or toggle icon to the end of the text block if specified.
-    if (this.readMoreColor === ReadMoreColor.LIGHT && this.maxLines) {
-      this.maxLinesHelper.truncate(
-        this.maxLines,
-        this.readMore,
-        this.color,
-        ReadMoreColor.LIGHT
-      );
-    } else {
-      if (this.maxLines)
-        this.maxLinesHelper.truncate(this.maxLines, this.readMore, this.color);
-    }
-
-    // listen for changes of content
-    this.subscriptions.add(
-      this.obs.observe(this.container).subscribe(() => {
-        // do nothing if the mutation is the result of the element expanding
-        if (!this.isInTransition) {
-          // Remove read more button before re-truncation
-          this.maxLinesHelper.removeReadMoreButton();
-          this.truncate();
-        }
-      })
-    );
-  }
-
-  private restoreContainer() {
-    let lastIndex = 0;
-    const originalChildNodes = this.originalContainer.childNodes;
-    this.container.childNodes.forEach((childNode) => {
-      if (
-        originalChildNodes.length <= lastIndex ||
-        childNode.nodeType === Node.COMMENT_NODE
-      ) {
-        return;
-      }
-
-      const newChild = originalChildNodes[lastIndex].cloneNode(true);
-      this.container.replaceChild(newChild, childNode);
-      lastIndex++;
-    });
-    for (let i = lastIndex + 1; i < originalChildNodes.length; i++) {
-      this.container.appendChild(originalChildNodes[i].cloneNode(true));
-    }
-  }
-
-  private reTruncate() {
-    // Restore the original content.
-    this.restoreContainer();
-    // Perform truncation again.
-    this.truncate();
   }
 }

@@ -4,6 +4,7 @@ import {
   VerticalAlignment,
 } from 'src/app/ComponentLibrary/MyGrid';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
+import { TextSize } from 'src/app/ComponentLibrary/MyText';
 import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.component';
 import { Margin } from 'src/app/Directives/Margin/margin.directive';
 
@@ -24,6 +25,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
           [myMarginRight]="Margin.SMALL"
         >
         </my-horizontal-bar>
+        <my-text [size]="TextSize.XXXSMALL">color history</my-text>
         <button>
           <i class="bi bi-caret-down-fill"></i>
         </button>
@@ -38,4 +40,5 @@ export class DrawBoardColorPlatteComponent {
   VerticalAlignment = VerticalAlignment;
   BarColor = BarColor;
   Margin = Margin;
+  TextSize = TextSize;
 }
