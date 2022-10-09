@@ -16,14 +16,14 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER"
       >
         <my-col [col]="2">
-          <button>
+          <my-button>
             <i class="bi bi-arrow-counterclockwise"></i>
-          </button>
+          </my-button>
         </my-col>
         <my-col [col]="2">
-          <button>
+          <my-button>
             <i class="bi bi-arrow-clockwise"></i>
-          </button>
+          </my-button>
         </my-col>
 
         <my-vertical-bar
@@ -35,14 +35,14 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         </my-vertical-bar>
 
         <my-col [col]="2">
-          <button>
+          <my-button>
             <i class="bi bi-plus-lg"></i>
-          </button>
+          </my-button>
         </my-col>
         <my-col [col]="2">
-          <button>
+          <my-button>
             <i class="bi bi-dash-lg"></i>
-          </button>
+          </my-button>
         </my-col>
       </my-grid>
     </my-container>

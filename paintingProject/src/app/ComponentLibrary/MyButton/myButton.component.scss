@@ -1,0 +1,19 @@
+@import 'settings';
+
+:host {
+    display: block;
+    text-align: center;
+
+    &[data-type="active"] {
+      &:hover {
+        cursor: pointer;
+        opacity: 0.7;
+      }
+    }
+
+    &[data-type="disabled"] {
+      background-color: $neutral-xlight;
+    }
+}
+
+

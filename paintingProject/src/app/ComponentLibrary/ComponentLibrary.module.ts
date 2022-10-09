@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MyButtonComponent } from './MyButton';
 import { MyColumnComponent } from './MyColumn/myColumn.component';
 import { MyContainerComponent } from './MyContainer/myContainer.component';
 import { MyGridComponent } from './MyGrid/myGrid.component';
@@ -19,6 +20,7 @@ import { MyVerticalBarComponent } from './MyVerticalBar/myVerticalBar.component'
     MyColumnComponent,
     MyVerticalBarComponent,
     MyHorizontalBarComponent,
+    MyButtonComponent,
   ],
   exports: [
     MyContainerComponent,
@@ -28,6 +30,7 @@ import { MyVerticalBarComponent } from './MyVerticalBar/myVerticalBar.component'
     MyColumnComponent,
     MyVerticalBarComponent,
     MyHorizontalBarComponent,
+    MyButtonComponent,
   ],
 })
 export class ComponentLibraryModule {}

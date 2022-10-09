@@ -1,4 +1,14 @@
 @import 'settings';
+
 :host {
     display: block;
+
+    &[data-type="Selectable"] {
+      &:hover {
+        cursor: pointer;
+        opacity: 0.8;
+      }
+    }
 }
+
+

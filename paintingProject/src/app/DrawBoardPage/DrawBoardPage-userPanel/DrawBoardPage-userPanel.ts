@@ -16,9 +16,9 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER"
       >
         <my-col [col]="2">
-          <button>
+          <my-button>
             <i class="bi bi-person"></i>
-          </button>
+          </my-button>
         </my-col>
         <my-vertical-bar
           [height]="5"
@@ -28,7 +28,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         >
         </my-vertical-bar>
         <my-col [col]="5">
-          <button>Share</button>
+          <my-button>Share</my-button>
         </my-col>
       </my-grid>
     </my-container>

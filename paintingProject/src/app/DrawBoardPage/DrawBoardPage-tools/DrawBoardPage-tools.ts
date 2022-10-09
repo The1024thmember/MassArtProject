@@ -16,7 +16,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [vAlign]="VerticalAlignment.VERTICAL_CENTER"
       >
         <my-col class="logo" [col]="2">
-          <button>Mass Art</button>
+          <my-button>Mass Art</my-button>
         </my-col>
         <my-vertical-bar
           [height]="5"
@@ -26,29 +26,29 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <my-col class="pens" [col]="6">
           <my-grid>
             <my-col [col]="2">
-              <button>
+              <my-button>
                 <img class="Icons" src="./assets/line.svg" />
-              </button>
+              </my-button>
             </my-col>
             <my-col [col]="2">
-              <button>
+              <my-button>
                 <img class="Icons" src="./assets/curve.svg" />
-              </button>
+              </my-button>
             </my-col>
             <my-col [col]="2">
-              <button>
+              <my-button>
                 <i class="bi bi-square"></i>
-              </button>
+              </my-button>
             </my-col>
             <my-col [col]="2">
-              <button>
+              <my-button>
                 <i class="bi bi-circle"></i>
-              </button>
+              </my-button>
             </my-col>
             <my-col [col]="2">
-              <button>
+              <my-button>
                 <i class="bi bi-triangle"></i>
-              </button>
+              </my-button>
             </my-col>
             <my-vertical-bar
               [height]="5"
@@ -60,14 +60,14 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <my-col [col]="2">
           <my-grid>
             <my-col [col]="6">
-              <button>
+              <my-button>
                 <i class="bi bi-border-width"></i>
-              </button>
+              </my-button>
             </my-col>
             <my-col [col]="6">
-              <button>
+              <my-button>
                 <i class="bi bi-paint-bucket"></i>
-              </button>
+              </my-button>
             </my-col>
           </my-grid>
         </my-col>
@@ -75,43 +75,43 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
     </my-container>
 
     <my-container class="Tools" [myShowMobile]="true">
-      <button>Mass</button>
+      <my-button>Mass</my-button>
       <my-horizontal-bar
         [width]="5"
         [color]="BarColor.LIGHT"
         [myMarginLeft]="Margin.SMALL"
       ></my-horizontal-bar>
-      <button>
+      <my-button>
         <img class="Icons" src="./assets/line.svg" />
-      </button>
+      </my-button>
 
-      <button>
+      <my-button>
         <img class="Icons" src="./assets/curve.svg" />
-      </button>
+      </my-button>
 
-      <button>
+      <my-button>
         <i class="bi bi-square"></i>
-      </button>
+      </my-button>
 
-      <button>
+      <my-button>
         <i class="bi bi-circle"></i>
-      </button>
+      </my-button>
 
-      <button>
+      <my-button>
         <i class="bi bi-triangle"></i>
-      </button>
+      </my-button>
       <my-horizontal-bar
         [myMarginLeft]="Margin.SMALL"
         [width]="5"
         [color]="BarColor.LIGHT"
       ></my-horizontal-bar>
-      <button>
+      <my-button>
         <i class="bi bi-border-width"></i>
-      </button>
+      </my-button>
 
-      <button>
+      <my-button>
         <i class="bi bi-paint-bucket"></i>
-      </button>
+      </my-button>
     </my-container>
   `,
   styleUrls: ['./DrawBoardPage-tools.scss'],

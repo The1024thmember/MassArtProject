@@ -4,20 +4,20 @@ import {
   HostBinding,
   Input,
 } from '@angular/core';
+import { ButtonColor, ButtonStatus } from './myButton.types';
 
-type containerType = 'Normal' | 'Selectable';
 @Component({
-  selector: 'my-container',
+  selector: 'my-button',
   template: `<ng-content></ng-content>`,
-  styleUrls: ['./myContainer.component.scss'],
+  styleUrls: ['./myButton.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush, //check this out https://netbasal.com/a-comprehensive-guide-to-angular-onpush-change-detection-strategy-5bac493074a4
 })
-export class MyContainerComponent {
+export class MyButtonComponent {
   @Input()
   @HostBinding('style.background-color')
-  color?: string;
+  backgroundColor: ButtonColor = ButtonColor.PRIMARY;
 
   @Input()
   @HostBinding('attr.data-type')
-  type: containerType = 'Normal';
+  status: ButtonStatus = ButtonStatus.ACTIVE;
 }
