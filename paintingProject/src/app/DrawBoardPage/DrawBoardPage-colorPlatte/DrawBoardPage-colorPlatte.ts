@@ -58,9 +58,11 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
             [color]="color"
             [type]="'Selectable'"
           ></my-container>
+
           <my-horizontal-bar
             [width]="7"
             [color]="BarColor.LIGHT"
+            [myMarginTop]="Margin.SMALL"
             [myMarginLeft]="Margin.SMALL"
             [myMarginRight]="Margin.SMALL"
           >

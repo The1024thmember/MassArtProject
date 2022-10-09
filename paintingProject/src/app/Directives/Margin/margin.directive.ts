@@ -19,15 +19,19 @@ export enum Margin {
     [myMarginLeft],
     [myMarginRight],
     [myMarginBottom],
+    [myMarginTop],
     [myMarginLeftTablet],
     [myMarginRightTablet],
     [myMarginBottomTablet],
+    [myMarginTopTablet],
     [myMarginLeftDesktop],
     [myMarginRightDesktop],
     [myMarginBottomDesktop],
+    [myMarginTopDesktop],
     [myMarginLeftDesktopLarge],
     [myMarginRightDesktopLarge],
     [myMarginBottomDesktopLarge],
+    [myMarginTopDesktopLarge],
   `,
 })
 export class MarginDirective {
@@ -43,6 +47,10 @@ export class MarginDirective {
   @Input()
   myMarginBottom?: Margin;
 
+  @HostBinding('attr.data-margin-top')
+  @Input()
+  myMarginTop?: Margin;
+
   @HostBinding('attr.data-margin-left-tablet')
   @Input()
   myMarginLeftTablet?: Margin;
@@ -54,6 +62,10 @@ export class MarginDirective {
   @HostBinding('attr.data-margin-bottom-tablet')
   @Input()
   myMarginBottomTablet?: Margin;
+
+  @HostBinding('attr.data-margin-top-tablet')
+  @Input()
+  myMarginTopTablet?: Margin;
 
   @HostBinding('attr.data-margin-left-desktop')
   @Input()
@@ -67,6 +79,10 @@ export class MarginDirective {
   @Input()
   myMarginBottomDesktop?: Margin;
 
+  @HostBinding('attr.data-margin-top-desktop')
+  @Input()
+  myMarginTopDesktop?: Margin;
+
   @HostBinding('attr.data-margin-left-desktop-large')
   @Input()
   myMarginLeftDesktopLarge?: Margin;
@@ -78,4 +94,8 @@ export class MarginDirective {
   @HostBinding('attr.data-margin-bottom-desktop-large')
   @Input()
   myMarginBottomDesktopLarge?: Margin;
+
+  @HostBinding('attr.data-margin-top-desktop-large')
+  @Input()
+  myMarginTopDesktopLarge?: Margin;
 }
