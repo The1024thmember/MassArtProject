@@ -15,7 +15,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
       class="Color"
       *ngIf="!isHistoryExpanded; else HistoryExpanded"
     >
-      <my-container class="Color-platte">
+      <my-container class="Color-platte" [myMarginBottom]="Margin.XXSMALL">
         <i class="bi bi-palette-fill"></i>
         <my-container
           class="Color-platte-selection"
@@ -25,9 +25,17 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         </my-container>
       </my-container>
       <my-container class="Color-history">
-        <my-horizontal-bar [width]="7" [color]="BarColor.LIGHT">
+        <my-horizontal-bar
+          [width]="7"
+          [color]="BarColor.LIGHT"
+          [myMarginBottom]="Margin.XXXSMALL"
+        >
         </my-horizontal-bar>
-        <my-text [size]="TextSize.XXXSMALL" [color]="FontColor.MID">
+        <my-text
+          [size]="TextSize.XXXSMALL"
+          [color]="FontColor.MID"
+          [myMarginBottom]="Margin.XXXSMALL"
+        >
           expand history
         </my-text>
         <my-button (click)="expandColorHistoryHandler()">
@@ -52,11 +60,20 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
             class="Color-history-record"
             [color]="color"
             [type]="'Selectable'"
+            [myMarginBottom]="Margin.XXSMALL"
           ></my-container>
 
-          <my-horizontal-bar [width]="7" [color]="BarColor.LIGHT">
+          <my-horizontal-bar
+            [width]="7"
+            [color]="BarColor.LIGHT"
+            [myMarginTop]="Margin.XXXSMALL"
+          >
           </my-horizontal-bar>
-          <my-text [size]="TextSize.XXXSMALL" [color]="FontColor.MID">
+          <my-text
+            [size]="TextSize.XXXSMALL"
+            [color]="FontColor.MID"
+            [myMarginBottom]="Margin.XXXSMALL"
+          >
             fold history
           </my-text>
           <my-button (click)="unExpandColorHistoryHandler()">

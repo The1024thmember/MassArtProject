@@ -52,6 +52,10 @@ $spacing-list: $spacing-none
   #{"[data-margin-bottom=" + nth($spacing-name, $i) + "]"} {
     margin-bottom: $spacing-item;
   }
+
+  #{"[data-margin-top=" + nth($spacing-name, $i) + "]"} {
+    margin-top: $spacing-item;
+  }
 }
 
 /* Generates spacing for tablet */
@@ -69,6 +73,10 @@ $spacing-list: $spacing-none
 
     #{"[data-margin-bottom-tablet=" + nth($spacing-name, $i) + "]"} {
       margin-bottom: $spacing-item;
+    }
+
+    #{"[data-margin-top-tablet=" + nth($spacing-name, $i) + "]"} {
+      margin-top: $spacing-item;
     }
   }
 }
@@ -89,6 +97,10 @@ $spacing-list: $spacing-none
     #{"[data-margin-bottom-desktop=" + nth($spacing-name, $i) + "]"} {
       margin-bottom: $spacing-item;
     }
+
+    #{"[data-margin-top-desktop=" + nth($spacing-name, $i) + "]"} {
+      margin-top: $spacing-item;
+    }
   }
 }
 
@@ -107,6 +119,10 @@ $spacing-list: $spacing-none
 
     #{"[data-margin-bottom-desktop-large=" + nth($spacing-name, $i) + "]"} {
       margin-bottom: $spacing-item;
+    }
+
+    #{"[data-margin-top-desktop-large=" + nth($spacing-name, $i) + "]"} {
+      margin-top: $spacing-item;
     }
   }
 }
