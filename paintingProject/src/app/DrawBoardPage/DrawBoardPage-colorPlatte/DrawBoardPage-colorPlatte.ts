@@ -21,6 +21,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
           class="Color-platte-selection"
           [color]="'#333'"
           [type]="'Selectable'"
+          (click)="colorSetectorOpenHandler()"
         >
         </my-container>
       </my-container>
@@ -51,6 +52,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
             class="Color-platte-selection"
             [color]="'#333'"
             [type]="'Selectable'"
+            (click)="colorSetectorOpenHandler()"
           >
           </my-container>
         </my-container>
@@ -107,5 +109,9 @@ export class DrawBoardColorPlatteComponent implements OnInit {
   unExpandColorHistoryHandler() {
     console.log('fold the history');
     this.isHistoryExpanded = false;
+  }
+
+  colorSetectorOpenHandler() {
+    console.log('open the color selector');
   }
 }
