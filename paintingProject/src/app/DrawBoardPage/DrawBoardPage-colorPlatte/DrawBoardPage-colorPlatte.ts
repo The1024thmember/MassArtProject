@@ -25,12 +25,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         </my-container>
       </my-container>
       <my-container class="Color-history">
-        <my-horizontal-bar
-          [width]="7"
-          [color]="BarColor.LIGHT"
-          [myMarginLeft]="Margin.SMALL"
-          [myMarginRight]="Margin.SMALL"
-        >
+        <my-horizontal-bar [width]="7" [color]="BarColor.LIGHT">
         </my-horizontal-bar>
         <my-text [size]="TextSize.XXXSMALL" [color]="FontColor.MID">
           expand history
@@ -59,13 +54,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
             [type]="'Selectable'"
           ></my-container>
 
-          <my-horizontal-bar
-            [width]="7"
-            [color]="BarColor.LIGHT"
-            [myMarginTop]="Margin.SMALL"
-            [myMarginLeft]="Margin.SMALL"
-            [myMarginRight]="Margin.SMALL"
-          >
+          <my-horizontal-bar [width]="7" [color]="BarColor.LIGHT">
           </my-horizontal-bar>
           <my-text [size]="TextSize.XXXSMALL" [color]="FontColor.MID">
             fold history

@@ -5,7 +5,7 @@ import {
 } from 'src/app/ComponentLibrary/MyGrid';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.component';
-import { Margin } from 'src/app/Directives/Margin/margin.directive';
+import { Margin } from 'src/app/Directives/Margin';
 
 @Component({
   selector: 'drawBoardPage-controls',
