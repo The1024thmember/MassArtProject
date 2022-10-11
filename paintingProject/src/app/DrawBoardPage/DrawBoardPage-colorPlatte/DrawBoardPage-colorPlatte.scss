@@ -1,17 +1,26 @@
 @import 'settings';
+
+.Container {
+  align-items: self-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 400px;
+}
+
 .Color {
   align-items: center;
   background-color: $neutral-xxxlight;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  width: 75px;
-  max-height: 550px;
   border-radius: 10px;
   box-shadow: 10px 10px 5px lightgrey;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  max-height: 550px;
   margin-bottom: $spacing-mid;
   padding: 20px 0;
+  width: 75px;
 
   > * {
     margin-top: 10px;

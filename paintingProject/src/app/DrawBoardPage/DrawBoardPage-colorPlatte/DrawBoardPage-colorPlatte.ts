@@ -13,42 +13,12 @@ import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
 @Component({
   selector: 'drawBoardPage-colorPlatte',
   template: `
-    <my-container
-      class="Color"
-      *ngIf="!isHistoryExpanded; else HistoryExpanded"
-    >
-      <my-container class="Color-platte" [myMarginBottom]="Margin.XXSMALL">
-        <i class="bi bi-palette-fill"></i>
-        <my-container
-          class="Color-platte-selection"
-          [color]="currentColor"
-          [type]="'Selectable'"
-          (click)="colorSetectorOpenHandler()"
-        >
-        </my-container>
-      </my-container>
-      <my-container class="Color-history">
-        <my-horizontal-bar
-          [width]="7"
-          [color]="BarColor.LIGHT"
-          [myMarginBottom]="Margin.XXXSMALL"
-        >
-        </my-horizontal-bar>
-        <my-text
-          [size]="TextSize.XXXSMALL"
-          [color]="FontColor.MID"
-          [myMarginBottom]="Margin.XXXSMALL"
-        >
-          expand history
-        </my-text>
-        <my-button (click)="expandColorHistoryHandler()">
-          <i class="bi bi-caret-down-fill"></i>
-        </my-button>
-      </my-container>
-    </my-container>
-    <ng-template #HistoryExpanded>
-      <my-container class="Color">
-        <my-container class="Color-platte">
+    <my-container class="Container">
+      <my-container
+        class="Color"
+        *ngIf="!isHistoryExpanded; else HistoryExpanded"
+      >
+        <my-container class="Color-platte" [myMarginBottom]="Margin.XXSMALL">
           <i class="bi bi-palette-fill"></i>
           <my-container
             class="Color-platte-selection"
@@ -58,19 +28,11 @@ import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
           >
           </my-container>
         </my-container>
-        <my-container class="Color-history">
-          <my-container
-            *ngFor="let color of colorsHistory"
-            class="Color-history-record"
-            [color]="color"
-            [type]="'Selectable'"
-            [myMarginBottom]="Margin.XXSMALL"
-          ></my-container>
-
+        <my-container *ngIf="this.colorsHistory.length" class="Color-history">
           <my-horizontal-bar
             [width]="7"
             [color]="BarColor.LIGHT"
-            [myMarginTop]="Margin.XXXSMALL"
+            [myMarginBottom]="Margin.XXXSMALL"
           >
           </my-horizontal-bar>
           <my-text
@@ -78,19 +40,59 @@ import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
             [color]="FontColor.MID"
             [myMarginBottom]="Margin.XXXSMALL"
           >
-            fold history
+            expand history
           </my-text>
-          <my-button (click)="unExpandColorHistoryHandler()">
-            <i class="bi bi-caret-up-fill"></i>
+          <my-button (click)="expandColorHistoryHandler()">
+            <i class="bi bi-caret-down-fill"></i>
           </my-button>
         </my-container>
       </my-container>
-    </ng-template>
+      <ng-template #HistoryExpanded>
+        <my-container class="Color">
+          <my-container class="Color-platte">
+            <i class="bi bi-palette-fill"></i>
+            <my-container
+              class="Color-platte-selection"
+              [color]="currentColor"
+              [type]="'Selectable'"
+              (click)="colorSetectorOpenHandler()"
+            >
+            </my-container>
+          </my-container>
+          <my-container class="Color-history">
+            <my-container
+              *ngFor="let color of colorsHistory"
+              class="Color-history-record"
+              [color]="color"
+              [type]="'Selectable'"
+              [myMarginBottom]="Margin.XXSMALL"
+            ></my-container>
 
-    <drawBoardPage-colorPicker
-      *ngIf="isColorPickerShown"
-      (selectedColor)="selectColorHandler($event)"
-    ></drawBoardPage-colorPicker>
+            <my-horizontal-bar
+              [width]="7"
+              [color]="BarColor.LIGHT"
+              [myMarginTop]="Margin.XXXSMALL"
+            >
+            </my-horizontal-bar>
+            <my-text
+              [size]="TextSize.XXXSMALL"
+              [color]="FontColor.MID"
+              [myMarginBottom]="Margin.XXXSMALL"
+            >
+              fold history
+            </my-text>
+            <my-button (click)="unExpandColorHistoryHandler()">
+              <i class="bi bi-caret-up-fill"></i>
+            </my-button>
+          </my-container>
+        </my-container>
+      </ng-template>
+
+      <drawBoardPage-colorPicker
+        *ngIf="isColorPickerShown"
+        (selectedColor)="selectColorHandler($event)"
+      ></drawBoardPage-colorPicker>
+    </my-container>
   `,
   styleUrls: ['./DrawBoardPage-colorPlatte.scss'],
 })

@@ -2,7 +2,7 @@
 
 .ColorPicker {
   align-items: center;
-  background-color: $neutral-xxlight;
+  background-color: $neutral-xxxlight;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -10,8 +10,6 @@
   justify-content: space-around;
   height: 500px;
   width: 300px;
+  box-shadow: 10px 10px 5px lightgrey;
 
-  position: absolute;
-  left: 500px;
-  top: 200px;
 }
