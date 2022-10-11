@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -26,27 +26,27 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <my-col class="pens" [col]="6">
           <my-grid>
             <my-col [col]="2">
-              <my-button>
+              <my-button (click)="selectLineHandler()">
                 <img class="Icons" src="./assets/line.svg" />
               </my-button>
             </my-col>
             <my-col [col]="2">
-              <my-button>
+              <my-button (click)="selectCurveHandler()">
                 <img class="Icons" src="./assets/curve.svg" />
               </my-button>
             </my-col>
             <my-col [col]="2">
-              <my-button>
+              <my-button (click)="selectSquareHandler()">
                 <i class="bi bi-square"></i>
               </my-button>
             </my-col>
             <my-col [col]="2">
-              <my-button>
+              <my-button (click)="selectCircleHandler()">
                 <i class="bi bi-circle"></i>
               </my-button>
             </my-col>
             <my-col [col]="2">
-              <my-button>
+              <my-button (click)="selectTriangleHandler()">
                 <i class="bi bi-triangle"></i>
               </my-button>
             </my-col>
@@ -60,12 +60,12 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <my-col [col]="2">
           <my-grid>
             <my-col [col]="6">
-              <my-button>
+              <my-button (click)="selectWidthHandler()">
                 <i class="bi bi-border-width"></i>
               </my-button>
             </my-col>
             <my-col [col]="6">
-              <my-button>
+              <my-button (click)="selectFillHandler()">
                 <i class="bi bi-paint-bucket"></i>
               </my-button>
             </my-col>
@@ -116,10 +116,42 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
   `,
   styleUrls: ['./DrawBoardPage-tools.scss'],
 })
-export class DrawBoardToolsComponent {
+export class DrawBoardToolsComponent implements OnInit, OnChanges {
   HeadingType = HeadingType;
   HorizontalAlignment = HorizontalAlignment;
   VerticalAlignment = VerticalAlignment;
   BarColor = BarColor;
   Margin = Margin;
+
+  ngOnInit() {}
+
+  ngOnChanges() {}
+
+  selectLineHandler() {
+    console.log('selecting the line');
+  }
+
+  selectCurveHandler() {
+    console.log('selecting the curve');
+  }
+
+  selectSquareHandler() {
+    console.log('selecting the square');
+  }
+
+  selectCircleHandler() {
+    console.log('selecting the circle');
+  }
+
+  selectTriangleHandler() {
+    console.log('selecting the triangle');
+  }
+
+  selectWidthHandler() {
+    console.log('selecting the width');
+  }
+
+  selectFillHandler() {
+    console.log('selecting the fill');
+  }
 }
