@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { ColorSketchModule } from 'ngx-color/sketch';
+import { ColorSliderModule } from 'ngx-color/slider';
 import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DirectivesModule } from '../Directives';
 import { DrawBoardColorPickerComponent } from './DrawBoardPage-colorPicker/DrawBoardPage-colorPicker';
@@ -9,13 +11,14 @@ import { DrawBoardToolsComponent } from './DrawBoardPage-tools/DrawBoardPage-too
 import { DrawBoardUserPanelComponent } from './DrawBoardPage-userPanel/DrawBoardPage-userPanel';
 import { DrawBoardPageComponent } from './DrawBoardPage.component';
 import { DrawBoardPageRoutingModule } from './DrawBoardPage.routing.module';
-
 @NgModule({
   imports: [
     CommonModule,
     DrawBoardPageRoutingModule,
     ComponentLibraryModule,
     DirectivesModule,
+    ColorSketchModule,
+    ColorSliderModule,
   ],
   declarations: [
     DrawBoardPageComponent,
