@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ColorEvent } from 'ngx-color';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 
@@ -17,6 +17,8 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 })
 export class DrawBoardColorPickerComponent implements OnInit {
   HeadingType = HeadingType;
+  @Output() selectedColor: EventEmitter<ColorEvent> = new EventEmitter();
+
   ngOnInit() {}
 
   colorChangeHandler($event: ColorEvent) {
@@ -25,5 +27,6 @@ export class DrawBoardColorPickerComponent implements OnInit {
 
   changeComplete($event: ColorEvent) {
     console.log('complete:', $event.color);
+    this.selectedColor.emit($event);
   }
 }

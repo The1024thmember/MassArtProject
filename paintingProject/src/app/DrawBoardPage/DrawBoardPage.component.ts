@@ -6,7 +6,6 @@ import { Component } from '@angular/core';
     <drawBoardPage-controls></drawBoardPage-controls>
     <drawBoardPage-userPanel></drawBoardPage-userPanel>
     <drawBoardPage-colorPlatte></drawBoardPage-colorPlatte>
-    <drawBoardPage-colorPicker></drawBoardPage-colorPicker>
   `,
 })
 export class DrawBoardPageComponent {}

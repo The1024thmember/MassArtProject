@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ColorEvent } from 'ngx-color';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -7,6 +8,7 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 import { FontColor, TextSize } from 'src/app/ComponentLibrary/MyText';
 import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.component';
 import { Margin } from 'src/app/Directives/Margin/margin.directive';
+import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
 
 @Component({
   selector: 'drawBoardPage-colorPlatte',
@@ -19,7 +21,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <i class="bi bi-palette-fill"></i>
         <my-container
           class="Color-platte-selection"
-          [color]="'#333'"
+          [color]="currentColor"
           [type]="'Selectable'"
           (click)="colorSetectorOpenHandler()"
         >
@@ -50,7 +52,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
           <i class="bi bi-palette-fill"></i>
           <my-container
             class="Color-platte-selection"
-            [color]="'#333'"
+            [color]="currentColor"
             [type]="'Selectable'"
             (click)="colorSetectorOpenHandler()"
           >
@@ -58,7 +60,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         </my-container>
         <my-container class="Color-history">
           <my-container
-            *ngFor="let color of colors"
+            *ngFor="let color of colorsHistory"
             class="Color-history-record"
             [color]="color"
             [type]="'Selectable'"
@@ -84,6 +86,11 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         </my-container>
       </my-container>
     </ng-template>
+
+    <drawBoardPage-colorPicker
+      *ngIf="isColorPickerShown"
+      (selectedColor)="selectColorHandler($event)"
+    ></drawBoardPage-colorPicker>
   `,
   styleUrls: ['./DrawBoardPage-colorPlatte.scss'],
 })
@@ -95,9 +102,16 @@ export class DrawBoardColorPlatteComponent implements OnInit {
   FontColor = FontColor;
   Margin = Margin;
   TextSize = TextSize;
-  isHistoryExpanded: boolean = false;
 
-  colors = ['#33f', '#3ff', '#e4d'];
+  isHistoryExpanded: boolean = false;
+  isColorPickerShown: boolean = false;
+
+  // Place holder for future use
+  colorsHistoryObject: Mycolor[];
+  currentColorObject: Mycolor;
+
+  currentColor: string = '#333';
+  colorsHistory: string[] = [];
 
   ngOnInit() {}
 
@@ -113,5 +127,24 @@ export class DrawBoardColorPlatteComponent implements OnInit {
 
   colorSetectorOpenHandler() {
     console.log('open the color selector');
+    this.isColorPickerShown = true;
+  }
+
+  selectColorHandler($event: ColorEvent) {
+    console.log(
+      'the previous used color is:',
+      this.colorsHistory ? this.colorsHistory[0] : null
+    );
+    if (this.colorsHistory.length < 7) {
+      this.colorsHistory.unshift(this.currentColor);
+    } else {
+      this.colorsHistory = [
+        this.currentColor,
+        ...this.colorsHistory.slice(0, this.colorsHistory.length - 1),
+      ];
+    }
+
+    console.log('the selected color is:', $event.color.hex);
+    this.currentColor = $event.color.hex;
   }
 }
