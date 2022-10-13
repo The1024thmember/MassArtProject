@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ColorEvent } from 'ngx-color';
 import {
   HorizontalAlignment,
@@ -115,6 +115,9 @@ export class DrawBoardColorPlatteComponent implements OnInit {
   currentColor: string = '#333';
   colorsHistory: string[] = [];
 
+  // Need to think where to extract the string only color
+  @Output() selectedColor: EventEmitter<string> = new EventEmitter();
+
   ngOnInit() {}
 
   expandColorHistoryHandler() {
@@ -148,5 +151,7 @@ export class DrawBoardColorPlatteComponent implements OnInit {
 
     console.log('the selected color is:', $event.color.hex);
     this.currentColor = $event.color.hex;
+
+    this.selectedColor.emit(this.currentColor);
   }
 }

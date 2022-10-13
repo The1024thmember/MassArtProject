@@ -13,11 +13,11 @@ import { Margin } from '../Directives/Margin';
       <my-grid class="Container-firstRowTools">
         <my-col [col]="5">
           <drawBoardPage-tools
-            (selectLine)="selectLineHandler($event)"
-            (selectCurve)="selectCurveHandler($event)"
-            (selectRectangle)="selectRectangleHandler($event)"
-            (selectCircle)="selectCircleHandler($event)"
-            (selectTriangle)="selectTriangleHandler($event)"
+            (selectLine)="setLineHandler($event)"
+            (selectCurve)="setCurveHandler($event)"
+            (selectRectangle)="setRectangleHandler($event)"
+            (selectCircle)="setCircleHandler($event)"
+            (selectTriangle)="setTriangleHandler($event)"
           ></drawBoardPage-tools>
         </my-col>
         <my-col [col]="5">
@@ -27,7 +27,9 @@ import { Margin } from '../Directives/Margin';
           <drawBoardPage-userPanel></drawBoardPage-userPanel>
         </my-col>
       </my-grid>
-      <drawBoardPage-colorPlatte></drawBoardPage-colorPlatte>
+      <drawBoardPage-colorPlatte
+        (selectedColor)="setColorHandler($event)"
+      ></drawBoardPage-colorPlatte>
 
       <my-container class="MyCanvas">
         <canvas id="fabricSurface"></canvas>
@@ -42,6 +44,7 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
   private _canvas: fabric.Canvas;
   start: number[] = [0, 0];
   end: number[] = [200, 200];
+  color: string = '#000';
 
   constructor() {}
 
@@ -58,19 +61,25 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
     console.log('something changed ...');
   }
 
-  selectLineHandler($event: any) {
+  setLineHandler($event: any) {
     console.log('drawing line on the canvas');
     this.onAddLine();
   }
-  selectCurveHandler($event: any) {}
-  selectRectangleHandler($event: any) {}
-  selectCircleHandler($event: any) {}
-  selectTriangleHandler($event: any) {}
+
+  setColorHandler($event: string) {
+    console.log('setting color for current draw');
+    this.color = $event;
+  }
+
+  setCurveHandler($event: any) {}
+  setRectangleHandler($event: any) {}
+  setCircleHandler($event: any) {}
+  setTriangleHandler($event: any) {}
 
   onAddLine() {
     //points [ x1,y1, x2,y2]
     var line = new fabric.Line([...this.start, ...this.end], {
-      stroke: 'red',
+      stroke: this.color,
     });
     console.log(`drawing: from:${this.start} to ${this.end}`);
     // "add" line onto canvas
