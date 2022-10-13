@@ -1,4 +1,10 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnChanges,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -123,12 +129,19 @@ export class DrawBoardToolsComponent implements OnInit, OnChanges {
   BarColor = BarColor;
   Margin = Margin;
 
+  @Output() selectLine: EventEmitter<any> = new EventEmitter();
+  @Output() selectCurve: EventEmitter<any> = new EventEmitter();
+  @Output() selectRectangle: EventEmitter<any> = new EventEmitter();
+  @Output() selectCurveCircle: EventEmitter<any> = new EventEmitter();
+  @Output() selectCurveTriangle: EventEmitter<any> = new EventEmitter();
+
   ngOnInit() {}
 
   ngOnChanges() {}
 
   selectLineHandler() {
     console.log('selecting the line');
+    this.selectLine.emit(true);
   }
 
   selectCurveHandler() {

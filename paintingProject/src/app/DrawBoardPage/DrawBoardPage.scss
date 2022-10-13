@@ -6,3 +6,12 @@
   }
 }
 
+.MyCanvas {
+  height: 700px;
+  width: 600px;
+  margin: auto;
+  position: absolute;
+  left: 500px;
+  top: 100px;
+  border: 20px solid $orange-xxxdark;
+}
