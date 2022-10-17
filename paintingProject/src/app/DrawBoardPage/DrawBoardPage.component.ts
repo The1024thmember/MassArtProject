@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { fabric } from 'fabric';
 import { Margin } from '../Directives/Margin';
+import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDragAndDrop.service';
 
 @Component({
   template: `
@@ -46,7 +47,7 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
   end: number[] = [200, 200];
   color: string = '#000';
 
-  constructor() {}
+  constructor(private canvasDragAndDropService: CanvasDragAndDropService) {}
 
   ngOnInit() {
     console.log('on init ...');
@@ -78,6 +79,9 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
 
   onAddLine() {
     //points [ x1,y1, x2,y2]
+    this._canvas.on('mouse:down', (e) =>
+      this.canvasDragAndDropService.getMouseCoords(e)
+    );
     var line = new fabric.Line([...this.start, ...this.end], {
       stroke: this.color,
     });
