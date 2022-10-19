@@ -31,9 +31,8 @@ import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDr
       <drawBoardPage-colorPlatte
         (selectedColor)="setColorHandler($event)"
       ></drawBoardPage-colorPlatte>
-
       <my-container class="MyCanvas">
-        <canvas id="fabricSurface"></canvas>
+        <canvas width="900" height="700" id="fabricSurface"></canvas>
       </my-container>
     </my-container>
   `,
@@ -43,9 +42,9 @@ import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDr
 export class DrawBoardPageComponent implements OnInit, OnChanges {
   Margin = Margin;
   private _canvas: fabric.Canvas;
-  start: number[] = [0, 0];
-  end: number[] = [200, 200];
   color: string = '#000';
+  start: number[] = [0, 0];
+  end: number[] = [900, 900];
 
   constructor(private canvasDragAndDropService: CanvasDragAndDropService) {}
 
@@ -77,15 +76,26 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
   setCircleHandler($event: any) {}
   setTriangleHandler($event: any) {}
 
-  onAddLine() {
+  getPosition() {
     //points [ x1,y1, x2,y2]
-    this._canvas.on('mouse:down', (e) =>
-      this.canvasDragAndDropService.getMouseCoords(e)
+
+    this._canvas.on(
+      'mouse:down',
+      (e) => (this.start = this.canvasDragAndDropService.getStartPosition(e))
     );
+
+    this._canvas.on(
+      'mouse:up',
+      (e) => (this.end = this.canvasDragAndDropService.getEndPosition(e))
+    );
+  }
+
+  onAddLine() {
+    this.getPosition();
+
     var line = new fabric.Line([...this.start, ...this.end], {
       stroke: this.color,
     });
-    console.log(`drawing: from:${this.start} to ${this.end}`);
     // "add" line onto canvas
     this._canvas.add(line);
   }

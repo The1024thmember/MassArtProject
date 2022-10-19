@@ -12,10 +12,14 @@ import { fabric } from 'fabric';
     <button (click)="onAddRect()">Add Rectangle</button>
     <button (click)="onAddCircle()">Add Circle</button>
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
+    <button (click)="onSetUnselectableCirclePosition()">
+      Set Unselectable Circle Position
+    </button>
   </my-container>`,
 })
 export class TestPageComponent implements OnInit {
   private _canvas: fabric.Canvas;
+  canvasElement: HTMLElement | null;
   //private _mouseUp: (evt: fabric.IEvent) => void;
 
   constructor() {
@@ -34,6 +38,8 @@ export class TestPageComponent implements OnInit {
     console.log(this._canvas);
     //this._fabricService.canvas = this._canvas;
     // this._canvas.on('mouse:up', this._mouseUp);
+
+    this.canvasElement = document.getElementById('fabricSurface');
   }
 
   onAddRect() {
@@ -72,5 +78,28 @@ export class TestPageComponent implements OnInit {
 
     // "add" rectangle onto canvas
     this._canvas.add(circle);
+  }
+
+  //change the position for the last added element
+  onSetUnselectableCirclePosition() {
+    const obj = this._canvas.getObjects()[this._canvas.getObjects().length - 1];
+    document.addEventListener(
+      'mousemove',
+      () => {
+        this.functionYouWantToCall(event, obj);
+      },
+      false
+    );
+    console.log('clicked onSetUnselectableCirclePosition');
+  }
+
+  functionYouWantToCall(event: any, obj: any) {
+    obj.set({
+      left: event.pageX,
+      top: event.pageY,
+    });
+    obj.setCoords();
+    console.log(obj);
+    this._canvas.renderAll();
   }
 }
