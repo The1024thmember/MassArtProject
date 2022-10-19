@@ -12,8 +12,13 @@ import { fabric } from 'fabric';
     <button (click)="onAddRect()">Add Rectangle</button>
     <button (click)="onAddCircle()">Add Circle</button>
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
-    <button (click)="onSetUnselectableCirclePosition()">
-      Set Unselectable Circle Position
+
+    <button (click)="onAddLine()">Add Line</button>
+    <button (click)="onSetUnselectableCirclePosition(this.selectedElement)">
+      click to draw line
+    </button>
+    <button (click)="onSetUnselectableCirclePosition(this.selectedElement)">
+      click to move object position
     </button>
   </my-container>`,
 })
@@ -21,6 +26,8 @@ export class TestPageComponent implements OnInit {
   private _canvas: fabric.Canvas;
   canvasElement: HTMLElement | null;
   //private _mouseUp: (evt: fabric.IEvent) => void;
+
+  selectedElement: any;
 
   constructor() {
     //protected _fabricService: FabricService
@@ -52,6 +59,7 @@ export class TestPageComponent implements OnInit {
     });
 
     // "add" rectangle onto canvas
+    this.selectedElement = rect;
     this._canvas.add(rect);
   }
 
@@ -64,7 +72,17 @@ export class TestPageComponent implements OnInit {
     });
 
     // "add" rectangle onto canvas
+    this.selectedElement = circle;
     this._canvas.add(circle);
+  }
+
+  onAddLine() {
+    var line = new fabric.Line([0, 0, 100, 100], {
+      stroke: 'black',
+    });
+    // "add" line onto canvas
+    this.selectedElement = line;
+    this._canvas.add(line);
   }
 
   onAddUnselectableCircle() {
@@ -77,22 +95,23 @@ export class TestPageComponent implements OnInit {
     });
 
     // "add" rectangle onto canvas
+    this.selectedElement = circle;
     this._canvas.add(circle);
   }
 
   //change the position for the last added element
-  onSetUnselectableCirclePosition() {
-    const obj = this._canvas.getObjects()[this._canvas.getObjects().length - 1];
+  onSetUnselectableCirclePosition(param: any) {
     document.addEventListener(
       'mousemove',
       () => {
-        this.functionYouWantToCall(event, obj);
+        this.dragLine(event, param);
       },
       false
     );
     console.log('clicked onSetUnselectableCirclePosition');
   }
 
+  // for change the latest selected object position
   functionYouWantToCall(event: any, obj: any) {
     obj.set({
       left: event.pageX,
@@ -100,6 +119,21 @@ export class TestPageComponent implements OnInit {
     });
     obj.setCoords();
     console.log(obj);
+    this._canvas.renderAll();
+  }
+
+  //for drag line
+  dragLine(event: any, obj: any) {
+    obj.set({
+      left: 100,
+      top: 100,
+      width: event.pageX - 100,
+      height: event.pageY - 100,
+      stroke: 'red',
+    });
+    obj.setCoords();
+    console.log(obj);
+    console.log('canvas:', this._canvas);
     this._canvas.renderAll();
   }
 }
