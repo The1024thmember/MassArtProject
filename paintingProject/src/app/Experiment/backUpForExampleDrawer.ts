@@ -77,9 +77,13 @@ export class DrawingEditor {
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
 
-  constructor(canvas: fabric.Canvas) {
+  constructor(
+    private readonly selector: string,
+    canvasHeight: number,
+    canvasWidth: number
+  ) {
     //Create the Fabric canvas
-    this.canvas = canvas;
+    this.canvas = new fabric.Canvas(`${selector}`, { selection: false });
     console.log('new library canvas: ');
     console.log(this.canvas);
 
@@ -103,27 +107,21 @@ export class DrawingEditor {
   }
 
   private initializeCanvasEvents() {
+    console.log('Initializing DrawingEditor');
     this.canvas.on('mouse:down', (o) => {
       const e = <MouseEvent>o.e;
+      console.log('key down');
       const pointer = this.canvas.getPointer(o.e);
-      if (!(this.isMultipleSelected() || this.isSingleSelected())) {
-        this.cursorMode = CursorMode.Draw;
-      } else {
-        this.cursorMode = CursorMode.Select;
-      }
       if (this.cursorMode === CursorMode.Draw) {
         this.mouseDown(pointer.x, pointer.y);
       }
     });
 
-    this.canvas.on('mouse:up', (o) => {
-      this.isDown = false;
-    });
-
     this.canvas.on('mouse:move', (o) => {
       const e = <MouseEvent>o.e;
-      if (this.isDown && this.cursorMode === CursorMode.Draw) {
-        const pointer = this.canvas.getPointer(o.e);
+
+      const pointer = this.canvas.getPointer(o.e);
+      if (this.cursorMode === CursorMode.Draw) {
         this.mouseMove(pointer.x, pointer.y);
       }
     });
@@ -132,21 +130,19 @@ export class DrawingEditor {
       this.isDown = false;
     });
 
-    this.canvas.on('selection:created', (o) => {
-      // after creating, it is selected by default
-      console.log(`${o.target} is being selected`);
+    this.canvas.on('object:selected', (o) => {
       this.cursorMode = CursorMode.Select;
-    });
-
-    this.canvas.on('selection:updated', (o) => {
-      // change selection
-      console.log(`${o.target} is being chosen`);
+      //sets currently selected object
+      if (o.target) {
+        this.object = o.target;
+      } else {
+        console.log('There is no object been selected.');
+      }
     });
 
     this.canvas.on('selection:cleared', (o) => {
-      // mouse click on empty canvas, so no object is selected
-      console.log('No object under selection');
       this.cursorMode = CursorMode.Draw;
+      console.log('There is no object under selection');
     });
   }
 
@@ -179,19 +175,5 @@ export class DrawingEditor {
   //Method which allows any drawer to Promise their resize() function
   private async resize(x: number, y: number): Promise<fabric.Object> {
     return await this._drawer.resize(this.object, x, y);
-  }
-
-  private isMultipleSelected() {
-    if (this.canvas.getActiveObjects().length > 1) {
-      return true;
-    }
-    return false;
-  }
-
-  private isSingleSelected() {
-    if (this.canvas.getActiveObjects().length == 1) {
-      return true;
-    }
-    return false;
   }
 }

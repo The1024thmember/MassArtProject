@@ -16,6 +16,8 @@ import { DrawingEditor } from './drawer';
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
 
     <button>Add Line</button>
+    <button (click)="onMultiSelect()">Multi select</button>
+
     <!--
     <button (click)="drawline(this.selectedElement)">click to draw line</button>
     <button (click)="onSetUnselectableCirclePosition(this.selectedElement)">
@@ -36,7 +38,6 @@ export class TestPageComponent implements OnInit {
     //protected _fabricService: FabricService
     //this._mouseUp = (evt: fabric.IEvent) => this.__onMouseUp(evt);
     console.log('showing test component');
-    //this._drawEditor = new DrawingEditor('canvas', 1500, 800);
   }
 
   ngOnInit() {
@@ -46,12 +47,13 @@ export class TestPageComponent implements OnInit {
       preserveObjectStacking: true,
     });
     this._canvas.selection = true; //group selection
+    this._drawEditor = new DrawingEditor(this._canvas);
     console.log(this._canvas);
     //this._fabricService.canvas = this._canvas;
     // this._canvas.on('mouse:up', this._mouseUp);
 
     this.canvasElement = document.getElementById('fabricSurface');
-    this.initilizeDrawer();
+    //this.initilizeDrawer();
   }
 
   onAddRect() {
@@ -105,6 +107,9 @@ export class TestPageComponent implements OnInit {
     this._canvas.add(circle);
   }
 
+  onMultiSelect() {}
+
+  /*
   initilizeDrawer() {
     var line: fabric.Line;
     this._canvas.on('mouse:down', (o) => {
@@ -128,14 +133,22 @@ export class TestPageComponent implements OnInit {
     });
 
     this._canvas.on('selection:created', (o) => {
+      // after creating, it is selected by default
       console.log('Something is being selected');
+    });
+
+    this._canvas.on('selection:updated', (o) => {
+      // change selection
+      console.log('Something is being updated');
     });
 
     this._canvas.on('object:selected', (o) => {
-      console.log('Something is being selected');
+      // not sure function yet
+      console.log('object is being selected');
     });
 
     this._canvas.on('selection:cleared', (o) => {
+      // mouse click on empty canvas, so no object is selected
       console.log('There is no object under selection');
     });
   }
@@ -156,8 +169,8 @@ export class TestPageComponent implements OnInit {
       this._canvas.renderAll();
     }
   }
+  */
 
-  /*
   //change the position for the last added element
   onSetUnselectableCirclePosition(param: any) {
     document.addEventListener(
@@ -180,7 +193,6 @@ export class TestPageComponent implements OnInit {
     console.log(obj);
     this._canvas.renderAll();
   }
-
 
   drawline(param: any) {
     document.addEventListener(
@@ -215,5 +227,4 @@ export class TestPageComponent implements OnInit {
     console.log('canvas:', this._canvas);
     this._canvas.renderAll();
   }
-  */
 }
