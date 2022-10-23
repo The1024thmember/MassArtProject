@@ -12,7 +12,7 @@ import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDr
   template: `
     <my-container class="Container">
       <my-grid class="Container-firstRowTools">
-        <my-col [col]="5">
+        <my-col [col]="6">
           <drawBoardPage-tools
             (selectLine)="setLineHandler($event)"
             (selectCurve)="setCurveHandler($event)"
@@ -21,7 +21,7 @@ import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDr
             (selectTriangle)="setTriangleHandler($event)"
           ></drawBoardPage-tools>
         </my-col>
-        <my-col [col]="5">
+        <my-col [col]="4">
           <drawBoardPage-controls></drawBoardPage-controls>
         </my-col>
         <my-col [col]="2">

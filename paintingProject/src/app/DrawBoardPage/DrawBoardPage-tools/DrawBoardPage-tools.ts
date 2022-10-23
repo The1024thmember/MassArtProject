@@ -29,7 +29,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
           [color]="BarColor.LIGHT"
           [myMarginRight]="Margin.XSMALL"
         ></my-vertical-bar>
-        <my-col class="pens" [col]="6">
+        <my-col [col]="6">
           <my-grid>
             <my-col [col]="2">
               <my-button (click)="selectLineHandler()">
@@ -63,14 +63,19 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
             ></my-vertical-bar>
           </my-grid>
         </my-col>
-        <my-col [col]="2">
+        <my-col [col]="3">
           <my-grid>
-            <my-col [col]="6">
+            <my-col [col]="4">
+              <my-button (click)="selectMultiSelect()">
+                <i class="bi bi-app-indicator"></i>
+              </my-button>
+            </my-col>
+            <my-col [col]="4">
               <my-button (click)="selectWidthHandler()">
                 <i class="bi bi-border-width"></i>
               </my-button>
             </my-col>
-            <my-col [col]="6">
+            <my-col [col]="4">
               <my-button (click)="selectFillHandler()">
                 <i class="bi bi-paint-bucket"></i>
               </my-button>
@@ -87,23 +92,23 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [color]="BarColor.LIGHT"
         [myMarginLeft]="Margin.SMALL"
       ></my-horizontal-bar>
-      <my-button>
+      <my-button (click)="selectLineHandler()">
         <img class="Icons" src="./assets/line.svg" />
       </my-button>
 
-      <my-button>
+      <my-button (click)="selectCurveHandler()">
         <img class="Icons" src="./assets/curve.svg" />
       </my-button>
 
-      <my-button>
+      <my-button (click)="selectSquareHandler()">
         <i class="bi bi-square"></i>
       </my-button>
 
-      <my-button>
+      <my-button (click)="selectCircleHandler()">
         <i class="bi bi-circle"></i>
       </my-button>
 
-      <my-button>
+      <my-button (click)="selectTriangleHandler()">
         <i class="bi bi-triangle"></i>
       </my-button>
       <my-horizontal-bar
@@ -111,11 +116,14 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [width]="5"
         [color]="BarColor.LIGHT"
       ></my-horizontal-bar>
-      <my-button>
+
+      <my-button (click)="selectMultiSelect()">
+        <i class="bi bi-app-indicator"></i>
+      </my-button>
+      <my-button (click)="selectWidthHandler()">
         <i class="bi bi-border-width"></i>
       </my-button>
-
-      <my-button>
+      <my-button (click)="selectFillHandler()">
         <i class="bi bi-paint-bucket"></i>
       </my-button>
     </my-container>
@@ -158,6 +166,10 @@ export class DrawBoardToolsComponent implements OnInit, OnChanges {
 
   selectTriangleHandler() {
     console.log('selecting the triangle');
+  }
+
+  selectMultiSelect() {
+    console.log('selecting the multiple selection');
   }
 
   selectWidthHandler() {

@@ -1,0 +1,41 @@
+@import "settings/settings";
+
+:host {
+  align-items: center;
+  display: inline-flex;
+}
+
+.MytipContainer {
+  user-select: none;
+  width: inherit;
+
+  @media (min-width: $breakpoint-desktop-small) {
+    user-select: auto;
+  }
+}
+
+.IconContainer {
+  cursor: pointer;
+  display: inline-block;
+  line-height: 0;
+  width: inherit;
+}
+
+.IconWrapper {
+  align-items: center;
+  display: flex;
+  width: inherit;
+}
+
+.DefaultIcon {
+  line-height: 1;
+}
+
+.IconContent {
+  width: inherit;
+}
+
+/* adds padding for if icon is not empty and has content */
+.IconContent:not(:first-child):not(:empty) {
+  padding-left: $spacing-xxsmall;
+}

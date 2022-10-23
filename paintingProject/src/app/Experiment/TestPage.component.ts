@@ -126,6 +126,18 @@ export class TestPageComponent implements OnInit {
     this._canvas.on('mouse:up', (o) => {
       this.isDown = false;
     });
+
+    this._canvas.on('selection:created', (o) => {
+      console.log('Something is being selected');
+    });
+
+    this._canvas.on('object:selected', (o) => {
+      console.log('Something is being selected');
+    });
+
+    this._canvas.on('selection:cleared', (o) => {
+      console.log('There is no object under selection');
+    });
   }
 
   private async mouseMove(

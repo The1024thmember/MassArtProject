@@ -1,0 +1,227 @@
+@import "settings/settings";
+
+:host {
+  @include fontDetail();
+  background: $Mytip-background;
+  border-radius: $border-radius-small;
+  box-shadow: $box-shadow-level-1;
+  color: $text-color-light;
+  display: block;
+  padding: $spacing-xxsmall $spacing-xsmall;
+  pointer-events: none;
+  position: relative;
+  z-index: $z-index-Mytip;
+
+  &::before {
+    border: 7px solid transparent;
+    content: "";
+    position: absolute;
+  }
+
+  &[data-color="light"] {
+    background: $Mytip-light-background;
+    box-shadow: $Mytip-light-shadow;
+    color: $text-color-dark;
+  }
+
+  &[data-size="mid"] {
+    max-width: 240px;
+    word-wrap: normal;
+  }
+
+  &[data-position="bottom-start"] {
+    transform: translateY(7px);
+
+    &::before {
+      border-bottom-color: $Mytip-background;
+      bottom: 100%;
+      left: $spacing-xxxsmall;
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-bottom-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="bottom-center"] {
+    transform: translateY(7px);
+
+    &::before {
+      border-bottom-color: $Mytip-background;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-bottom-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="bottom-end"] {
+    transform: translateY(7px);
+
+    &::before {
+      border-bottom-color: $Mytip-background;
+      bottom: 100%;
+      right: $spacing-xxxsmall;
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-bottom-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="top-start"] {
+    transform: translateY(-7px);
+
+    &::before {
+      border-top-color: $Mytip-background;
+      left: $spacing-xxxsmall;
+      top: 100%;
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-top-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="top-center"] {
+    transform: translateY(-7px);
+
+    &::before {
+      border-top-color: $Mytip-background;
+      left: 50%;
+      top: 100%;
+      transform: translateX(-50%);
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-top-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="top-end"] {
+    transform: translateY(-7px);
+
+    &::before {
+      border-top-color: $Mytip-background;
+      right: $spacing-xxxsmall;
+      top: 100%;
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-top-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="start-top"] {
+    transform: translateX(-7px);
+
+    &::before {
+      border-left-color: $Mytip-background;
+      left: 100%;
+      top: $spacing-xxxsmall;
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-left-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="start-center"] {
+    transform: translateX(-7px);
+
+    &::before {
+      border-left-color: $Mytip-background;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-left-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="start-bottom"] {
+    transform: translateX(-7px);
+
+    &::before {
+      border-left-color: $Mytip-background;
+      bottom: $spacing-xxxsmall;
+      left: 100%;
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-left-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="end-top"] {
+    transform: translateX(7px);
+
+    &::before {
+      border-right-color: $Mytip-background;
+      right: 100%;
+      top: $spacing-xxxsmall;
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-right-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="end-center"] {
+    transform: translateX(7px);
+
+    &::before {
+      border-right-color: $Mytip-background;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-right-color: $Mytip-light-background;
+      }
+    }
+  }
+
+  &[data-position="end-bottom"] {
+    transform: translateX(7px);
+
+    &::before {
+      border-right-color: $Mytip-background;
+      bottom: $spacing-xxxsmall;
+      right: 100%;
+    }
+
+    &[data-color="light"] {
+      &::before {
+        border-right-color: $Mytip-light-background;
+      }
+    }
+  }
+}
