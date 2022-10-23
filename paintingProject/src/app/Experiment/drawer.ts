@@ -70,10 +70,10 @@ export class LineDrawer implements IObjectDrawer {
 
 export class DrawingEditor {
   canvas: fabric.Canvas;
-  private cursorMode: CursorMode;
-  private _drawer: IObjectDrawer; //Current drawer
+  private cursorMode: CursorMode = CursorMode.Draw;
+  public _drawer: IObjectDrawer; //Current drawer
   readonly drawerOptions: fabric.IObjectOptions; //Current drawer options
-  private readonly drawers: IObjectDrawer[]; //All possible drawers
+  public readonly drawers: IObjectDrawer[]; //All possible drawers
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
 
@@ -84,12 +84,14 @@ export class DrawingEditor {
   ) {
     //Create the Fabric canvas
     this.canvas = new fabric.Canvas(`${selector}`, { selection: false });
+    console.log('new library canvas: ');
+    console.log(this.canvas);
 
     //Create a collection of all possible "drawer" classes
     this.drawers = [new LineDrawer()];
 
     //Set the current "drawer" class
-    this._drawer = this.drawers[DrawingMode.Line];
+    //this._drawer = this.drawers[DrawingMode.Line];
 
     //Set the default options for the "drawer" class, including
     //stroke color, width, and style
@@ -105,9 +107,10 @@ export class DrawingEditor {
   }
 
   private initializeCanvasEvents() {
+    console.log('Initializing DrawingEditor');
     this.canvas.on('mouse:down', (o) => {
       const e = <MouseEvent>o.e;
-
+      console.log('key down');
       const pointer = this.canvas.getPointer(o.e);
       if (this.cursorMode === CursorMode.Draw) {
         this.mouseDown(pointer.x, pointer.y);

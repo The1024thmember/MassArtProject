@@ -15,11 +15,13 @@ import { DrawingEditor } from './drawer';
     <button (click)="onAddCircle()">Add Circle</button>
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
 
-    <button (click)="onAddLine()">Add Line</button>
+    <button>Add Line</button>
+    <!--
     <button (click)="drawline(this.selectedElement)">click to draw line</button>
     <button (click)="onSetUnselectableCirclePosition(this.selectedElement)">
       click to move object position
     </button>
+    -->
   </my-container>`,
 })
 export class TestPageComponent implements OnInit {
@@ -27,14 +29,14 @@ export class TestPageComponent implements OnInit {
   private _drawEditor: DrawingEditor;
   canvasElement: HTMLElement | null;
   //private _mouseUp: (evt: fabric.IEvent) => void;
-
+  private isDown: boolean = false;
   selectedElement: any;
 
   constructor() {
     //protected _fabricService: FabricService
     //this._mouseUp = (evt: fabric.IEvent) => this.__onMouseUp(evt);
     console.log('showing test component');
-    this._drawEditor = new DrawingEditor('canvas', 1500, 800);
+    //this._drawEditor = new DrawingEditor('canvas', 1500, 800);
   }
 
   ngOnInit() {
@@ -49,6 +51,7 @@ export class TestPageComponent implements OnInit {
     // this._canvas.on('mouse:up', this._mouseUp);
 
     this.canvasElement = document.getElementById('fabricSurface');
+    this.initilizeDrawer();
   }
 
   onAddRect() {
@@ -78,13 +81,14 @@ export class TestPageComponent implements OnInit {
     this._canvas.add(circle);
   }
 
-  onAddLine() {
-    var line = new fabric.Line([0, 0, 0, 0], {
+  onAddLine(x1: number, x2: number, y1: number, y2: number): fabric.Line {
+    var line = new fabric.Line([x1, x2, y1, y2], {
       stroke: 'black',
     });
     // "add" line onto canvas
     this.selectedElement = line;
     this._canvas.add(line);
+    return line;
   }
 
   onAddUnselectableCircle() {
@@ -101,6 +105,47 @@ export class TestPageComponent implements OnInit {
     this._canvas.add(circle);
   }
 
+  initilizeDrawer() {
+    var line: fabric.Line;
+    this._canvas.on('mouse:down', (o) => {
+      const e = <MouseEvent>o.e;
+      this.isDown = true;
+      console.log('key down');
+      const pointer = this._canvas.getPointer(o.e);
+      line = this.onAddLine(pointer.x, pointer.y, pointer.x, pointer.y);
+    });
+
+    this._canvas.on('mouse:move', (o) => {
+      const e = <MouseEvent>o.e;
+      if (this.isDown) {
+        const pointer = this._canvas.getPointer(o.e);
+        this.mouseMove(line, pointer.x, pointer.y);
+      }
+    });
+
+    this._canvas.on('mouse:up', (o) => {
+      this.isDown = false;
+    });
+  }
+
+  private async mouseMove(
+    line: fabric.Line,
+    x: number,
+    y: number
+  ): Promise<any> {
+    if (this.isDown) {
+      line
+        .set({
+          x2: x,
+          y2: y,
+        })
+        .setCoords();
+      //Renders all objects to the canvas
+      this._canvas.renderAll();
+    }
+  }
+
+  /*
   //change the position for the last added element
   onSetUnselectableCirclePosition(param: any) {
     document.addEventListener(
@@ -123,6 +168,7 @@ export class TestPageComponent implements OnInit {
     console.log(obj);
     this._canvas.renderAll();
   }
+
 
   drawline(param: any) {
     document.addEventListener(
@@ -157,4 +203,5 @@ export class TestPageComponent implements OnInit {
     console.log('canvas:', this._canvas);
     this._canvas.renderAll();
   }
+  */
 }
