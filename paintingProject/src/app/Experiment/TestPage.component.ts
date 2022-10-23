@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
+import { DrawingEditor } from './drawer';
 @Component({
   selector: 'test',
   template: `<my-container>
@@ -9,14 +10,13 @@ import { fabric } from 'fabric';
       style="border: 1px solid #cccccc;"
       id="fabricSurface"
     ></canvas>
+
     <button (click)="onAddRect()">Add Rectangle</button>
     <button (click)="onAddCircle()">Add Circle</button>
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
 
     <button (click)="onAddLine()">Add Line</button>
-    <button (click)="onSetUnselectableCirclePosition(this.selectedElement)">
-      click to draw line
-    </button>
+    <button (click)="drawline(this.selectedElement)">click to draw line</button>
     <button (click)="onSetUnselectableCirclePosition(this.selectedElement)">
       click to move object position
     </button>
@@ -24,6 +24,7 @@ import { fabric } from 'fabric';
 })
 export class TestPageComponent implements OnInit {
   private _canvas: fabric.Canvas;
+  private _drawEditor: DrawingEditor;
   canvasElement: HTMLElement | null;
   //private _mouseUp: (evt: fabric.IEvent) => void;
 
@@ -33,6 +34,7 @@ export class TestPageComponent implements OnInit {
     //protected _fabricService: FabricService
     //this._mouseUp = (evt: fabric.IEvent) => this.__onMouseUp(evt);
     console.log('showing test component');
+    this._drawEditor = new DrawingEditor('canvas', 1500, 800);
   }
 
   ngOnInit() {
@@ -77,7 +79,7 @@ export class TestPageComponent implements OnInit {
   }
 
   onAddLine() {
-    var line = new fabric.Line([0, 0, 100, 100], {
+    var line = new fabric.Line([0, 0, 0, 0], {
       stroke: 'black',
     });
     // "add" line onto canvas
@@ -104,7 +106,7 @@ export class TestPageComponent implements OnInit {
     document.addEventListener(
       'mousemove',
       () => {
-        this.dragLine(event, param);
+        this.functionYouWantToCall(event, param);
       },
       false
     );
@@ -122,13 +124,32 @@ export class TestPageComponent implements OnInit {
     this._canvas.renderAll();
   }
 
+  drawline(param: any) {
+    document.addEventListener(
+      'mousedown',
+      () => this.getStartPosition(event, param),
+      false
+    );
+    console.log('start draw line');
+  }
+
+  getStartPosition(event: any, param: any) {
+    console.log('mouse down:');
+    console.log(event);
+    //const startPos = [event.pageX, event.pageY];
+    const startPos = [event.pageX, event.pageY];
+    document.addEventListener('mousemove', () => {
+      this.dragLine(event, param, startPos);
+    });
+  }
+
   //for drag line
-  dragLine(event: any, obj: any) {
+  dragLine(event: any, obj: any, startPos: number[]) {
     obj.set({
-      left: 100,
-      top: 100,
-      width: event.pageX - 100,
-      height: event.pageY - 100,
+      left: startPos[0],
+      top: startPos[1],
+      width: event.pageX,
+      height: event.pageY,
       stroke: 'red',
     });
     obj.setCoords();
