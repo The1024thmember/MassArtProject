@@ -16,7 +16,7 @@ import { DrawingEditor } from './drawer';
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
 
     <button>Add Line</button>
-    <button (click)="onMultiSelect()">Multi select</button>
+    <button (click)="onMultiSelect()">Select / Multi Select</button>
 
     <!--
     <button (click)="drawline(this.selectedElement)">click to draw line</button>

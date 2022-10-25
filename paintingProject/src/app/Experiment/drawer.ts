@@ -106,18 +106,18 @@ export class DrawingEditor {
     this.canvas.on('mouse:down', (o) => {
       const e = <MouseEvent>o.e;
       const pointer = this.canvas.getPointer(o.e);
+      console.log('Mouse down: Get current selection:');
+      console.log(this.canvas.getActiveObjects());
+      console.log('Current cursor mode:', this.cursorMode);
       if (!(this.isMultipleSelected() || this.isSingleSelected())) {
         this.cursorMode = CursorMode.Draw;
       } else {
         this.cursorMode = CursorMode.Select;
       }
+
       if (this.cursorMode === CursorMode.Draw) {
         this.mouseDown(pointer.x, pointer.y);
       }
-    });
-
-    this.canvas.on('mouse:up', (o) => {
-      this.isDown = false;
     });
 
     this.canvas.on('mouse:move', (o) => {
@@ -130,19 +130,36 @@ export class DrawingEditor {
 
     this.canvas.on('mouse:up', (o) => {
       this.isDown = false;
+      //Only select the created object
+      if (this.cursorMode === CursorMode.Draw) {
+        this.mouseUp();
+      }
     });
+
+    /*  Will be trigger via:
+        1) create new object, the new object will be selected
+        2) when currently there is no selection, selected something
+    */
 
     this.canvas.on('selection:created', (o) => {
       // after creating, it is selected by default
       console.log(`${o.target} is being selected`);
-      this.cursorMode = CursorMode.Select;
+      console.log(o);
     });
 
+    /*  Will be trigger via:
+        1) change selection from A object to B object
+    */
     this.canvas.on('selection:updated', (o) => {
       // change selection
       console.log(`${o.target} is being chosen`);
+      console.log(o);
     });
 
+    /*  Will be trigger via:
+        1) When previous has some selected object, then remove them by click on
+           elsewhere in the canvas
+    */
     this.canvas.on('selection:cleared', (o) => {
       // mouse click on empty canvas, so no object is selected
       console.log('No object under selection');
@@ -164,11 +181,17 @@ export class DrawingEditor {
   }
 
   private async mouseMove(x: number, y: number): Promise<any> {
-    if (this.isDown) {
-      this.object = await this.resize(x, y);
-      //Renders all objects to the canvas
-      this.canvas.renderAll();
-    }
+    this.object = await this.resize(x, y);
+    //Renders all objects to the canvas
+    this.canvas.renderAll();
+  }
+
+  private async mouseUp(): Promise<any> {
+    this.cursorMode = CursorMode.Select;
+    this.canvas.setActiveObject(this.object);
+    console.log('Mouse up: Get current selection:');
+    console.log(this.canvas.getActiveObjects());
+    console.log('Current cursor mode:', this.cursorMode);
   }
 
   //Method which allows any drawer to Promise their make() function
