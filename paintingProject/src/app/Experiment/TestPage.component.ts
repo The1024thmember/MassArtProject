@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
-import { DrawingEditor, DrawingMode } from './drawer';
+import { DrawingEditor } from './Services/drawer';
+import { DrawingMode } from './Services/types';
 @Component({
   selector: 'test',
   template: `<my-container>
