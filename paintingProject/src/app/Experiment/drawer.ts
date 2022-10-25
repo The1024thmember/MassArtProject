@@ -2,10 +2,10 @@ import { fabric } from 'fabric';
 
 export const enum DrawingMode {
   Line,
+  Rectangle,
   Oval,
   Polyline,
   Path,
-  Rectangle,
   Text,
   Triangle,
 }
@@ -67,27 +67,66 @@ export class LineDrawer implements IObjectDrawer {
     });
   }
 }
+export class RectDrawer implements IObjectDrawer {
+  private origX: number;
+  private origY: number;
+  drawingMode: DrawingMode = DrawingMode.Rectangle;
+  make(
+    x: number,
+    y: number,
+    options: fabric.IObjectOptions,
+    width?: number,
+    height?: number
+  ): Promise<fabric.Object> {
+    this.origX = x;
+    this.origY = y;
+    //Return a Promise that will draw a line
+    return new Promise<fabric.Object>((resolve) => {
+      //Inside the Promise, draw the actual line from (x,y) to (x2,y2)
+      resolve(
+        new fabric.Rect({
+          left: x,
+          top: y,
+          width: width ? width : 0,
+          height: height ? height : 0,
+          ...options,
+        })
+      );
+    });
+  }
+
+  resize(object: fabric.Rect, x: number, y: number): Promise<fabric.Object> {
+    object
+      .set({
+        originX: this.origX > x ? 'right' : 'left',
+        originY: this.origY > y ? 'bottom' : 'top',
+        width: Math.abs(this.origX - x),
+        height: Math.abs(this.origY - y),
+      })
+      .setCoords();
+
+    //Wrap the resized object in a Promise
+    return new Promise<fabric.Object>((resolve) => {
+      resolve(object);
+    });
+  }
+}
 
 export class DrawingEditor {
   canvas: fabric.Canvas;
   private cursorMode: CursorMode = CursorMode.Draw;
   public _drawer: IObjectDrawer; //Current drawer
   readonly drawerOptions: fabric.IObjectOptions; //Current drawer options
-  public readonly drawers: IObjectDrawer[]; //All possible drawers
+  private readonly drawers: IObjectDrawer[]; //All possible drawers
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
 
   constructor(canvas: fabric.Canvas) {
     //Create the Fabric canvas
     this.canvas = canvas;
-    console.log('new library canvas: ');
-    console.log(this.canvas);
 
     //Create a collection of all possible "drawer" classes
-    this.drawers = [new LineDrawer()];
-
-    //Set the current "drawer" class
-    this._drawer = this.drawers[DrawingMode.Line];
+    this.drawers = [new LineDrawer(), new RectDrawer()];
 
     //Set the default options for the "drawer" class, including
     //stroke color, width, and style
@@ -165,6 +204,11 @@ export class DrawingEditor {
       console.log('No object under selection');
       this.cursorMode = CursorMode.Draw;
     });
+  }
+
+  public setDrawingTool(tool: DrawingMode) {
+    this._drawer = this.drawers[tool];
+    console.log('Current tools is:', this._drawer);
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
-import { DrawingEditor } from './drawer';
+import { DrawingEditor, DrawingMode } from './drawer';
 @Component({
   selector: 'test',
   template: `<my-container>
@@ -15,7 +15,7 @@ import { DrawingEditor } from './drawer';
     <button (click)="onAddCircle()">Add Circle</button>
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
 
-    <button>Add Line</button>
+    <button (click)="onAddLine()">Add Line</button>
     <button (click)="onMultiSelect()">Select / Multi Select</button>
 
     <!--
@@ -57,17 +57,7 @@ export class TestPageComponent implements OnInit {
   }
 
   onAddRect() {
-    var rect = new fabric.Rect({
-      left: 100,
-      top: 100,
-      fill: 'red',
-      width: 20,
-      height: 20,
-    });
-
-    // "add" rectangle onto canvas
-    this.selectedElement = rect;
-    this._canvas.add(rect);
+    this._drawEditor.setDrawingTool(DrawingMode.Rectangle);
   }
 
   onAddCircle() {
@@ -83,14 +73,8 @@ export class TestPageComponent implements OnInit {
     this._canvas.add(circle);
   }
 
-  onAddLine(x1: number, x2: number, y1: number, y2: number): fabric.Line {
-    var line = new fabric.Line([x1, x2, y1, y2], {
-      stroke: 'black',
-    });
-    // "add" line onto canvas
-    this.selectedElement = line;
-    this._canvas.add(line);
-    return line;
+  onAddLine() {
+    this._drawEditor.setDrawingTool(DrawingMode.Line);
   }
 
   onAddUnselectableCircle() {
