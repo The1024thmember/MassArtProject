@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import { CircleDrawer } from './circleDrawerService';
 import { LineDrawer } from './lineDrawerService';
 import { RectDrawer } from './rectDrawerService';
 import { CursorMode, DrawingMode, IObjectDrawer } from './types';
@@ -17,7 +18,7 @@ export class DrawingEditor {
     this.canvas = canvas;
 
     //Create a collection of all possible "drawer" classes
-    this.drawers = [new LineDrawer(), new RectDrawer()];
+    this.drawers = [new LineDrawer(), new RectDrawer(), new CircleDrawer()];
 
     //Set the default options for the "drawer" class, including
     //stroke color, width, and style
@@ -45,14 +46,14 @@ export class DrawingEditor {
         this.cursorMode = CursorMode.Select;
       }
 
-      if (this.cursorMode === CursorMode.Draw) {
+      if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseDown(pointer.x, pointer.y);
       }
     });
 
     this.canvas.on('mouse:move', (o) => {
       const e = <MouseEvent>o.e;
-      if (this.isDown && this.cursorMode === CursorMode.Draw) {
+      if (this.isDown && this.cursorMode === CursorMode.Draw && this._drawer) {
         const pointer = this.canvas.getPointer(o.e);
         this.mouseMove(pointer.x, pointer.y);
       }
@@ -61,7 +62,7 @@ export class DrawingEditor {
     this.canvas.on('mouse:up', (o) => {
       this.isDown = false;
       //Only select the created object
-      if (this.cursorMode === CursorMode.Draw) {
+      if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseUp();
       }
     });
@@ -124,6 +125,30 @@ export class DrawingEditor {
   private async mouseUp(): Promise<any> {
     this.cursorMode = CursorMode.Select;
     this.canvas.setActiveObject(this.object);
+    switch (this.object.type) {
+      case 'line': {
+        console.log(this.object);
+        if (this.object.width === 0 && this.object.height === 0) {
+          this.canvas.remove(this.object);
+        }
+        break;
+      }
+      case 'rect': {
+        console.log(this.object);
+        if (this.object.width === 0 || this.object.height === 0) {
+          this.canvas.remove(this.object);
+        }
+        break;
+      }
+      case 'circle': {
+        console.log(this.object);
+        if (this.object.width === 0) {
+          this.canvas.remove(this.object);
+        }
+        break;
+      }
+    }
+
     console.log('Mouse up: Get current selection:');
     console.log(this.canvas.getActiveObjects());
     console.log('Current cursor mode:', this.cursorMode);

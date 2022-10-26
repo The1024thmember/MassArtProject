@@ -58,20 +58,13 @@ export class TestPageComponent implements OnInit {
   }
 
   onAddRect() {
+    console.log('get all objects:');
+    console.log(this._canvas.getObjects());
     this._drawEditor.setDrawingTool(DrawingMode.Rectangle);
   }
 
   onAddCircle() {
-    var circle = new fabric.Circle({
-      radius: 20,
-      fill: 'green',
-      left: 100,
-      top: 100,
-    });
-
-    // "add" rectangle onto canvas
-    this.selectedElement = circle;
-    this._canvas.add(circle);
+    this._drawEditor.setDrawingTool(DrawingMode.Circle);
   }
 
   onAddLine() {
