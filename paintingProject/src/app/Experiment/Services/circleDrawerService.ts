@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { DrawingMode, IObjectDrawer } from './types';
+import { BorderColor, CornerSize, DrawingMode, IObjectDrawer } from './types';
 
 export class CircleDrawer implements IObjectDrawer {
   drawingMode: DrawingMode = DrawingMode.Circle;
@@ -21,6 +21,12 @@ export class CircleDrawer implements IObjectDrawer {
         new fabric.Circle({
           left: x,
           top: y,
+          hasControls: true, // the control for change the width, height rotation
+          hasBorders: true, // has selection border
+          borderColor: BorderColor.xxxlight,
+          cornerColor: BorderColor.xxlight,
+          transparentCorners: false,
+          cornerSize: CornerSize.desktop,
           ...options,
           radius: radius ? radius : 0,
         })

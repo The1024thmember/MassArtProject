@@ -14,6 +14,24 @@ export const enum CursorMode {
   Select,
 }
 
+export const enum BorderColor {
+  xxxlight = '#bec0c2',
+  xxlight = '#75787d',
+  xlight = '#4d525b',
+  light = '#363f4d',
+  dark = '#2b3340',
+  xdark = '#1f2836',
+  xxdark = '#161e2c',
+  xxxdark = '#0e1724',
+  xxxxdark = '#000',
+}
+
+export const enum CornerSize {
+  desktop = 10,
+  tablet = 8,
+  mobile = 6,
+}
+
 export interface IObjectDrawer {
   drawingMode: DrawingMode;
   //Makes the current object

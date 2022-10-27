@@ -46,6 +46,8 @@ export class TestPageComponent implements OnInit {
       backgroundColor: '#ebebef',
       selection: false,
       preserveObjectStacking: true,
+      targetFindTolerance: 10, // seelcting target allow 10 pixel tolerance value when selecting
+      perPixelTargetFind: true, //when selecting using the actual object instead of the whole bounding box
     });
     this._canvas.selection = true; //group selection
     this._drawEditor = new DrawingEditor(this._canvas);

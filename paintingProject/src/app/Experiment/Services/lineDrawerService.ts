@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { DrawingMode, IObjectDrawer } from './types';
+import { BorderColor, CornerSize, DrawingMode, IObjectDrawer } from './types';
 
 export class LineDrawer implements IObjectDrawer {
   drawingMode: DrawingMode = DrawingMode.Line;
@@ -13,7 +13,17 @@ export class LineDrawer implements IObjectDrawer {
     //Return a Promise that will draw a line
     return new Promise<fabric.Object>((resolve) => {
       //Inside the Promise, draw the actual line from (x,y) to (x2,y2)
-      resolve(new fabric.Line([x, y, x2 ? x2 : x, y2 ? y2 : y], options));
+      resolve(
+        new fabric.Line([x, y, x2 ? x2 : x, y2 ? y2 : y], {
+          hasControls: true, // the control for change the width, height rotation
+          hasBorders: true, // has selection border
+          borderColor: BorderColor.xxxlight,
+          cornerColor: BorderColor.xxlight,
+          transparentCorners: false,
+          cornerSize: CornerSize.desktop,
+          ...options,
+        })
+      );
     });
   }
 
