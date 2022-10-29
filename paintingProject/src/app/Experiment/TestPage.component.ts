@@ -14,10 +14,9 @@ import { DrawingMode } from './Services/types';
 
     <button (click)="onAddRect()">Add Rectangle</button>
     <button (click)="onAddCircle()">Add Circle</button>
-    <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
-
     <button (click)="onAddLine()">Add Line</button>
-    <button (click)="onMultiSelect()">Select / Multi Select</button>
+    <button (click)="onSelect()">Select</button>
+    <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
 
     <!--
     <button (click)="drawline(this.selectedElement)">click to draw line</button>
@@ -60,8 +59,6 @@ export class TestPageComponent implements OnInit {
   }
 
   onAddRect() {
-    console.log('get all objects:');
-    console.log(this._canvas.getObjects());
     this._drawEditor.setDrawingTool(DrawingMode.Rectangle);
   }
 
@@ -71,6 +68,12 @@ export class TestPageComponent implements OnInit {
 
   onAddLine() {
     this._drawEditor.setDrawingTool(DrawingMode.Line);
+  }
+
+  //iterating all canvas objects, make all of them selectable
+  onSelect() {
+    console.log('get all objects:');
+    this._drawEditor.makeObjectsSeletable();
   }
 
   onAddUnselectableCircle() {
@@ -86,6 +89,4 @@ export class TestPageComponent implements OnInit {
     this.selectedElement = circle;
     this._canvas.add(circle);
   }
-
-  onMultiSelect() {}
 }

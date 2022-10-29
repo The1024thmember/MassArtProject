@@ -103,6 +103,17 @@ export class DrawingEditor {
     console.log('Current tools is:', this._drawer);
   }
 
+  //is this optimal? since everytime I need to loop every single object one user has created
+  //and whenever the user select other tools I need to make the object none selectable
+  public makeObjectsSeletable() {
+    console.log('make objects selectable');
+    this.canvas.getObjects().forEach((element) => {
+      element.selectable = true;
+    });
+    this.canvas.renderAll();
+    console.log(this.canvas.getObjects());
+  }
+
   private async mouseDown(x: number, y: number): Promise<any> {
     this.isDown = true; //The mouse is being clicked
 

@@ -15,13 +15,14 @@ export class LineDrawer implements IObjectDrawer {
       //Inside the Promise, draw the actual line from (x,y) to (x2,y2)
       resolve(
         new fabric.Line([x, y, x2 ? x2 : x, y2 ? y2 : y], {
+          ...options,
+          selectable: false, //creating by default is non selectable
           hasControls: true, // the control for change the width, height rotation
           hasBorders: true, // has selection border
           borderColor: BorderColor.xxxlight,
           cornerColor: BorderColor.xxlight,
           transparentCorners: false,
           cornerSize: CornerSize.desktop,
-          ...options,
         })
       );
     });

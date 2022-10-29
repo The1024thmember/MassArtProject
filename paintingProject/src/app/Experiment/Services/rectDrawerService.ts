@@ -23,13 +23,14 @@ export class RectDrawer implements IObjectDrawer {
           top: y,
           width: width ? width : 0,
           height: height ? height : 0,
+          ...options,
+          selectable: false, //creating by default is non selectable
           hasControls: true, // the control for change the width, height rotation
           hasBorders: true, // has selection border
           borderColor: BorderColor.xxxlight,
           cornerColor: BorderColor.xxlight,
           transparentCorners: false,
           cornerSize: CornerSize.desktop,
-          ...options,
         })
       );
     });

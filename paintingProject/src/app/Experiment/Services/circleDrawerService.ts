@@ -21,13 +21,14 @@ export class CircleDrawer implements IObjectDrawer {
         new fabric.Circle({
           left: x,
           top: y,
+          ...options,
+          selectable: false, //creating by default is non selectable
           hasControls: true, // the control for change the width, height rotation
           hasBorders: true, // has selection border
           borderColor: BorderColor.xxxlight,
           cornerColor: BorderColor.xxlight,
           transparentCorners: false,
           cornerSize: CornerSize.desktop,
-          ...options,
           radius: radius ? radius : 0,
         })
       );
