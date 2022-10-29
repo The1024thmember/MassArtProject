@@ -31,7 +31,7 @@ export class TestPageComponent implements OnInit {
   private _drawEditor: DrawingEditor;
   canvasElement: HTMLElement | null;
   //private _mouseUp: (evt: fabric.IEvent) => void;
-  private isDown: boolean = false;
+  private isSelectLastAction: boolean = false;
   selectedElement: any;
 
   constructor() {
@@ -59,24 +59,41 @@ export class TestPageComponent implements OnInit {
   }
 
   onAddRect() {
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawEditor.makeObjectsNoneSeletable();
+    }
     this._drawEditor.setDrawingTool(DrawingMode.Rectangle);
   }
 
   onAddCircle() {
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawEditor.makeObjectsNoneSeletable();
+    }
     this._drawEditor.setDrawingTool(DrawingMode.Circle);
   }
 
   onAddLine() {
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawEditor.makeObjectsNoneSeletable();
+    }
     this._drawEditor.setDrawingTool(DrawingMode.Line);
   }
 
   //iterating all canvas objects, make all of them selectable
   onSelect() {
     console.log('get all objects:');
+    this.isSelectLastAction = true;
     this._drawEditor.makeObjectsSeletable();
   }
 
   onAddUnselectableCircle() {
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawEditor.makeObjectsNoneSeletable();
+    }
     var circle = new fabric.Circle({
       radius: 20,
       fill: 'green',
