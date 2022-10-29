@@ -23,8 +23,8 @@ export class CircleDrawer implements IObjectDrawer {
           top: y,
           ...options,
           selectable: false, //creating by default is non selectable
-          hasControls: true, // the control for change the width, height rotation
-          hasBorders: true, // has selection border
+          hasControls: false, // the control for change the width, height rotation
+          hasBorders: false, // has selection border
           borderColor: BorderColor.xxxlight,
           cornerColor: BorderColor.xxlight,
           transparentCorners: false,

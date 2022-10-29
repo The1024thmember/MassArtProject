@@ -17,8 +17,8 @@ export class LineDrawer implements IObjectDrawer {
         new fabric.Line([x, y, x2 ? x2 : x, y2 ? y2 : y], {
           ...options,
           selectable: false, //creating by default is non selectable
-          hasControls: true, // the control for change the width, height rotation
-          hasBorders: true, // has selection border
+          hasControls: false, // the control for change the width, height rotation
+          hasBorders: false, // has selection border
           borderColor: BorderColor.xxxlight,
           cornerColor: BorderColor.xxlight,
           transparentCorners: false,

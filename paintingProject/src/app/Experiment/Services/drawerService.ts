@@ -37,9 +37,7 @@ export class DrawingEditor {
     this.canvas.on('mouse:down', (o) => {
       const e = <MouseEvent>o.e;
       const pointer = this.canvas.getPointer(o.e);
-      console.log('Mouse down: Get current selection:');
-      console.log(this.canvas.getActiveObjects());
-      console.log('Current cursor mode:', this.cursorMode);
+
       if (!(this.isMultipleSelected() || this.isSingleSelected())) {
         this.cursorMode = CursorMode.Draw;
       } else {
@@ -49,6 +47,10 @@ export class DrawingEditor {
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseDown(pointer.x, pointer.y);
       }
+
+      console.log('Mouse down: Get current selection:');
+      console.log(this.canvas.getActiveObjects());
+      console.log('Current cursor mode:', this.cursorMode);
     });
 
     this.canvas.on('mouse:move', (o) => {
@@ -109,6 +111,8 @@ export class DrawingEditor {
     console.log('make objects selectable');
     this.canvas.getObjects().forEach((element) => {
       element.selectable = true;
+      element.hasBorders = true;
+      element.hasControls = true;
     });
     this.canvas.renderAll();
     console.log(this.canvas.getObjects());
@@ -120,6 +124,8 @@ export class DrawingEditor {
     console.log('make objects Noneselectable');
     this.canvas.getObjects().forEach((element) => {
       element.selectable = false;
+      element.hasBorders = false;
+      element.hasControls = false;
     });
     this.canvas.renderAll();
     console.log(this.canvas.getObjects());
@@ -171,6 +177,8 @@ export class DrawingEditor {
       }
     }
 
+    //Making element default as none selective
+    this.canvas.discardActiveObject().renderAll();
     console.log('Mouse up: Get current selection:');
     console.log(this.canvas.getActiveObjects());
     console.log('Current cursor mode:', this.cursorMode);
@@ -198,5 +206,13 @@ export class DrawingEditor {
       return true;
     }
     return false;
+  }
+
+  // Remove active (selected) objects
+  private removeActiveObject() {
+    this.canvas.getActiveObjects().forEach((obj) => {
+      this.canvas.remove(obj);
+    });
+    this.canvas.discardActiveObject().renderAll();
   }
 }
