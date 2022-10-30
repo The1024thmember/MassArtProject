@@ -4,7 +4,6 @@ import { ColorSketchModule } from 'ngx-color/sketch';
 import { ColorSliderModule } from 'ngx-color/slider';
 import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DirectivesModule } from '../Directives';
-import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDragAndDrop.service';
 import { DrawBoardColorPickerComponent } from './DrawBoardPage-colorPicker/DrawBoardPage-colorPicker';
 import { DrawBoardColorPlatteComponent } from './DrawBoardPage-colorPlatte/DrawBoardPage-colorPlatte';
 import { DrawBoardControlsComponent } from './DrawBoardPage-controls/DrawBoardPage-controls';
@@ -30,6 +29,6 @@ import { DrawBoardPageRoutingModule } from './DrawBoardPage.routing.module';
     DrawBoardColorPickerComponent,
   ],
   exports: [],
-  providers: [CanvasDragAndDropService],
+  providers: [],
 })
 export class DrawBoardPageModule {}

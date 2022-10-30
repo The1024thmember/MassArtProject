@@ -17,6 +17,7 @@ import { DrawingMode } from './Services/types';
     <button (click)="onAddLine()">Add Line</button>
     <button (click)="onSelect()">Select</button>
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
+    <button (click)="onChangeColor()">Change color</button>
 
     <!--
     <button (click)="drawline(this.selectedElement)">click to draw line</button>
@@ -55,7 +56,6 @@ export class TestPageComponent implements OnInit {
     // this._canvas.on('mouse:up', this._mouseUp);
 
     this.canvasElement = document.getElementById('fabricSurface');
-    //this.initilizeDrawer();
   }
 
   onAddRect() {
@@ -88,6 +88,8 @@ export class TestPageComponent implements OnInit {
     this.isSelectLastAction = true;
     this._drawEditor.makeObjectsSeletable();
   }
+
+  onChangeColor() {}
 
   onAddUnselectableCircle() {
     if (this.isSelectLastAction) {

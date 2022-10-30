@@ -42,7 +42,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
               </my-button>
             </my-col>
             <my-col [col]="2">
-              <my-button (click)="selectSquareHandler()">
+              <my-button (click)="selectRectHandler()">
                 <i class="bi bi-square"></i>
               </my-button>
             </my-col>
@@ -66,7 +66,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <my-col [col]="3">
           <my-grid>
             <my-col [col]="4">
-              <my-button (click)="selectMultiSelect()">
+              <my-button (click)="selectMultiSelectHandler()">
                 <i class="bi bi-app-indicator"></i>
               </my-button>
             </my-col>
@@ -100,7 +100,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <img class="Icons" src="./assets/curve.svg" />
       </my-button>
 
-      <my-button (click)="selectSquareHandler()">
+      <my-button (click)="selectRectHandler()">
         <i class="bi bi-square"></i>
       </my-button>
 
@@ -117,7 +117,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [color]="BarColor.LIGHT"
       ></my-horizontal-bar>
 
-      <my-button (click)="selectMultiSelect()">
+      <my-button (click)="selectMultiSelectHandler()">
         <i class="bi bi-app-indicator"></i>
       </my-button>
       <my-button (click)="selectWidthHandler()">
@@ -140,8 +140,9 @@ export class DrawBoardToolsComponent implements OnInit, OnChanges {
   @Output() selectLine: EventEmitter<any> = new EventEmitter();
   @Output() selectCurve: EventEmitter<any> = new EventEmitter();
   @Output() selectRectangle: EventEmitter<any> = new EventEmitter();
-  @Output() selectCurveCircle: EventEmitter<any> = new EventEmitter();
+  @Output() selectCircle: EventEmitter<any> = new EventEmitter();
   @Output() selectCurveTriangle: EventEmitter<any> = new EventEmitter();
+  @Output() selectMultiSelect: EventEmitter<any> = new EventEmitter();
 
   ngOnInit() {}
 
@@ -156,20 +157,23 @@ export class DrawBoardToolsComponent implements OnInit, OnChanges {
     console.log('selecting the curve');
   }
 
-  selectSquareHandler() {
-    console.log('selecting the square');
+  selectRectHandler() {
+    console.log('selecting the rect');
+    this.selectRectangle.emit(true);
   }
 
   selectCircleHandler() {
     console.log('selecting the circle');
+    this.selectCircle.emit(true);
   }
 
   selectTriangleHandler() {
     console.log('selecting the triangle');
   }
 
-  selectMultiSelect() {
+  selectMultiSelectHandler() {
     console.log('selecting the multiple selection');
+    this.selectMultiSelect.emit(true);
   }
 
   selectWidthHandler() {

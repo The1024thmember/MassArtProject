@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { fabric } from 'fabric';
 import { Margin } from '../Directives/Margin';
-import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDragAndDrop.service';
+import { DrawingEditor, DrawingMode } from '../Services';
 
 @Component({
   template: `
@@ -19,6 +19,7 @@ import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDr
             (selectRectangle)="setRectangleHandler($event)"
             (selectCircle)="setCircleHandler($event)"
             (selectTriangle)="setTriangleHandler($event)"
+            (selectMultiSelect)="setMultiSelectHandler($event)"
           ></drawBoardPage-tools>
         </my-col>
         <my-col [col]="4">
@@ -41,20 +42,29 @@ import { CanvasDragAndDropService } from '../Services/CanvasDragAndDrop/canvasDr
 })
 export class DrawBoardPageComponent implements OnInit, OnChanges {
   Margin = Margin;
+
   private _canvas: fabric.Canvas;
+  private _drawEditor: DrawingEditor;
+  private isSelectLastAction: boolean = false;
+
+  selectedElement: any;
   color: string = '#000';
   start: number[] = [0, 0];
   end: number[] = [900, 900];
 
-  constructor(private canvasDragAndDropService: CanvasDragAndDropService) {}
+  constructor() {}
 
   ngOnInit() {
     console.log('on init ...');
     this._canvas = new fabric.Canvas('fabricSurface', {
+      backgroundColor: '#ebebef',
       selection: false,
       preserveObjectStacking: true,
+      targetFindTolerance: 10, // seelcting target allow 10 pixel tolerance value when selecting
+      perPixelTargetFind: true, //when selecting using the actual object instead of the whole bounding box
     });
     this._canvas.selection = true; //group selection
+    this._drawEditor = new DrawingEditor(this._canvas);
   }
 
   ngOnChanges() {
@@ -63,78 +73,42 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
 
   setLineHandler($event: any) {
     console.log('drawing line on the canvas');
-    this.onAddLine();
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawEditor.makeObjectsNoneSeletable();
+    }
+    this._drawEditor.setDrawingTool(DrawingMode.Line);
   }
+
+  setCurveHandler($event: any) {}
+
+  setRectangleHandler($event: any) {
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawEditor.makeObjectsNoneSeletable();
+    }
+    this._drawEditor.setDrawingTool(DrawingMode.Rectangle);
+  }
+
+  setCircleHandler($event: any) {
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawEditor.makeObjectsNoneSeletable();
+    }
+    this._drawEditor.setDrawingTool(DrawingMode.Circle);
+  }
+
+  setTriangleHandler($event: any) {}
 
   setColorHandler($event: string) {
     console.log('setting color for current draw');
     this.color = $event;
   }
 
-  setCurveHandler($event: any) {}
-  setRectangleHandler($event: any) {}
-  setCircleHandler($event: any) {}
-  setTriangleHandler($event: any) {}
-
-  getPosition() {
-    //points [ x1,y1, x2,y2]
-
-    this._canvas.on(
-      'mouse:down',
-      (e) => (this.start = this.canvasDragAndDropService.getStartPosition(e))
-    );
-
-    this._canvas.on(
-      'mouse:up',
-      (e) => (this.end = this.canvasDragAndDropService.getEndPosition(e))
-    );
-  }
-
-  onAddLine() {
-    this.getPosition();
-
-    var line = new fabric.Line([...this.start, ...this.end], {
-      stroke: this.color,
-    });
-    // "add" line onto canvas
-    this._canvas.add(line);
-  }
-
-  onAddRect() {
-    var rect = new fabric.Rect({
-      left: 100,
-      top: 100,
-      fill: 'red',
-      width: 20,
-      height: 20,
-    });
-
-    // "add" rectangle onto canvas
-    this._canvas.add(rect);
-  }
-
-  onAddCircle() {
-    var circle = new fabric.Circle({
-      radius: 20,
-      fill: 'green',
-      left: 100,
-      top: 100,
-    });
-
-    // "add" rectangle onto canvas
-    this._canvas.add(circle);
-  }
-
-  onAddUnselectableCircle() {
-    var circle = new fabric.Circle({
-      radius: 20,
-      fill: 'green',
-      left: 100,
-      top: 100,
-      selectable: false,
-    });
-
-    // "add" rectangle onto canvas
-    this._canvas.add(circle);
+  //iterating all canvas objects, make all of them selectable
+  setMultiSelectHandler($event: any) {
+    console.log('get all objects:');
+    this.isSelectLastAction = true;
+    this._drawEditor.makeObjectsSeletable();
   }
 }
