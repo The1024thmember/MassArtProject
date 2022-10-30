@@ -137,6 +137,7 @@ export class DrawingEditor {
     this.canvas.getActiveObjects().forEach(async (obj) => {
       await this._drawer.changeProperty(obj, option, value);
     });
+    this.canvas.renderAll();
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
