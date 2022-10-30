@@ -113,6 +113,7 @@ export class DrawingEditor {
       element.selectable = true;
       element.hasBorders = true;
       element.hasControls = true;
+      element.hoverCursor = 'move';
     });
     this.canvas.renderAll();
     console.log(this.canvas.getObjects());
@@ -126,6 +127,7 @@ export class DrawingEditor {
       element.selectable = false;
       element.hasBorders = false;
       element.hasControls = false;
+      element.hoverCursor = 'default';
     });
     this.canvas.renderAll();
     console.log(this.canvas.getObjects());

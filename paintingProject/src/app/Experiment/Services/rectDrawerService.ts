@@ -31,6 +31,7 @@ export class RectDrawer implements IObjectDrawer {
           cornerColor: BorderColor.xxlight,
           transparentCorners: false,
           cornerSize: CornerSize.desktop,
+          hoverCursor: 'default',
         })
       );
     });
