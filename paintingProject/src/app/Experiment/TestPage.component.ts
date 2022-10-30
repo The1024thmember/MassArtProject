@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
 import { DrawingEditor } from './Services/drawerService';
-import { DrawingMode } from './Services/types';
+import { ChangeObjectProperty, DrawingMode } from './Services/types';
 @Component({
   selector: 'test',
   template: `<my-container>
@@ -18,7 +18,7 @@ import { DrawingMode } from './Services/types';
     <button (click)="onSelect()">Select</button>
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
     <button (click)="onChangeColor()">Change color</button>
-
+    <button (click)="onChangeWeight()">Change weight</button>
     <!--
     <button (click)="drawline(this.selectedElement)">click to draw line</button>
     <button (click)="onSetUnselectableCirclePosition(this.selectedElement)">
@@ -89,7 +89,19 @@ export class TestPageComponent implements OnInit {
     this._drawEditor.makeObjectsSeletable();
   }
 
-  onChangeColor() {}
+  onChangeColor() {
+    this._drawEditor.changeSelectObjectProperty(
+      ChangeObjectProperty.StrokeColor,
+      'red'
+    );
+  }
+
+  onChangeWeight() {
+    this._drawEditor.changeSelectObjectProperty(
+      ChangeObjectProperty.StrokeWeight,
+      '10'
+    );
+  }
 
   onAddUnselectableCircle() {
     if (this.isSelectLastAction) {

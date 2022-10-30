@@ -30,6 +30,7 @@ export class CircleDrawer implements IObjectDrawer {
           transparentCorners: false,
           cornerSize: CornerSize.desktop,
           radius: radius ? radius : 0,
+          fill: undefined,
           hoverCursor: 'default',
         })
       );

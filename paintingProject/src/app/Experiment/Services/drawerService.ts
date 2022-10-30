@@ -2,7 +2,13 @@ import { fabric } from 'fabric';
 import { CircleDrawer } from './circleDrawerService';
 import { LineDrawer } from './lineDrawerService';
 import { RectDrawer } from './rectDrawerService';
-import { CursorMode, DrawingMode, IObjectDrawer } from './types';
+import {
+  ChangeObjectProperty,
+  CursorMode,
+  DrawingMode,
+  IObjectDrawer,
+  ObjectType,
+} from './types';
 
 export class DrawingEditor {
   canvas: fabric.Canvas;
@@ -128,6 +134,27 @@ export class DrawingEditor {
     console.log(this.canvas.getObjects());
   }
 
+  // ---- need to add validations for the input value ---//
+  //Change the color for the current selection
+  public changeSelectObjectProperty(
+    option: ChangeObjectProperty,
+    value: string
+  ) {
+    this.canvas.getActiveObjects().forEach((obj) => {
+      switch (option) {
+        case ChangeObjectProperty.StrokeColor:
+          obj.stroke = value;
+          console.log(`change ${obj.toString} color to be ${value}`);
+          break;
+        case ChangeObjectProperty.StrokeWeight:
+          obj.strokeWidth = parseInt(value);
+          console.log(`change ${obj.toString} weight to be ${value}`);
+          break;
+      }
+    });
+    this.canvas.renderAll();
+  }
+
   private async mouseDown(x: number, y: number): Promise<any> {
     this.isDown = true; //The mouse is being clicked
 
@@ -150,21 +177,21 @@ export class DrawingEditor {
   private async mouseUp(): Promise<any> {
     this.canvas.setActiveObject(this.object);
     switch (this.object.type) {
-      case 'line': {
+      case ObjectType.Line: {
         console.log(this.object);
         if (this.object.width === 0 && this.object.height === 0) {
           this.canvas.remove(this.object);
         }
         break;
       }
-      case 'rect': {
+      case ObjectType.Rectangle: {
         console.log(this.object);
         if (this.object.width === 0 || this.object.height === 0) {
           this.canvas.remove(this.object);
         }
         break;
       }
-      case 'circle': {
+      case ObjectType.Circle: {
         console.log(this.object);
         if (this.object.width === 0) {
           this.canvas.remove(this.object);
