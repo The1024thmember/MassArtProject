@@ -6,7 +6,7 @@ import { CursorMode, DrawingMode, IObjectDrawer } from './types';
 
 export class DrawingEditor {
   canvas: fabric.Canvas;
-  private cursorMode: CursorMode = CursorMode.Draw;
+  private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
   public _drawer: IObjectDrawer; //Current drawer
   readonly drawerOptions: fabric.IObjectOptions; //Current drawer options
   private readonly drawers: IObjectDrawer[]; //All possible drawers
@@ -37,12 +37,6 @@ export class DrawingEditor {
     this.canvas.on('mouse:down', (o) => {
       const e = <MouseEvent>o.e;
       const pointer = this.canvas.getPointer(o.e);
-
-      if (!(this.isMultipleSelected() || this.isSingleSelected())) {
-        this.cursorMode = CursorMode.Draw;
-      } else {
-        this.cursorMode = CursorMode.Select;
-      }
 
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseDown(pointer.x, pointer.y);
@@ -96,7 +90,6 @@ export class DrawingEditor {
     this.canvas.on('selection:cleared', (o) => {
       // mouse click on empty canvas, so no object is selected
       console.log('No object under selection');
-      this.cursorMode = CursorMode.Draw;
     });
   }
 
@@ -115,6 +108,7 @@ export class DrawingEditor {
       element.hasControls = true;
       element.hoverCursor = 'move';
     });
+    this.cursorMode = CursorMode.Select;
     this.canvas.renderAll();
     console.log(this.canvas.getObjects());
   }
@@ -129,6 +123,7 @@ export class DrawingEditor {
       element.hasControls = false;
       element.hoverCursor = 'default';
     });
+    this.cursorMode = CursorMode.Draw;
     this.canvas.renderAll();
     console.log(this.canvas.getObjects());
   }
@@ -153,7 +148,6 @@ export class DrawingEditor {
   }
 
   private async mouseUp(): Promise<any> {
-    this.cursorMode = CursorMode.Select;
     this.canvas.setActiveObject(this.object);
     switch (this.object.type) {
       case 'line': {
