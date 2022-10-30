@@ -143,17 +143,15 @@ export class DrawBoardColorPlatteComponent implements OnInit {
       this.colorsHistory ? this.colorsHistory[0] : null
     );
 
-    if (this.colorsHistory.includes(this.currentColor)) {
-      return;
-    }
-
-    if (this.colorsHistory.length < 7) {
-      this.colorsHistory.unshift(this.currentColor);
-    } else {
-      this.colorsHistory = [
-        this.currentColor,
-        ...this.colorsHistory.slice(0, this.colorsHistory.length - 1),
-      ];
+    if (!this.colorsHistory.includes(this.currentColor)) {
+      if (this.colorsHistory.length < 7) {
+        this.colorsHistory.unshift(this.currentColor);
+      } else {
+        this.colorsHistory = [
+          this.currentColor,
+          ...this.colorsHistory.slice(0, this.colorsHistory.length - 1),
+        ];
+      }
     }
 
     console.log('the selected color is:', $event.color.hex);

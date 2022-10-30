@@ -31,7 +31,9 @@ export class DrawBoardColorPickerComponent implements OnInit, OnChanges {
   @Input() selectedColorFromHistory: string;
   @Output() selectedColor: EventEmitter<ColorEvent> = new EventEmitter();
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.color = this.selectedColorFromHistory;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.color = this.selectedColorFromHistory;
