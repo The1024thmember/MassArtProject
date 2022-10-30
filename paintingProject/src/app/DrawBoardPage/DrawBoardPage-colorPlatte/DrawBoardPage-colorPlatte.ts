@@ -66,6 +66,7 @@ import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
               [color]="color"
               [type]="'Selectable'"
               [myMarginBottom]="Margin.XXSMALL"
+              (click)="selectColorFromHistoryHandler(color)"
             ></my-container>
 
             <my-horizontal-bar
@@ -90,7 +91,8 @@ import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
 
       <drawBoardPage-colorPicker
         *ngIf="isColorPickerShown"
-        (selectedColor)="selectColorHandler($event)"
+        [selectedColorFromHistory]="currentColor"
+        (selectedColor)="selectColorFromPlatteHandler($event)"
       ></drawBoardPage-colorPicker>
     </my-container>
   `,
@@ -135,11 +137,16 @@ export class DrawBoardColorPlatteComponent implements OnInit {
     this.isColorPickerShown = true;
   }
 
-  selectColorHandler($event: ColorEvent) {
+  selectColorFromPlatteHandler($event: ColorEvent) {
     console.log(
       'the previous used color is:',
       this.colorsHistory ? this.colorsHistory[0] : null
     );
+
+    if (this.colorsHistory.includes(this.currentColor)) {
+      return;
+    }
+
     if (this.colorsHistory.length < 7) {
       this.colorsHistory.unshift(this.currentColor);
     } else {
@@ -152,6 +159,11 @@ export class DrawBoardColorPlatteComponent implements OnInit {
     console.log('the selected color is:', $event.color.hex);
     this.currentColor = $event.color.hex;
 
+    this.selectedColor.emit(this.currentColor);
+  }
+
+  selectColorFromHistoryHandler($event: string) {
+    this.currentColor = $event;
     this.selectedColor.emit(this.currentColor);
   }
 }

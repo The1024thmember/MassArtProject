@@ -1,4 +1,12 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { ColorEvent } from 'ngx-color';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 
@@ -8,6 +16,7 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
     <my-container class="ColorPicker">
       <my-heading [headingType]="HeadingType.H3">Color Wheel</my-heading>
       <color-sketch
+        [color]="color"
         (onChange)="colorChangeHandler($event)"
         (onChangeComplete)="changeComplete($event)"
       ></color-sketch>
@@ -15,11 +24,18 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
   `,
   styleUrls: ['./DrawBoardPage-colorPicker.scss'],
 })
-export class DrawBoardColorPickerComponent implements OnInit {
+export class DrawBoardColorPickerComponent implements OnInit, OnChanges {
   HeadingType = HeadingType;
+  color: string;
+
+  @Input() selectedColorFromHistory: string;
   @Output() selectedColor: EventEmitter<ColorEvent> = new EventEmitter();
 
   ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.color = this.selectedColorFromHistory;
+  }
 
   colorChangeHandler($event: ColorEvent) {
     console.log('onchange', $event.color);
