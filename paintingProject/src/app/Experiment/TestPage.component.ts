@@ -90,14 +90,14 @@ export class TestPageComponent implements OnInit {
   }
 
   onChangeColor() {
-    this._drawEditor.changeSelectObjectProperty(
+    this._drawEditor.changeSelectObjectsProperty(
       ChangeObjectProperty.StrokeColor,
       'red'
     );
   }
 
   onChangeWeight() {
-    this._drawEditor.changeSelectObjectProperty(
+    this._drawEditor.changeSelectObjectsProperty(
       ChangeObjectProperty.StrokeWeight,
       '10'
     );

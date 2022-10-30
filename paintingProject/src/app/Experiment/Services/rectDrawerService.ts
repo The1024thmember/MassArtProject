@@ -1,5 +1,11 @@
 import { fabric } from 'fabric';
-import { BorderColor, CornerSize, DrawingMode, IObjectDrawer } from './types';
+import {
+  BorderColor,
+  ChangeObjectProperty,
+  CornerSize,
+  DrawingMode,
+  IObjectDrawer,
+} from './types';
 
 export class RectDrawer implements IObjectDrawer {
   private origX: number;
@@ -47,6 +53,34 @@ export class RectDrawer implements IObjectDrawer {
         height: Math.abs(this.origY - y),
       })
       .setCoords();
+
+    //Wrap the resized object in a Promise
+    return new Promise<fabric.Object>((resolve) => {
+      resolve(object);
+    });
+  }
+
+  changeProperty(
+    object: fabric.Rect,
+    option: ChangeObjectProperty,
+    value: string
+  ): Promise<fabric.Object> {
+    switch (option) {
+      case ChangeObjectProperty.StrokeColor:
+        object.set({
+          stroke: value,
+        });
+        console.log(`change ${object} color to be ${value}`);
+        console.log(object);
+        break;
+      case ChangeObjectProperty.StrokeWeight:
+        object.set({
+          strokeWidth: parseInt(value),
+        });
+        console.log(`change ${object} strokeWidth to be ${value}`);
+        console.log(object);
+        break;
+    }
 
     //Wrap the resized object in a Promise
     return new Promise<fabric.Object>((resolve) => {

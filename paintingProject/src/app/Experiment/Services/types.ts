@@ -60,4 +60,10 @@ export interface IObjectDrawer {
     x: number,
     y: number
   ) => Promise<fabric.Object>;
+
+  readonly changeProperty: (
+    object: any,
+    option: ChangeObjectProperty,
+    value: string
+  ) => Promise<fabric.Object>;
 }

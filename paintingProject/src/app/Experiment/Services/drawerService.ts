@@ -47,10 +47,6 @@ export class DrawingEditor {
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseDown(pointer.x, pointer.y);
       }
-
-      console.log('Mouse down: Get current selection:');
-      console.log(this.canvas.getActiveObjects());
-      console.log('Current cursor mode:', this.cursorMode);
     });
 
     this.canvas.on('mouse:move', (o) => {
@@ -116,7 +112,6 @@ export class DrawingEditor {
     });
     this.cursorMode = CursorMode.Select;
     this.canvas.renderAll();
-    console.log(this.canvas.getObjects());
   }
 
   //is this optimal? since everytime I need to loop every single object one user has created
@@ -131,28 +126,17 @@ export class DrawingEditor {
     });
     this.cursorMode = CursorMode.Draw;
     this.canvas.renderAll();
-    console.log(this.canvas.getObjects());
   }
 
   // ---- need to add validations for the input value ---//
   //Change the color for the current selection
-  public changeSelectObjectProperty(
+  public async changeSelectObjectsProperty(
     option: ChangeObjectProperty,
     value: string
   ) {
-    this.canvas.getActiveObjects().forEach((obj) => {
-      switch (option) {
-        case ChangeObjectProperty.StrokeColor:
-          obj.stroke = value;
-          console.log(`change ${obj.toString} color to be ${value}`);
-          break;
-        case ChangeObjectProperty.StrokeWeight:
-          obj.strokeWidth = parseInt(value);
-          console.log(`change ${obj.toString} weight to be ${value}`);
-          break;
-      }
+    this.canvas.getActiveObjects().forEach(async (obj) => {
+      await this._drawer.changeProperty(obj, option, value);
     });
-    this.canvas.renderAll();
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
@@ -215,6 +199,14 @@ export class DrawingEditor {
   //Method which allows any drawer to Promise their resize() function
   private async resize(x: number, y: number): Promise<fabric.Object> {
     return await this._drawer.resize(this.object, x, y);
+  }
+
+  //Method which allows any drawer to Promise their resize() function
+  private async changeProperty(
+    option: ChangeObjectProperty,
+    value: string
+  ): Promise<fabric.Object> {
+    return await this._drawer.changeProperty(this.object, option, value);
   }
 
   private isMultipleSelected() {
