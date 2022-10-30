@@ -9,9 +9,20 @@ export const enum DrawingMode {
   Triangle,
 }
 
+export const enum ObjectType {
+  Line = 'line',
+  Rectangle = 'rect',
+  Circle = 'circle',
+}
+
 export const enum CursorMode {
   Draw,
   Select,
+}
+
+export const enum ChangeObjectProperty {
+  StrokeWeight,
+  StrokeColor,
 }
 
 export const enum BorderColor {
@@ -48,5 +59,11 @@ export interface IObjectDrawer {
     object: any,
     x: number,
     y: number
+  ) => Promise<fabric.Object>;
+
+  readonly changeProperty: (
+    object: any,
+    option: ChangeObjectProperty,
+    value: string
   ) => Promise<fabric.Object>;
 }

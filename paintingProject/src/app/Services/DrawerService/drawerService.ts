@@ -2,7 +2,13 @@ import { fabric } from 'fabric';
 import { CircleDrawer } from './circleDrawerService';
 import { LineDrawer } from './lineDrawerService';
 import { RectDrawer } from './rectDrawerService';
-import { CursorMode, DrawingMode, IObjectDrawer } from './types';
+import {
+  ChangeObjectProperty,
+  CursorMode,
+  DrawingMode,
+  IObjectDrawer,
+  ObjectType,
+} from './types';
 
 export class DrawingEditor {
   canvas: fabric.Canvas;
@@ -41,10 +47,6 @@ export class DrawingEditor {
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseDown(pointer.x, pointer.y);
       }
-
-      console.log('Mouse down: Get current selection:');
-      console.log(this.canvas.getActiveObjects());
-      console.log('Current cursor mode:', this.cursorMode);
     });
 
     this.canvas.on('mouse:move', (o) => {
@@ -110,7 +112,6 @@ export class DrawingEditor {
     });
     this.cursorMode = CursorMode.Select;
     this.canvas.renderAll();
-    console.log(this.canvas.getObjects());
   }
 
   //is this optimal? since everytime I need to loop every single object one user has created
@@ -125,7 +126,18 @@ export class DrawingEditor {
     });
     this.cursorMode = CursorMode.Draw;
     this.canvas.renderAll();
-    console.log(this.canvas.getObjects());
+  }
+
+  // ---- need to add validations for the input value ---//
+  //Change the color for the current selection
+  public async changeSelectObjectsProperty(
+    option: ChangeObjectProperty,
+    value: string
+  ) {
+    this.canvas.getActiveObjects().forEach(async (obj) => {
+      await this._drawer.changeProperty(obj, option, value);
+    });
+    this.canvas.renderAll();
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
@@ -150,21 +162,21 @@ export class DrawingEditor {
   private async mouseUp(): Promise<any> {
     this.canvas.setActiveObject(this.object);
     switch (this.object.type) {
-      case 'line': {
+      case ObjectType.Line: {
         console.log(this.object);
         if (this.object.width === 0 && this.object.height === 0) {
           this.canvas.remove(this.object);
         }
         break;
       }
-      case 'rect': {
+      case ObjectType.Rectangle: {
         console.log(this.object);
         if (this.object.width === 0 || this.object.height === 0) {
           this.canvas.remove(this.object);
         }
         break;
       }
-      case 'circle': {
+      case ObjectType.Circle: {
         console.log(this.object);
         if (this.object.width === 0) {
           this.canvas.remove(this.object);
@@ -188,6 +200,14 @@ export class DrawingEditor {
   //Method which allows any drawer to Promise their resize() function
   private async resize(x: number, y: number): Promise<fabric.Object> {
     return await this._drawer.resize(this.object, x, y);
+  }
+
+  //Method which allows any drawer to Promise their resize() function
+  private async changeProperty(
+    option: ChangeObjectProperty,
+    value: string
+  ): Promise<fabric.Object> {
+    return await this._drawer.changeProperty(this.object, option, value);
   }
 
   private isMultipleSelected() {

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { fabric } from 'fabric';
 import { Margin } from '../Directives/Margin';
-import { DrawingEditor, DrawingMode } from '../Services';
+import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
 
 @Component({
   template: `
