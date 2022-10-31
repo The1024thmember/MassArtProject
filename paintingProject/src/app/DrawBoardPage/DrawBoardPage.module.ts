@@ -9,6 +9,7 @@ import { DrawBoardColorPlatteComponent } from './DrawBoardPage-colorPlatte/DrawB
 import { DrawBoardControlsComponent } from './DrawBoardPage-controls/DrawBoardPage-controls';
 import { DrawBoardToolsComponent } from './DrawBoardPage-tools/DrawBoardPage-tools';
 import { DrawBoardUserPanelComponent } from './DrawBoardPage-userPanel/DrawBoardPage-userPanel';
+import { DrawBoardColorWeightComponent } from './DrawBoardPage-weightPicker/DrawBoardPage-weightPicker';
 import { DrawBoardPageComponent } from './DrawBoardPage.component';
 import { DrawBoardPageRoutingModule } from './DrawBoardPage.routing.module';
 @NgModule({
@@ -27,6 +28,7 @@ import { DrawBoardPageRoutingModule } from './DrawBoardPage.routing.module';
     DrawBoardUserPanelComponent,
     DrawBoardColorPlatteComponent,
     DrawBoardColorPickerComponent,
+    DrawBoardColorWeightComponent,
   ],
   exports: [],
   providers: [],

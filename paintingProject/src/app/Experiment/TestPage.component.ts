@@ -19,6 +19,17 @@ import { ChangeObjectProperty, DrawingMode } from './Services/types';
     <button (click)="onAddUnselectableCircle()">Add Unselectable Circle</button>
     <button (click)="onChangeColor()">Change color</button>
     <button (click)="onChangeWeight()">Change weight</button>
+    <ng-container *ngIf="showChangeWeightBar">
+      <input
+        #weightSetter
+        name="ram"
+        type="range"
+        min="1"
+        max="15"
+        [value]="2"
+        (input)="setWeightValue(weightSetter.value)"
+      />
+    </ng-container>
     <!--
     <button (click)="drawline(this.selectedElement)">click to draw line</button>
     <button (click)="onSetUnselectableCirclePosition(this.selectedElement)">
@@ -28,12 +39,13 @@ import { ChangeObjectProperty, DrawingMode } from './Services/types';
   </my-container>`,
 })
 export class TestPageComponent implements OnInit {
-  private _canvas: fabric.Canvas;
-  private _drawEditor: DrawingEditor;
+  selectedElement: any;
   canvasElement: HTMLElement | null;
+  showChangeWeightBar: boolean = false;
   //private _mouseUp: (evt: fabric.IEvent) => void;
   private isSelectLastAction: boolean = false;
-  selectedElement: any;
+  private _canvas: fabric.Canvas;
+  private _drawEditor: DrawingEditor;
 
   constructor() {
     //protected _fabricService: FabricService
@@ -97,9 +109,14 @@ export class TestPageComponent implements OnInit {
   }
 
   onChangeWeight() {
+    this.showChangeWeightBar = true;
+  }
+
+  setWeightValue($event: any) {
+    console.log('the set weight value is:', $event);
     this._drawEditor.changeSelectObjectsProperty(
       ChangeObjectProperty.StrokeWeight,
-      '10'
+      String($event)
     );
   }
 

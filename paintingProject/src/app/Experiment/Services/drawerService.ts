@@ -12,9 +12,10 @@ import {
 
 export class DrawingEditor {
   canvas: fabric.Canvas;
-  private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
   public _drawer: IObjectDrawer; //Current drawer
+  public hideToolSignal: boolean = false;
   readonly drawerOptions: fabric.IObjectOptions; //Current drawer options
+  private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
   private readonly drawers: IObjectDrawer[]; //All possible drawers
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
@@ -47,6 +48,9 @@ export class DrawingEditor {
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseDown(pointer.x, pointer.y);
       }
+
+      //Add tool hiden listener
+      this.hideToolSignal = true;
     });
 
     this.canvas.on('mouse:move', (o) => {

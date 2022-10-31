@@ -71,7 +71,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
               </my-button>
             </my-col>
             <my-col [col]="4">
-              <my-button (click)="selectWidthHandler()">
+              <my-button (click)="selectWeightHandler()">
                 <i class="bi bi-border-width"></i>
               </my-button>
             </my-col>
@@ -120,13 +120,20 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
       <my-button (click)="selectMultiSelectHandler()">
         <i class="bi bi-app-indicator"></i>
       </my-button>
-      <my-button (click)="selectWidthHandler()">
+      <my-button (click)="selectWeightHandler()">
         <i class="bi bi-border-width"></i>
       </my-button>
+
       <my-button (click)="selectFillHandler()">
         <i class="bi bi-paint-bucket"></i>
       </my-button>
     </my-container>
+    <ng-container *ngIf="showWeightPicker">
+      <drawBoardPage-weightPicker
+        [maxWeight]="50"
+        (selectedWeight)="setWeightHandler($event)"
+      ></drawBoardPage-weightPicker>
+    </ng-container>
   `,
   styleUrls: ['./DrawBoardPage-tools.scss'],
 })
@@ -136,6 +143,7 @@ export class DrawBoardToolsComponent implements OnInit, OnChanges {
   VerticalAlignment = VerticalAlignment;
   BarColor = BarColor;
   Margin = Margin;
+  showWeightPicker: boolean = false;
 
   @Output() selectLine: EventEmitter<any> = new EventEmitter();
   @Output() selectCurve: EventEmitter<any> = new EventEmitter();
@@ -143,6 +151,7 @@ export class DrawBoardToolsComponent implements OnInit, OnChanges {
   @Output() selectCircle: EventEmitter<any> = new EventEmitter();
   @Output() selectCurveTriangle: EventEmitter<any> = new EventEmitter();
   @Output() selectMultiSelect: EventEmitter<any> = new EventEmitter();
+  @Output() selectWeightSelect: EventEmitter<any> = new EventEmitter();
 
   ngOnInit() {}
 
@@ -176,8 +185,14 @@ export class DrawBoardToolsComponent implements OnInit, OnChanges {
     this.selectMultiSelect.emit(true);
   }
 
-  selectWidthHandler() {
-    console.log('selecting the width');
+  selectWeightHandler() {
+    console.log('selecting the weight');
+    this.selectWeightSelect.emit(true);
+    this.showWeightPicker = true;
+  }
+
+  setWeightHandler($event: any) {
+    console.log('the selected weight is:', $event);
   }
 
   selectFillHandler() {
