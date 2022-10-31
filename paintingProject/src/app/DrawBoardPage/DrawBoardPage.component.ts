@@ -24,6 +24,7 @@ import {
             (selectCircle)="setCircleHandler($event)"
             (selectTriangle)="setTriangleHandler($event)"
             (selectMultiSelect)="setMultiSelectHandler($event)"
+            (selectWeightSelect)="setWeightHandler($event)"
           ></drawBoardPage-tools>
         </my-col>
         <my-col [col]="4">
@@ -110,6 +111,14 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
     this._drawEditor.changeSelectObjectsProperty(
       ChangeObjectProperty.StrokeColor,
       this.color
+    );
+  }
+
+  setWeightHandler($event: number) {
+    console.log('setting weight for current draw');
+    this._drawEditor.changeSelectObjectsProperty(
+      ChangeObjectProperty.StrokeWeight,
+      String($event)
     );
   }
 
