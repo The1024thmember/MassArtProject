@@ -130,7 +130,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
     </my-container>
     <ng-container *ngIf="showWeightPicker">
       <drawBoardPage-weightPicker
-        [maxWeight]="50"
+        [maxWeight]="20"
         (selectedWeight)="setWeightHandler($event)"
       ></drawBoardPage-weightPicker>
     </ng-container>

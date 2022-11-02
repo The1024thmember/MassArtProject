@@ -24,21 +24,24 @@ export class RectDrawer implements IObjectDrawer {
           width: width ? width : 0,
           height: height ? height : 0,
           ...options,
-          selectable: false, //creating by default is non selectable
-          hasControls: false, // the control for change the width, height rotation
-          hasBorders: false, // has selection border
         })
       );
     });
   }
 
-  resize(object: fabric.Rect, x: number, y: number): Promise<fabric.Object> {
+  resize(
+    object: fabric.Rect,
+    x: number,
+    y: number,
+    options?: fabric.IObjectOptions
+  ): Promise<fabric.Object> {
     object
       .set({
         originX: this.origX > x ? 'right' : 'left',
         originY: this.origY > y ? 'bottom' : 'top',
         width: Math.abs(this.origX - x),
         height: Math.abs(this.origY - y),
+        ...options,
       })
       .setCoords();
 

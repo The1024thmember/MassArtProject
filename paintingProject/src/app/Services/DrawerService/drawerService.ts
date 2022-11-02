@@ -33,8 +33,10 @@ export class DrawingEditor {
     this.drawerOptions = {
       stroke: 'black',
       strokeWidth: 1,
-      selectable: true,
-      strokeUniform: false,
+      selectable: false, //creating by default is non selectable
+      strokeUniform: true,
+      hasControls: false, // the control for change the width, height rotation
+      hasBorders: false, // has selection border
       borderColor: BorderColor.xxxlight,
       cornerColor: BorderColor.xxlight,
       transparentCorners: false,
@@ -50,7 +52,7 @@ export class DrawingEditor {
   // ---- need to add validations for the input value ---//
   //Change the color for the current selection
   public setDrawingColor(color: string) {
-    this.drawerOptions = { ...this.drawerOptions, stroke: color };
+    this.drawerOptions.stroke = color;
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
         await this._drawer.changeProperty(
@@ -66,7 +68,7 @@ export class DrawingEditor {
   // ---- need to add validations for the input value ---//
   //Change the color for the current selection
   public setDrawingWeight(weight: number) {
-    this.drawerOptions = { ...this.drawerOptions, strokeWidth: weight };
+    this.drawerOptions.strokeWidth = weight;
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
         await this._drawer.changeProperty(

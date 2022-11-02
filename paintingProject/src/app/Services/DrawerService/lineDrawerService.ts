@@ -16,15 +16,17 @@ export class LineDrawer implements IObjectDrawer {
       resolve(
         new fabric.Line([x, y, x2 ? x2 : x, y2 ? y2 : y], {
           ...options,
-          selectable: false, //creating by default is non selectable
-          hasControls: false, // the control for change the width, height rotation
-          hasBorders: false, // has selection border
         })
       );
     });
   }
 
-  resize(object: fabric.Line, x: number, y: number): Promise<fabric.Object> {
+  resize(
+    object: fabric.Line,
+    x: number,
+    y: number,
+    options?: fabric.IObjectOptions
+  ): Promise<fabric.Object> {
     //Change the secondary point (x2, y2) of the object
     //This resizes the object between starting point (x,y)
     //and secondary point (x2,y2), where x2 and y2 have new values.
@@ -32,6 +34,7 @@ export class LineDrawer implements IObjectDrawer {
       .set({
         x2: x,
         y2: y,
+        ...options,
       })
       .setCoords();
 

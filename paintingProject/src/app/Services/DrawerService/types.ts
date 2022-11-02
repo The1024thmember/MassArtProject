@@ -58,7 +58,8 @@ export interface IObjectDrawer {
   readonly resize: (
     object: any,
     x: number,
-    y: number
+    y: number,
+    options?: fabric.IObjectOptions
   ) => Promise<fabric.Object>;
 
   readonly changeProperty: (

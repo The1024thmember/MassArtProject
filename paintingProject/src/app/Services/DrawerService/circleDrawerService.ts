@@ -22,16 +22,18 @@ export class CircleDrawer implements IObjectDrawer {
           left: x,
           top: y,
           ...options,
-          selectable: false, //creating by default is non selectable
-          hasControls: false, // the control for change the width, height rotation
-          hasBorders: false, // has selection border
           radius: radius ? radius : 0,
         })
       );
     });
   }
 
-  resize(object: fabric.Circle, x: number, y: number): Promise<fabric.Object> {
+  resize(
+    object: fabric.Circle,
+    x: number,
+    y: number,
+    options?: fabric.IObjectOptions
+  ): Promise<fabric.Object> {
     //Change the secondary point (x2, y2) of the object
     //This resizes the object between starting point (x,y)
     //and secondary point (x2,y2), where x2 and y2 have new values.
@@ -43,6 +45,7 @@ export class CircleDrawer implements IObjectDrawer {
           Math.min(Math.abs(x - this.origX), Math.abs(y - this.origY)),
           this.defaultRadius
         ),
+        ...options,
       })
       .setCoords();
 
