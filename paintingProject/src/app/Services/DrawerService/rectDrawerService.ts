@@ -1,11 +1,5 @@
 import { fabric } from 'fabric';
-import {
-  BorderColor,
-  ChangeObjectProperty,
-  CornerSize,
-  DrawingMode,
-  IObjectDrawer,
-} from './types';
+import { ChangeObjectProperty, DrawingMode, IObjectDrawer } from './types';
 
 export class RectDrawer implements IObjectDrawer {
   private origX: number;
@@ -33,12 +27,6 @@ export class RectDrawer implements IObjectDrawer {
           selectable: false, //creating by default is non selectable
           hasControls: false, // the control for change the width, height rotation
           hasBorders: false, // has selection border
-          borderColor: BorderColor.xxxlight,
-          cornerColor: BorderColor.xxlight,
-          transparentCorners: false,
-          cornerSize: CornerSize.desktop,
-          fill: undefined,
-          hoverCursor: 'default',
         })
       );
     });

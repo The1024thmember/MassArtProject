@@ -3,7 +3,9 @@ import { CircleDrawer } from './circleDrawerService';
 import { LineDrawer } from './lineDrawerService';
 import { RectDrawer } from './rectDrawerService';
 import {
+  BorderColor,
   ChangeObjectProperty,
+  CornerSize,
   CursorMode,
   DrawingMode,
   IObjectDrawer,
@@ -12,9 +14,9 @@ import {
 
 export class DrawingEditor {
   canvas: fabric.Canvas;
-  private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
   public _drawer: IObjectDrawer; //Current drawer
-  readonly drawerOptions: fabric.IObjectOptions; //Current drawer options
+  private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
+  private drawerOptions: fabric.IObjectOptions; //Current drawer options
   private readonly drawers: IObjectDrawer[]; //All possible drawers
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
@@ -33,6 +35,12 @@ export class DrawingEditor {
       strokeWidth: 1,
       selectable: true,
       strokeUniform: true,
+      borderColor: BorderColor.xxxlight,
+      cornerColor: BorderColor.xxlight,
+      transparentCorners: false,
+      cornerSize: CornerSize.desktop,
+      fill: undefined,
+      hoverCursor: 'default',
     };
 
     this.isDown = false; //To start, user is NOT dragging the mouse

@@ -1,11 +1,5 @@
 import { fabric } from 'fabric';
-import {
-  BorderColor,
-  ChangeObjectProperty,
-  CornerSize,
-  DrawingMode,
-  IObjectDrawer,
-} from './types';
+import { ChangeObjectProperty, DrawingMode, IObjectDrawer } from './types';
 
 export class CircleDrawer implements IObjectDrawer {
   drawingMode: DrawingMode = DrawingMode.Circle;
@@ -31,13 +25,7 @@ export class CircleDrawer implements IObjectDrawer {
           selectable: false, //creating by default is non selectable
           hasControls: false, // the control for change the width, height rotation
           hasBorders: false, // has selection border
-          borderColor: BorderColor.xxxlight,
-          cornerColor: BorderColor.xxlight,
-          transparentCorners: false,
-          cornerSize: CornerSize.desktop,
           radius: radius ? radius : 0,
-          fill: undefined,
-          hoverCursor: 'default',
         })
       );
     });
