@@ -1,0 +1,17 @@
+@import 'settings';
+
+.Container {
+  &-firstRowTools {
+    margin-bottom: 200px;
+  }
+}
+
+.MyCanvas {
+  height: 700px;
+  width: 900px;
+  margin: auto;
+  position: absolute;
+  left: 450px;
+  top: 100px;
+  border: 20px solid $orange-xxxdark;
+}

@@ -19,7 +19,7 @@ const routes: Routes = [
   {
     path: 'exp',
     loadChildren: () =>
-      import('./Experiment/TestPage.module').then((m) => m.TestPageModule),
+      import('./Experiment/Exp.module').then((m) => m.ExpModule),
   },
 ];
 

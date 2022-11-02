@@ -1,0 +1,15 @@
+@import 'settings';
+
+.ColorPicker {
+  align-items: center;
+  background-color: $neutral-xxxlight;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  height: 500px;
+  width: 300px;
+  box-shadow: 10px 10px 5px lightgrey;
+
+}

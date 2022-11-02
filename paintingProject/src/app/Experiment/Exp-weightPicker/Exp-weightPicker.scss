@@ -1,0 +1,19 @@
+@import 'settings';
+
+.WeightPicker {
+  background-color:  $neutral-xxxlight;
+  border-radius: 10px;
+  box-shadow: 10px 10px 5px lightgrey;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  height: 35px;
+  width: 320px;
+}
+
+Input[type='range'] {
+  width: 300px;
+  accent-color: $neutral-xlight;
+}
+
+
