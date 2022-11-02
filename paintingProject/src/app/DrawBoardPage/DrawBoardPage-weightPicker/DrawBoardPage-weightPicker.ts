@@ -20,7 +20,7 @@ import { ColorEvent } from 'ngx-color';
         min="1"
         [max]="maxWeight"
         [value]="2"
-        (input)="setWeightValue(weightSetter.value)"
+        (input)="setWeightValueContinuous(weightSetter.value)"
       />
     </my-container>
   `,
@@ -28,13 +28,13 @@ import { ColorEvent } from 'ngx-color';
 })
 export class DrawBoardColorWeightComponent implements OnInit, OnChanges {
   @Input() maxWeight: number;
+  //Set whenever the cursor moves
   @Output() selectedWeight: EventEmitter<ColorEvent> = new EventEmitter();
-
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges): void {}
 
-  setWeightValue($event: any) {
+  setWeightValueContinuous($event: any) {
     this.selectedWeight.emit($event);
   }
 }
