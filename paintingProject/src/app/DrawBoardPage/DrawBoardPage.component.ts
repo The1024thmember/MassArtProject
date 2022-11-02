@@ -6,11 +6,7 @@ import {
 } from '@angular/core';
 import { fabric } from 'fabric';
 import { Margin } from '../Directives/Margin';
-import {
-  ChangeObjectProperty,
-  DrawingEditor,
-  DrawingMode,
-} from '../Services/DrawerService';
+import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
 
 @Component({
   template: `
@@ -108,18 +104,12 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
   setColorHandler($event: string) {
     console.log('setting color for current draw');
     this.color = $event;
-    this._drawEditor.changeSelectObjectsProperty(
-      ChangeObjectProperty.StrokeColor,
-      this.color
-    );
+    this._drawEditor.setDrawingColor(this.color);
   }
 
   setWeightHandler($event: number) {
     console.log('setting weight for current draw');
-    this._drawEditor.changeSelectObjectsProperty(
-      ChangeObjectProperty.StrokeWeight,
-      String($event)
-    );
+    this._drawEditor.setDrawingWeight($event);
   }
 
   //iterating all canvas objects, make all of them selectable

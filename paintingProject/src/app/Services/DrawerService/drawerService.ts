@@ -34,7 +34,7 @@ export class DrawingEditor {
       stroke: 'black',
       strokeWidth: 1,
       selectable: true,
-      strokeUniform: true,
+      strokeUniform: false,
       borderColor: BorderColor.xxxlight,
       cornerColor: BorderColor.xxlight,
       transparentCorners: false,
@@ -45,6 +45,71 @@ export class DrawingEditor {
 
     this.isDown = false; //To start, user is NOT dragging the mouse
     this.initializeCanvasEvents();
+  }
+
+  // ---- need to add validations for the input value ---//
+  //Change the color for the current selection
+  public setDrawingColor(color: string) {
+    this.drawerOptions = { ...this.drawerOptions, stroke: color };
+    if (this.cursorMode == CursorMode.Select) {
+      this.canvas.getActiveObjects().forEach(async (obj) => {
+        await this._drawer.changeProperty(
+          obj,
+          ChangeObjectProperty.StrokeColor,
+          color
+        );
+      });
+      this.canvas.renderAll();
+    }
+  }
+
+  // ---- need to add validations for the input value ---//
+  //Change the color for the current selection
+  public setDrawingWeight(weight: number) {
+    this.drawerOptions = { ...this.drawerOptions, strokeWidth: weight };
+    if (this.cursorMode == CursorMode.Select) {
+      this.canvas.getActiveObjects().forEach(async (obj) => {
+        await this._drawer.changeProperty(
+          obj,
+          ChangeObjectProperty.StrokeWeight,
+          String(weight)
+        );
+      });
+      this.canvas.renderAll();
+    }
+  }
+
+  public setDrawingTool(tool: DrawingMode) {
+    this._drawer = this.drawers[tool];
+    console.log('Current tools is:', this._drawer);
+  }
+
+  //is this optimal? since everytime I need to loop every single object one user has created
+  //and whenever the user select other tools I need to make the object none selectable
+  public makeObjectsSeletable() {
+    console.log('make objects selectable');
+    this.canvas.getObjects().forEach((element) => {
+      element.selectable = true;
+      element.hasBorders = true;
+      element.hasControls = true;
+      element.hoverCursor = 'move';
+    });
+    this.cursorMode = CursorMode.Select;
+    this.canvas.renderAll();
+  }
+
+  //is this optimal? since everytime I need to loop every single object one user has created
+  //and whenever the user select other tools I need to make the object none selectable
+  public makeObjectsNoneSeletable() {
+    console.log('make objects Noneselectable');
+    this.canvas.getObjects().forEach((element) => {
+      element.selectable = false;
+      element.hasBorders = false;
+      element.hasControls = false;
+      element.hoverCursor = 'default';
+    });
+    this.cursorMode = CursorMode.Draw;
+    this.canvas.renderAll();
   }
 
   private initializeCanvasEvents() {
@@ -101,51 +166,6 @@ export class DrawingEditor {
       // mouse click on empty canvas, so no object is selected
       console.log('No object under selection');
     });
-  }
-
-  public setDrawingTool(tool: DrawingMode) {
-    this._drawer = this.drawers[tool];
-    console.log('Current tools is:', this._drawer);
-  }
-
-  //is this optimal? since everytime I need to loop every single object one user has created
-  //and whenever the user select other tools I need to make the object none selectable
-  public makeObjectsSeletable() {
-    console.log('make objects selectable');
-    this.canvas.getObjects().forEach((element) => {
-      element.selectable = true;
-      element.hasBorders = true;
-      element.hasControls = true;
-      element.hoverCursor = 'move';
-    });
-    this.cursorMode = CursorMode.Select;
-    this.canvas.renderAll();
-  }
-
-  //is this optimal? since everytime I need to loop every single object one user has created
-  //and whenever the user select other tools I need to make the object none selectable
-  public makeObjectsNoneSeletable() {
-    console.log('make objects Noneselectable');
-    this.canvas.getObjects().forEach((element) => {
-      element.selectable = false;
-      element.hasBorders = false;
-      element.hasControls = false;
-      element.hoverCursor = 'default';
-    });
-    this.cursorMode = CursorMode.Draw;
-    this.canvas.renderAll();
-  }
-
-  // ---- need to add validations for the input value ---//
-  //Change the color for the current selection
-  public async changeSelectObjectsProperty(
-    option: ChangeObjectProperty,
-    value: string
-  ) {
-    this.canvas.getActiveObjects().forEach(async (obj) => {
-      await this._drawer.changeProperty(obj, option, value);
-    });
-    this.canvas.renderAll();
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
