@@ -7,6 +7,7 @@ import {
 import { fabric } from 'fabric';
 import { Margin } from '../Directives/Margin';
 import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
+import { InteractService } from '../Services/InteractService';
 
 @Component({
   template: `
@@ -45,8 +46,9 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
   Margin = Margin;
 
   private _canvas: fabric.Canvas;
-  private _drawEditor: DrawingEditor;
   private isSelectLastAction: boolean = false;
+  private _drawEditor: DrawingEditor;
+  private _interactService: InteractService;
 
   selectedElement: any;
   color: string = '#000';
@@ -66,6 +68,7 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
     });
     this._canvas.selection = true; //group selection
     this._drawEditor = new DrawingEditor(this._canvas);
+    this._interactService = new InteractService(this._canvas);
   }
 
   ngOnChanges() {

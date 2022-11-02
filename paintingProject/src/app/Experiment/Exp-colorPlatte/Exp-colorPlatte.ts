@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ColorEvent } from 'ngx-color';
 import {
   HorizontalAlignment,
@@ -118,6 +118,7 @@ export class ExpColorPlatteComponent implements OnInit {
   colorsHistory: string[] = [];
 
   // Need to think where to extract the string only color
+  @Input() selectedObjectColor: string;
   @Output() selectedColor: EventEmitter<string> = new EventEmitter();
 
   ngOnInit() {}

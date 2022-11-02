@@ -1,0 +1,1 @@
+export { InteractService } from './interactService';

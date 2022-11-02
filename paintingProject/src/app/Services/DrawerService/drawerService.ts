@@ -12,6 +12,10 @@ import {
   ObjectType,
 } from './types';
 
+/*
+  The function for this service is to:
+  Create new objects or modify existing objects
+*/
 export class DrawingEditor {
   canvas: fabric.Canvas;
   public _drawer: IObjectDrawer; //Current drawer
@@ -47,6 +51,7 @@ export class DrawingEditor {
 
     this.isDown = false; //To start, user is NOT dragging the mouse
     this.initializeCanvasEvents();
+    this.setDrawingTool(DrawingMode.Line);
   }
 
   // ---- need to add validations for the input value ---//
@@ -82,13 +87,11 @@ export class DrawingEditor {
 
   public setDrawingTool(tool: DrawingMode) {
     this._drawer = this.drawers[tool];
-    console.log('Current tools is:', this._drawer);
   }
 
   //is this optimal? since everytime I need to loop every single object one user has created
   //and whenever the user select other tools I need to make the object none selectable
   public makeObjectsSeletable() {
-    console.log('make objects selectable');
     this.canvas.getObjects().forEach((element) => {
       element.selectable = true;
       element.hasBorders = true;
@@ -102,7 +105,6 @@ export class DrawingEditor {
   //is this optimal? since everytime I need to loop every single object one user has created
   //and whenever the user select other tools I need to make the object none selectable
   public makeObjectsNoneSeletable() {
-    console.log('make objects Noneselectable');
     this.canvas.getObjects().forEach((element) => {
       element.selectable = false;
       element.hasBorders = false;
@@ -117,7 +119,6 @@ export class DrawingEditor {
     this.canvas.on('mouse:down', (o) => {
       const e = <MouseEvent>o.e;
       const pointer = this.canvas.getPointer(o.e);
-
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseDown(pointer.x, pointer.y);
       }
@@ -137,35 +138,6 @@ export class DrawingEditor {
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseUp();
       }
-    });
-
-    /*  Will be trigger via:
-        1) create new object, the new object will be selected
-        2) when currently there is no selection, selected something
-    */
-
-    this.canvas.on('selection:created', (o) => {
-      // after creating, it is selected by default
-      console.log(`${o.target} is being selected`);
-      console.log(o);
-    });
-
-    /*  Will be trigger via:
-        1) change selection from A object to B object
-    */
-    this.canvas.on('selection:updated', (o) => {
-      // change selection
-      console.log(`${o.target} is being chosen`);
-      console.log(o);
-    });
-
-    /*  Will be trigger via:
-        1) When previous has some selected object, then remove them by click on
-           elsewhere in the canvas
-    */
-    this.canvas.on('selection:cleared', (o) => {
-      // mouse click on empty canvas, so no object is selected
-      console.log('No object under selection');
     });
   }
 
@@ -189,24 +161,21 @@ export class DrawingEditor {
   }
 
   private async mouseUp(): Promise<any> {
-    this.canvas.setActiveObject(this.object);
+    // Delete the object that is created on clear selection (or without drag movement)
     switch (this.object.type) {
       case ObjectType.Line: {
-        console.log(this.object);
         if (this.object.width === 0 && this.object.height === 0) {
           this.canvas.remove(this.object);
         }
         break;
       }
       case ObjectType.Rectangle: {
-        console.log(this.object);
         if (this.object.width === 0 || this.object.height === 0) {
           this.canvas.remove(this.object);
         }
         break;
       }
       case ObjectType.Circle: {
-        console.log(this.object);
         if (this.object.width === 0) {
           this.canvas.remove(this.object);
         }
@@ -215,10 +184,10 @@ export class DrawingEditor {
     }
 
     //Making element default as none selective
+    this.canvas.setActiveObject(this.object);
     this.canvas.discardActiveObject().renderAll();
     console.log('Mouse up: Get current selection:');
     console.log(this.canvas.getActiveObjects());
-    console.log('Current cursor mode:', this.cursorMode);
   }
 
   //Method which allows any drawer to Promise their make() function
@@ -237,27 +206,5 @@ export class DrawingEditor {
     value: string
   ): Promise<fabric.Object> {
     return await this._drawer.changeProperty(this.object, option, value);
-  }
-
-  private isMultipleSelected() {
-    if (this.canvas.getActiveObjects().length > 1) {
-      return true;
-    }
-    return false;
-  }
-
-  private isSingleSelected() {
-    if (this.canvas.getActiveObjects().length == 1) {
-      return true;
-    }
-    return false;
-  }
-
-  // Remove active (selected) objects
-  private removeActiveObject() {
-    this.canvas.getActiveObjects().forEach((obj) => {
-      this.canvas.remove(obj);
-    });
-    this.canvas.discardActiveObject().renderAll();
   }
 }
