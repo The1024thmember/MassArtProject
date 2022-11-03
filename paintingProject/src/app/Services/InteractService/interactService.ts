@@ -1,3 +1,4 @@
+import * as Rx from 'rxjs';
 /*
   All the functionality within this service is exectuable when it is in selection mode
   The function for this service is to:
@@ -6,13 +7,23 @@
 */
 export class InteractService {
   canvas: fabric.Canvas;
-  public selectedObjectColor: string;
-  public selectedObjectWeight: number;
+  selectedObjectColor$: Rx.Subject<string>;
+  selectedObjectWidth$: Rx.Subject<number>;
+
+  private currentSelectObject: fabric.Object | null;
   private activeObjects: fabric.Object[];
 
-  constructor(canvas: fabric.Canvas) {
+  constructor(
+    canvas: fabric.Canvas,
+    selectedObjectColor$: Rx.Subject<string>,
+    selectedObjectWidth$: Rx.Subject<number>
+  ) {
     //Create the Fabric canvas
     this.canvas = canvas;
+    this.selectedObjectColor$ = selectedObjectColor$;
+    this.selectedObjectWidth$ = selectedObjectWidth$;
+
+    //Create event listener on canvas
     this.initializeCanvasEvents();
   }
 
@@ -29,8 +40,8 @@ export class InteractService {
         console.log(`${o.e} is being selected`);
         console.log(o);
         this.getCurrentActiveObjects();
-        this.selectedObjectColor = this.getSelectedObjectColor();
-        this.selectedObjectWeight = this.getSelectedObjectWeight();
+        this.selectedObjectColor$.next(this.getSelectedObjectColor());
+        this.selectedObjectWidth$.next(this.getSelectedObjectWeight());
       }
     });
 
@@ -41,6 +52,9 @@ export class InteractService {
       // change selection
       console.log(`${o.target} is being chosen`);
       console.log(o);
+      this.getCurrentActiveObjects();
+      this.selectedObjectColor$.next(this.getSelectedObjectColor());
+      this.selectedObjectWidth$.next(this.getSelectedObjectWeight());
     });
 
     /*  Will be trigger via:
@@ -55,22 +69,29 @@ export class InteractService {
 
   private getCurrentActiveObjects() {
     this.activeObjects = this.canvas.getActiveObjects();
+    if (this.activeObjects.length === 1) {
+      this.currentSelectObject = this.activeObjects[0];
+    } else {
+      this.currentSelectObject = null;
+    }
   }
 
   private getSelectedObjectColor(): string {
-    if (this.isMultipleSelected()) {
-      this.selectedObjectColor = 'black';
-    } else if (this.isSingleSelected()) {
-      this.selectedObjectColor = 'black';
+    if (!this.currentSelectObject) {
+      // means there are multiple objects selected
+      return 'black';
+    } else {
+      return this.currentSelectObject?.stroke || 'black';
     }
-    return this.selectedObjectColor;
   }
 
   private getSelectedObjectWeight(): number {
-    if (this.isMultipleSelected()) {
-      this.selectedObjectWeight = 2;
+    if (!this.currentSelectObject) {
+      // means there are multiple objects selected
+      return 2;
+    } else {
+      return this.currentSelectObject?.strokeWidth || 2;
     }
-    return this.selectedObjectWeight;
   }
 
   //____________________________________________________________________________

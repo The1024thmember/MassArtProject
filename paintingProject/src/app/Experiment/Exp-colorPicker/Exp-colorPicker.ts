@@ -16,7 +16,7 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
     <my-container class="ColorPicker">
       <my-heading [headingType]="HeadingType.H3">Color Wheel</my-heading>
       <color-sketch
-        [color]="color"
+        [color]="colorFromHistoryOrObject"
         (onChange)="colorChangeHandler($event)"
         (onChangeComplete)="changeComplete($event)"
       ></color-sketch>
@@ -26,17 +26,14 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 })
 export class ExpColorPickerComponent implements OnInit, OnChanges {
   HeadingType = HeadingType;
-  color: string;
 
-  @Input() selectedColorFromHistory: string;
+  @Input() colorFromHistoryOrObject: string;
   @Output() selectedColor: EventEmitter<ColorEvent> = new EventEmitter();
 
-  ngOnInit() {
-    this.color = this.selectedColorFromHistory;
-  }
+  ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.color = this.selectedColorFromHistory;
+    console.log('change color to set:', this.colorFromHistoryOrObject);
   }
 
   colorChangeHandler($event: ColorEvent) {

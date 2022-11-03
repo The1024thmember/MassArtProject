@@ -4,6 +4,7 @@ import { ColorSketchModule } from 'ngx-color/sketch';
 import { ColorSliderModule } from 'ngx-color/slider';
 import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DirectivesModule } from '../Directives';
+import { MyAsyncPipeModule } from '../Pipes';
 import { ExpColorPickerComponent } from './Exp-colorPicker/Exp-colorPicker';
 import { ExpColorPlatteComponent } from './Exp-colorPlatte/Exp-colorPlatte';
 import { ExpControlsComponent } from './Exp-controls/Exp-controls';
@@ -21,6 +22,7 @@ import { ExpRoutingModule } from './Exp.routing.module';
     DirectivesModule,
     ColorSketchModule,
     ColorSliderModule,
+    MyAsyncPipeModule,
   ],
   declarations: [
     ExpComponent,

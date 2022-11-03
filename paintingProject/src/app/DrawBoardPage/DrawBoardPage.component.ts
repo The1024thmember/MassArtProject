@@ -5,10 +5,10 @@ import {
   OnInit,
 } from '@angular/core';
 import { fabric } from 'fabric';
+import * as Rx from 'rxjs';
 import { Margin } from '../Directives/Margin';
 import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
-
 @Component({
   template: `
     <my-container class="Container">
@@ -50,6 +50,9 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
   private _drawEditor: DrawingEditor;
   private _interactService: InteractService;
 
+  selectedObjectColor$ = new Rx.Subject<string>();
+  selectedObjectWidth$ = new Rx.Subject<number>();
+
   selectedElement: any;
   color: string = '#000';
   start: number[] = [0, 0];
@@ -68,7 +71,11 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
     });
     this._canvas.selection = true; //group selection
     this._drawEditor = new DrawingEditor(this._canvas);
-    this._interactService = new InteractService(this._canvas);
+    this._interactService = new InteractService(
+      this._canvas,
+      this.selectedObjectColor$,
+      this.selectedObjectWidth$
+    );
   }
 
   ngOnChanges() {

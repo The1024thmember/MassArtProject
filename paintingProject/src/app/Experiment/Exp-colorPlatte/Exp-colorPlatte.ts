@@ -1,5 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { ColorEvent } from 'ngx-color';
+import * as Rx from 'rxjs';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -91,14 +99,16 @@ import { Mycolor } from '../Exp-colorPicker/colorPicker.type';
 
       <Exp-colorPicker
         *ngIf="isColorPickerShown"
-        [selectedColorFromHistory]="currentColor"
+        [colorFromHistoryOrObject]="
+          (selectedColorFromHistoryOrObject$ | myAsync) ?? 'black'
+        "
         (selectedColor)="selectColorFromPlatteHandler($event)"
       ></Exp-colorPicker>
     </my-container>
   `,
   styleUrls: ['./Exp-colorPlatte.scss'],
 })
-export class ExpColorPlatteComponent implements OnInit {
+export class ExpColorPlatteComponent implements OnInit, OnChanges {
   HeadingType = HeadingType;
   HorizontalAlignment = HorizontalAlignment;
   VerticalAlignment = VerticalAlignment;
@@ -117,11 +127,20 @@ export class ExpColorPlatteComponent implements OnInit {
   currentColor: string = '#333';
   colorsHistory: string[] = [];
 
+  selectedColorFromHistoryOrObject$ = new Rx.Observable<string>();
+
   // Need to think where to extract the string only color
   @Input() selectedObjectColor: string;
   @Output() selectedColor: EventEmitter<string> = new EventEmitter();
 
   ngOnInit() {}
+
+  ngOnChanges() {
+    this.selectedColorFromHistoryOrObject$ = Rx.merge(
+      this.currentColor,
+      this.selectedObjectColor
+    );
+  }
 
   expandColorHistoryHandler() {
     console.log('expand the history');
@@ -139,11 +158,6 @@ export class ExpColorPlatteComponent implements OnInit {
   }
 
   selectColorFromPlatteHandler($event: ColorEvent) {
-    console.log(
-      'the previous used color is:',
-      this.colorsHistory ? this.colorsHistory[0] : null
-    );
-
     if (!this.colorsHistory.includes(this.currentColor)) {
       if (this.colorsHistory.length < 7) {
         this.colorsHistory.unshift(this.currentColor);

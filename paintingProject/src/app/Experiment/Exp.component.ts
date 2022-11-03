@@ -5,6 +5,8 @@ import {
   OnInit,
 } from '@angular/core';
 import { fabric } from 'fabric';
+import * as Rx from 'rxjs';
+import { map } from 'rxjs';
 import { Margin } from '../Directives/Margin';
 import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
@@ -32,7 +34,7 @@ import { InteractService } from '../Services/InteractService';
         </my-col>
       </my-grid>
       <Exp-colorPlatte
-        [selectedObjectColor]="selectedObjectColor"
+        [selectedObjectColor]="(color$ | myAsync) ?? 'black'"
         (selectedColor)="setColorHandler($event)"
       ></Exp-colorPlatte>
       <my-container class="MyCanvas">
@@ -46,16 +48,19 @@ import { InteractService } from '../Services/InteractService';
 export class ExpComponent implements OnInit, OnChanges {
   Margin = Margin;
 
+  selectedElement: any;
+
+  start: number[] = [0, 0];
+  end: number[] = [900, 900];
+
+  color$ = new Rx.Observable<string>();
+  selectedObjectColor$ = new Rx.Subject<string>();
+  selectedObjectWidth$ = new Rx.Subject<number>();
+
   private _canvas: fabric.Canvas;
   private isSelectLastAction: boolean = false;
   private _drawEditor: DrawingEditor;
   private _interactService: InteractService;
-
-  selectedObjectColor: string = 'black';
-  selectedElement: any;
-  color: string = '#000';
-  start: number[] = [0, 0];
-  end: number[] = [900, 900];
 
   constructor() {}
 
@@ -70,7 +75,16 @@ export class ExpComponent implements OnInit, OnChanges {
     });
     this._canvas.selection = true; //group selection
     this._drawEditor = new DrawingEditor(this._canvas);
-    this._interactService = new InteractService(this._canvas);
+    this._interactService = new InteractService(
+      this._canvas,
+      this.selectedObjectColor$,
+      this.selectedObjectWidth$
+    );
+
+    this.color$ = Rx.combineLatest([this.selectedObjectColor$]).pipe(
+      map((selectedColor: any) => selectedColor ?? 'black'),
+      Rx.tap((_) => console.log(_))
+    );
   }
 
   ngOnChanges() {
@@ -108,8 +122,7 @@ export class ExpComponent implements OnInit, OnChanges {
 
   setColorHandler($event: string) {
     console.log('setting color for current draw');
-    this.color = $event;
-    this._drawEditor.setDrawingColor(this.color);
+    this._drawEditor.setDrawingColor($event);
   }
 
   setWeightHandler($event: number) {
