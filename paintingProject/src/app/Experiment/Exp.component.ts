@@ -34,7 +34,7 @@ import { InteractService } from '../Services/InteractService';
         </my-col>
       </my-grid>
       <Exp-colorPlatte
-        [selectedObjectColor]="(color$ | myAsync) ?? 'black'"
+        [selectedObjectColor]="color$"
         (selectedColor)="setColorHandler($event)"
       ></Exp-colorPlatte>
       <my-container class="MyCanvas">
