@@ -30,7 +30,12 @@ export class ExpColorPickerComponent implements OnInit, OnChanges {
   @Input() colorFromHistoryOrObject: string; //The color set from history or selected object
   @Output() selectedColor: EventEmitter<ColorEvent> = new EventEmitter();
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(
+      'Exp-colorPicker colorFromHistoryOrObject:',
+      this.colorFromHistoryOrObject
+    );
+  }
 
   ngOnChanges(changes: SimpleChanges): void {}
 

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { ColorEvent } from 'ngx-color';
 import * as Rx from 'rxjs';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -105,7 +105,7 @@ import { Mycolor } from '../Exp-colorPicker/colorPicker.type';
       <Exp-colorPicker
         *ngIf="isColorPickerShown"
         [colorFromHistoryOrObject]="
-          (selectedColorFromHistoryOrObject$ | myAsync) ?? 'black'
+          (selectedColorFromHistoryOrObject$ | myAsync) ?? currentColor
         "
         (selectedColor)="selectColorFromPlatteHandler($event)"
       ></Exp-colorPicker>
@@ -140,18 +140,13 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
   @Output() selectedColor: EventEmitter<string> = new EventEmitter(); // The color selected from color Platte or ColorPicker
 
   ngOnInit() {
-    this.selectedColorFromHistoryOrObject$ = Rx.combineLatest([
-      this.ObjectColor,
-      this.currentColorObservable$,
-    ]).pipe(
+    this.selectedColorFromHistoryOrObject$ = Rx.merge(
+      this.ObjectColor, // The selected object color
+      this.currentColorObservable$ // The color from color picker or history
+    ).pipe(
       Rx.distinctUntilChanged(),
-      tap(([a, b]) => {
-        console.error('selectedObjectColor:', a);
-        console.error('currentColorObservable:', b);
-      }),
-      map((result) => result[0]),
-      tap((_) => {
-        console.error('finally:', _);
+      tap((result) => {
+        console.error('selectedColorFromHistoryOrObject:', result);
       })
     );
 
