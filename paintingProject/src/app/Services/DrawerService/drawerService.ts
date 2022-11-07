@@ -186,8 +186,6 @@ export class DrawingEditor {
     //Making element default as none selective
     this.canvas.setActiveObject(this.object);
     this.canvas.discardActiveObject().renderAll();
-    console.log('Mouse up: Get current selection:');
-    console.log(this.canvas.getActiveObjects());
   }
 
   //Method which allows any drawer to Promise their make() function

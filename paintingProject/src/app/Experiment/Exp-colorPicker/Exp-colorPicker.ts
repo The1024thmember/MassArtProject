@@ -27,21 +27,16 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 export class ExpColorPickerComponent implements OnInit, OnChanges {
   HeadingType = HeadingType;
 
-  @Input() colorFromHistoryOrObject: string;
+  @Input() colorFromHistoryOrObject: string; //The color set from history or selected object
   @Output() selectedColor: EventEmitter<ColorEvent> = new EventEmitter();
 
   ngOnInit() {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('change color to set:', this.colorFromHistoryOrObject);
-  }
+  ngOnChanges(changes: SimpleChanges): void {}
 
-  colorChangeHandler($event: ColorEvent) {
-    console.log('onchange', $event.color);
-  }
+  colorChangeHandler($event: ColorEvent) {}
 
   changeComplete($event: ColorEvent) {
-    console.log('complete:', $event.color);
     this.selectedColor.emit($event);
   }
 }

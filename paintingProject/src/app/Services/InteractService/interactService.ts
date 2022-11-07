@@ -37,8 +37,6 @@ export class InteractService {
       // the current found way to distinguish between creation select and
       // select via the selection mode and click on the object is the mouse event
       if (o.e) {
-        console.log(`${o.e} is being selected`);
-        console.log(o);
         this.getCurrentActiveObjects();
         this.selectedObjectColor$.next(this.getSelectedObjectColor());
         this.selectedObjectWidth$.next(this.getSelectedObjectWeight());
@@ -50,8 +48,6 @@ export class InteractService {
     */
     this.canvas.on('selection:updated', (o) => {
       // change selection
-      console.log(`${o.target} is being chosen`);
-      console.log(o);
       this.getCurrentActiveObjects();
       this.selectedObjectColor$.next(this.getSelectedObjectColor());
       this.selectedObjectWidth$.next(this.getSelectedObjectWeight());
@@ -63,7 +59,6 @@ export class InteractService {
     */
     this.canvas.on('selection:cleared', (o) => {
       // mouse click on empty canvas, so no object is selected
-      console.log('No object under selection');
     });
   }
 

@@ -136,12 +136,12 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
   currentColorObservable$ = new Rx.Subject<string>();
 
   // Need to think where to extract the string only color
-  @Input() selectedObjectColor: Rx.Observable<string>;
-  @Output() selectedColor: EventEmitter<string> = new EventEmitter();
+  @Input() ObjectColor: Rx.Observable<string>; // The selected object color
+  @Output() selectedColor: EventEmitter<string> = new EventEmitter(); // The color selected from color Platte or ColorPicker
 
   ngOnInit() {
     this.selectedColorFromHistoryOrObject$ = Rx.combineLatest([
-      this.selectedObjectColor.pipe(map((temp) => temp[0])),
+      this.ObjectColor,
       this.currentColorObservable$,
     ]).pipe(
       Rx.distinctUntilChanged(),
@@ -149,24 +149,26 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
         console.error('selectedObjectColor:', a);
         console.error('currentColorObservable:', b);
       }),
-      map((result) => result[0])
+      map((result) => result[0]),
+      tap((_) => {
+        console.error('finally:', _);
+      })
     );
+
+    console.log('exp-colorPlatte input ObjectColor:', this.ObjectColor);
   }
 
   ngOnChanges(changes: any) {}
 
   expandColorHistoryHandler() {
-    console.log('expand the history');
     this.isHistoryExpanded = true;
   }
 
   unExpandColorHistoryHandler() {
-    console.log('fold the history');
     this.isHistoryExpanded = false;
   }
 
   colorSelectorOpenHandler() {
-    console.log('open the color selector');
     this.isColorPickerShown = true;
   }
 
@@ -181,8 +183,6 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
         ];
       }
     }
-
-    console.log('the selected color is:', $event.color.hex);
     this.currentColor = $event.color.hex;
 
     this.currentColorObservable$.next(this.currentColor);

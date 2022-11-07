@@ -1,12 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnChanges,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { fabric } from 'fabric';
 import * as Rx from 'rxjs';
-import { map } from 'rxjs';
 import { Margin } from '../Directives/Margin';
 import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
@@ -34,7 +33,7 @@ import { InteractService } from '../Services/InteractService';
         </my-col>
       </my-grid>
       <Exp-colorPlatte
-        [selectedObjectColor]="color$"
+        [ObjectColor]="selectedObjectColor$"
         (selectedColor)="setColorHandler($event)"
       ></Exp-colorPlatte>
       <my-container class="MyCanvas">
@@ -45,7 +44,7 @@ import { InteractService } from '../Services/InteractService';
   styleUrls: ['./Exp.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExpComponent implements OnInit, OnChanges {
+export class ExpComponent implements OnInit, OnDestroy {
   Margin = Margin;
 
   selectedElement: any;
@@ -53,7 +52,6 @@ export class ExpComponent implements OnInit, OnChanges {
   start: number[] = [0, 0];
   end: number[] = [900, 900];
 
-  color$ = new Rx.Observable<string>();
   selectedObjectColor$ = new Rx.Subject<string>();
   selectedObjectWidth$ = new Rx.Subject<number>();
 
@@ -65,7 +63,6 @@ export class ExpComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    console.log('on init ...');
     this._canvas = new fabric.Canvas('fabricSurface', {
       backgroundColor: '#ebebef',
       selection: false,
@@ -75,24 +72,18 @@ export class ExpComponent implements OnInit, OnChanges {
     });
     this._canvas.selection = true; //group selection
     this._drawEditor = new DrawingEditor(this._canvas);
+
+    //Gettting the selected object color
     this._interactService = new InteractService(
       this._canvas,
       this.selectedObjectColor$,
       this.selectedObjectWidth$
     );
-
-    this.color$ = Rx.combineLatest([this.selectedObjectColor$]).pipe(
-      map((selectedColor: any) => selectedColor ?? 'black'),
-      Rx.tap((_) => console.log(_))
-    );
   }
 
-  ngOnChanges() {
-    console.log('something changed ...');
-  }
+  ngOnDestroy() {}
 
   setLineHandler($event: any) {
-    console.log('drawing line on the canvas');
     if (this.isSelectLastAction) {
       this.isSelectLastAction = false;
       this._drawEditor.makeObjectsNoneSeletable();
@@ -121,18 +112,15 @@ export class ExpComponent implements OnInit, OnChanges {
   setTriangleHandler($event: any) {}
 
   setColorHandler($event: string) {
-    console.log('setting color for current draw');
     this._drawEditor.setDrawingColor($event);
   }
 
   setWeightHandler($event: number) {
-    console.log('setting weight for current draw');
     this._drawEditor.setDrawingWeight($event);
   }
 
   //iterating all canvas objects, make all of them selectable
   setMultiSelectHandler($event: any) {
-    console.log('get all objects:');
     this.isSelectLastAction = true;
     this._drawEditor.makeObjectsSeletable();
   }
