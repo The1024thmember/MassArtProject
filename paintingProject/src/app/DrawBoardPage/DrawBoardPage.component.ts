@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnChanges,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { fabric } from 'fabric';
@@ -9,6 +9,7 @@ import * as Rx from 'rxjs';
 import { Margin } from '../Directives/Margin';
 import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
+
 @Component({
   template: `
     <my-container class="Container">
@@ -32,6 +33,7 @@ import { InteractService } from '../Services/InteractService';
         </my-col>
       </my-grid>
       <drawBoardPage-colorPlatte
+        [ObjectColor]="selectedObjectColor$"
         (selectedColor)="setColorHandler($event)"
       ></drawBoardPage-colorPlatte>
       <my-container class="MyCanvas">
@@ -42,26 +44,25 @@ import { InteractService } from '../Services/InteractService';
   styleUrls: ['./DrawBoardPage.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DrawBoardPageComponent implements OnInit, OnChanges {
+export class DrawBoardPageComponent implements OnInit, OnDestroy {
   Margin = Margin;
+
+  selectedElement: any;
+
+  start: number[] = [0, 0];
+  end: number[] = [900, 900];
+
+  selectedObjectColor$ = new Rx.Subject<string>();
+  selectedObjectWidth$ = new Rx.Subject<number>();
 
   private _canvas: fabric.Canvas;
   private isSelectLastAction: boolean = false;
   private _drawEditor: DrawingEditor;
   private _interactService: InteractService;
 
-  selectedObjectColor$ = new Rx.Subject<string>();
-  selectedObjectWidth$ = new Rx.Subject<number>();
-
-  selectedElement: any;
-  color: string = '#000';
-  start: number[] = [0, 0];
-  end: number[] = [900, 900];
-
   constructor() {}
 
   ngOnInit() {
-    console.log('on init ...');
     this._canvas = new fabric.Canvas('fabricSurface', {
       backgroundColor: '#ebebef',
       selection: false,
@@ -71,6 +72,8 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
     });
     this._canvas.selection = true; //group selection
     this._drawEditor = new DrawingEditor(this._canvas);
+
+    //Gettting the selected object color
     this._interactService = new InteractService(
       this._canvas,
       this.selectedObjectColor$,
@@ -78,12 +81,9 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
     );
   }
 
-  ngOnChanges() {
-    console.log('something changed ...');
-  }
+  ngOnDestroy() {}
 
   setLineHandler($event: any) {
-    console.log('drawing line on the canvas');
     if (this.isSelectLastAction) {
       this.isSelectLastAction = false;
       this._drawEditor.makeObjectsNoneSeletable();
@@ -112,19 +112,15 @@ export class DrawBoardPageComponent implements OnInit, OnChanges {
   setTriangleHandler($event: any) {}
 
   setColorHandler($event: string) {
-    console.log('setting color for current draw');
-    this.color = $event;
-    this._drawEditor.setDrawingColor(this.color);
+    this._drawEditor.setDrawingColor($event);
   }
 
   setWeightHandler($event: number) {
-    console.log('setting weight for current draw');
     this._drawEditor.setDrawingWeight($event);
   }
 
   //iterating all canvas objects, make all of them selectable
   setMultiSelectHandler($event: any) {
-    console.log('get all objects:');
     this.isSelectLastAction = true;
     this._drawEditor.makeObjectsSeletable();
   }

@@ -1,5 +1,14 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { ColorEvent } from 'ngx-color';
+import * as Rx from 'rxjs';
+import { tap } from 'rxjs';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -22,7 +31,9 @@ import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
           <i class="bi bi-palette-fill"></i>
           <my-container
             class="Color-platte-selection"
-            [color]="currentColor"
+            [color]="
+              (selectedColorFromHistoryOrObject$ | myAsync) ?? currentColor
+            "
             [type]="'Selectable'"
             (click)="colorSetectorOpenHandler()"
           >
@@ -53,7 +64,9 @@ import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
             <i class="bi bi-palette-fill"></i>
             <my-container
               class="Color-platte-selection"
-              [color]="currentColor"
+              [color]="
+                (selectedColorFromHistoryOrObject$ | myAsync) ?? currentColor
+              "
               [type]="'Selectable'"
               (click)="colorSetectorOpenHandler()"
             >
@@ -91,14 +104,16 @@ import { Mycolor } from '../DrawBoardPage-colorPicker/colorPicker.type';
 
       <drawBoardPage-colorPicker
         *ngIf="isColorPickerShown"
-        [selectedColorFromHistory]="currentColor"
+        [colorFromHistoryOrObject]="
+          (selectedColorFromHistoryOrObject$ | myAsync) ?? currentColor
+        "
         (selectedColor)="selectColorFromPlatteHandler($event)"
       ></drawBoardPage-colorPicker>
     </my-container>
   `,
   styleUrls: ['./DrawBoardPage-colorPlatte.scss'],
 })
-export class DrawBoardColorPlatteComponent implements OnInit {
+export class DrawBoardColorPlatteComponent implements OnInit, OnChanges {
   HeadingType = HeadingType;
   HorizontalAlignment = HorizontalAlignment;
   VerticalAlignment = VerticalAlignment;
@@ -117,32 +132,42 @@ export class DrawBoardColorPlatteComponent implements OnInit {
   currentColor: string = '#333';
   colorsHistory: string[] = [];
 
-  // Need to think where to extract the string only color
-  @Output() selectedColor: EventEmitter<string> = new EventEmitter();
+  selectedColorFromHistoryOrObject$ = new Rx.Observable<string>();
+  currentColorObservable$ = new Rx.Subject<string>();
 
-  ngOnInit() {}
+  // Need to think where to extract the string only color
+  @Input() ObjectColor: Rx.Observable<string>; // The selected object color
+  @Output() selectedColor: EventEmitter<string> = new EventEmitter(); // The color selected from color Platte or ColorPicker
+
+  ngOnInit() {
+    this.selectedColorFromHistoryOrObject$ = Rx.merge(
+      this.ObjectColor, // The selected object color
+      this.currentColorObservable$ // The color from color picker or history
+    ).pipe(
+      Rx.distinctUntilChanged(),
+      tap((result) => {
+        console.error('selectedColorFromHistoryOrObject:', result);
+      })
+    );
+
+    console.log('exp-colorPlatte input ObjectColor:', this.ObjectColor);
+  }
+
+  ngOnChanges(changes: any) {}
 
   expandColorHistoryHandler() {
-    console.log('expand the history');
     this.isHistoryExpanded = true;
   }
 
   unExpandColorHistoryHandler() {
-    console.log('fold the history');
     this.isHistoryExpanded = false;
   }
 
   colorSetectorOpenHandler() {
-    console.log('open the color selector');
     this.isColorPickerShown = true;
   }
 
   selectColorFromPlatteHandler($event: ColorEvent) {
-    console.log(
-      'the previous used color is:',
-      this.colorsHistory ? this.colorsHistory[0] : null
-    );
-
     if (!this.colorsHistory.includes(this.currentColor)) {
       if (this.colorsHistory.length < 7) {
         this.colorsHistory.unshift(this.currentColor);
@@ -153,15 +178,15 @@ export class DrawBoardColorPlatteComponent implements OnInit {
         ];
       }
     }
-
-    console.log('the selected color is:', $event.color.hex);
     this.currentColor = $event.color.hex;
 
+    this.currentColorObservable$.next(this.currentColor);
     this.selectedColor.emit(this.currentColor);
   }
 
   selectColorFromHistoryHandler($event: string) {
     this.currentColor = $event;
+    this.currentColorObservable$.next(this.currentColor);
     this.selectedColor.emit(this.currentColor);
   }
 }
