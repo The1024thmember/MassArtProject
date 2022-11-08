@@ -38,8 +38,10 @@ export class InteractService {
       // select via the selection mode and click on the object is the mouse event
       if (o.e) {
         this.getCurrentActiveObjects();
-        this.selectedObjectColor$.next(this.getSelectedObjectColor());
-        this.selectedObjectWidth$.next(this.getSelectedObjectWeight());
+        if (this.isSingleSelected()) {
+          this.selectedObjectColor$.next(this.getSelectedObjectColor());
+          this.selectedObjectWidth$.next(this.getSelectedObjectWeight());
+        }
       }
     });
 
@@ -49,8 +51,10 @@ export class InteractService {
     this.canvas.on('selection:updated', (o) => {
       // change selection
       this.getCurrentActiveObjects();
-      this.selectedObjectColor$.next(this.getSelectedObjectColor());
-      this.selectedObjectWidth$.next(this.getSelectedObjectWeight());
+      if (this.isSingleSelected()) {
+        this.selectedObjectColor$.next(this.getSelectedObjectColor());
+        this.selectedObjectWidth$.next(this.getSelectedObjectWeight());
+      }
     });
 
     /*  Will be trigger via:
@@ -89,7 +93,6 @@ export class InteractService {
     }
   }
 
-  //____________________________________________________________________________
   //Won't change the weight and color, keep as default
   private isMultipleSelected() {
     if (this.activeObjects.length > 1) {
