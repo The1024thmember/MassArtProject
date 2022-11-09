@@ -58,8 +58,8 @@ export class DrawingEditor {
   //Change the color for the current selection
   public setDrawingColor(color: string) {
     this.drawerOptions.stroke = color;
-    this.canvas.freeDrawingBrush.color = color; // we want the free draw color to be updated as well
-    console.log('free draw color:', this.canvas.freeDrawingBrush.color);
+    this.canvas.freeDrawingBrush.color = color; // we want the free draw color to be updated in here as well,
+    // otherwise it will require click on free draw icon to reset color
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
         await this._drawer.changeProperty(
@@ -96,10 +96,6 @@ export class DrawingEditor {
   public enableFreeDrawing() {
     this.cursorMode = CursorMode.Free;
     this.canvas.isDrawingMode = true;
-    console.log(
-      'free draw color in enableFreeDrawing:',
-      this.canvas.freeDrawingBrush.color
-    );
     this.canvas.freeDrawingBrush.width = this.drawerOptions.strokeWidth || 2;
   }
 
