@@ -52,8 +52,15 @@ export class ExpComponent implements OnInit, OnDestroy {
   start: number[] = [0, 0];
   end: number[] = [900, 900];
 
+  // Value from interact service, the current selected object's color & weight
   selectedObjectColor$ = new Rx.Subject<string>();
   selectedObjectWidth$ = new Rx.Subject<number>();
+
+  // Value from user interaction with widget, the user set color & weight
+  emittedSelectedColor$ = new Rx.Subject<string>();
+  emittedSelectedWidth$ = new Rx.Subject<number>();
+
+  subscription$ = new Rx.Subscription();
 
   private _canvas: fabric.Canvas;
   private isSelectLastAction: boolean = false;
@@ -79,9 +86,20 @@ export class ExpComponent implements OnInit, OnDestroy {
       this.selectedObjectColor$,
       this.selectedObjectWidth$
     );
+
+    // Set the draw color to the merge result of selecton and set
+    this.subscription$.add(
+      Rx.merge(this.selectedObjectColor$, this.emittedSelectedColor$).subscribe(
+        (drawingColor) => {
+          this._drawEditor.setDrawingColor(drawingColor);
+        }
+      )
+    );
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.subscription$.unsubscribe();
+  }
 
   setLineHandler($event: any) {
     if (this.isSelectLastAction) {
@@ -111,8 +129,12 @@ export class ExpComponent implements OnInit, OnDestroy {
 
   setTriangleHandler($event: any) {}
 
+  //The drawer color should not only determined by the color-platte,
+  // but also determined by current color selection, which should be
+  // handled the same with color platte current showed color. The best
+  // solution is to introduce two-way binding on color-platte component
   setColorHandler($event: string) {
-    this._drawEditor.setDrawingColor($event);
+    this.emittedSelectedColor$.next($event);
   }
 
   setWeightHandler($event: number) {
