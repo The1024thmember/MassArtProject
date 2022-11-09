@@ -109,7 +109,14 @@ export class ExpComponent implements OnInit, OnDestroy {
     this._drawEditor.setDrawingTool(DrawingMode.Line);
   }
 
-  setCurveHandler($event: any) {}
+  //start free drawing
+  setCurveHandler($event: any) {
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawEditor.makeObjectsNoneSeletable();
+    }
+    this._drawEditor.enableFreeDrawing();
+  }
 
   setRectangleHandler($event: any) {
     if (this.isSelectLastAction) {

@@ -163,6 +163,7 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   }
 
   selectCurveHandler() {
+    this.selectCurve.emit(true);
     console.log('selecting the curve');
   }
 

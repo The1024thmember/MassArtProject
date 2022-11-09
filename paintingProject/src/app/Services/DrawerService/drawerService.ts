@@ -86,7 +86,20 @@ export class DrawingEditor {
   }
 
   public setDrawingTool(tool: DrawingMode) {
+    this.cursorMode = CursorMode.Draw;
     this._drawer = this.drawers[tool];
+    this.disableFreeDrawing();
+  }
+
+  public enableFreeDrawing() {
+    this.cursorMode = CursorMode.Free;
+    this.canvas.isDrawingMode = true;
+    this.canvas.freeDrawingBrush.color = this.drawerOptions.stroke || 'black';
+    this.canvas.freeDrawingBrush.width = this.drawerOptions.strokeWidth || 2;
+  }
+
+  public disableFreeDrawing() {
+    this.canvas.isDrawingMode = false;
   }
 
   //is this optimal? since everytime I need to loop every single object one user has created
@@ -99,6 +112,7 @@ export class DrawingEditor {
       element.hoverCursor = 'move';
     });
     this.cursorMode = CursorMode.Select;
+    this.disableFreeDrawing();
     this.canvas.renderAll();
   }
 
@@ -111,7 +125,6 @@ export class DrawingEditor {
       element.hasControls = false;
       element.hoverCursor = 'default';
     });
-    this.cursorMode = CursorMode.Draw;
     this.canvas.renderAll();
   }
 
