@@ -2,6 +2,7 @@ export const enum DrawingMode {
   Line,
   Rectangle,
   Circle,
+  FreeDraw,
   Oval,
   Polyline,
   Path,
@@ -13,6 +14,7 @@ export const enum ObjectType {
   Line = 'line',
   Rectangle = 'rect',
   Circle = 'circle',
+  FreeDraw = 'FreeDraw',
 }
 
 export const enum CursorMode {

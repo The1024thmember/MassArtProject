@@ -1,5 +1,6 @@
 import { fabric } from 'fabric';
 import { CircleDrawer } from './circleDrawerService';
+import { FreeDrawer } from './freeDrawerService';
 import { LineDrawer } from './lineDrawerService';
 import { RectDrawer } from './rectDrawerService';
 import {
@@ -30,7 +31,12 @@ export class DrawingEditor {
     this.canvas = canvas;
 
     //Create a collection of all possible "drawer" classes
-    this.drawers = [new LineDrawer(), new RectDrawer(), new CircleDrawer()];
+    this.drawers = [
+      new LineDrawer(),
+      new RectDrawer(),
+      new CircleDrawer(),
+      new FreeDrawer(),
+    ];
 
     //Set the default options for the "drawer" class, including
     //stroke color, width, and style
