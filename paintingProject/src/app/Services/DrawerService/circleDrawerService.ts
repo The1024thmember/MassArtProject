@@ -32,7 +32,8 @@ export class CircleDrawer implements IObjectDrawer {
     object: fabric.Circle,
     x: number,
     y: number,
-    options?: fabric.IObjectOptions
+    options?: fabric.IObjectOptions,
+    canvas?: fabric.Canvas
   ): Promise<fabric.Object> {
     //Change the secondary point (x2, y2) of the object
     //This resizes the object between starting point (x,y)

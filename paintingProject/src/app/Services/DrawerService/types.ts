@@ -62,7 +62,8 @@ export interface IObjectDrawer {
     object: any,
     x: number,
     y: number,
-    options?: fabric.IObjectOptions
+    options?: fabric.IObjectOptions,
+    canvas?: fabric.Canvas
   ) => Promise<fabric.Object>;
 
   readonly changeProperty: (

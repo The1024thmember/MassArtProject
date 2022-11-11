@@ -33,7 +33,8 @@ export class RectDrawer implements IObjectDrawer {
     object: fabric.Rect,
     x: number,
     y: number,
-    options?: fabric.IObjectOptions
+    options?: fabric.IObjectOptions,
+    canvas?: fabric.Canvas
   ): Promise<fabric.Object> {
     object
       .set({
