@@ -96,7 +96,7 @@ export class DrawingEditor {
   public setDrawingTool(tool: DrawingMode) {
     this.cursorMode = CursorMode.Draw;
     this._drawer = this.drawers[tool];
-    //this.disableFreeDrawing();
+    this.disableFreeDrawing();
   }
 
   public enableFreeDrawing() {
