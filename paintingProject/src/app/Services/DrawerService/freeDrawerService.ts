@@ -3,7 +3,7 @@ import { ChangeObjectProperty, DrawingMode, IObjectDrawer } from './types';
 
 export class FreeDrawer implements IObjectDrawer {
   drawingMode: DrawingMode = DrawingMode.FreeDraw;
-  path: fabric.Point[] = [];
+  path: string;
   make(
     x: number,
     y: number,
@@ -13,11 +13,17 @@ export class FreeDrawer implements IObjectDrawer {
   ): Promise<fabric.Object> {
     //Return a Promise that will draw a line
     console.log('this.path:', this.path);
-    this.path.push(new fabric.Point(x, y));
+    this.path = `M ${x} ${y} L ${x + 1} ${y + 1}`;
+
     return new Promise<fabric.Object>((resolve) => {
-      //Inside the Promise, draw the actual line from (x,y) to (x2,y2)
       resolve(
         new fabric.Path(this.path, {
+          strokeWidth: 2,
+          stroke: 'black',
+          fill: 'black',
+          selectable: false,
+          hasRotatingPoint: false,
+          visible: true,
           ...options,
         })
       );
@@ -33,16 +39,11 @@ export class FreeDrawer implements IObjectDrawer {
     //Change the secondary point (x2, y2) of the object
     //This resizes the object between starting point (x,y)
     //and secondary point (x2,y2), where x2 and y2 have new values.
-    this.path.push(new fabric.Point(x, y));
-    object
-      .set({
-        path: this.path,
-        ...options,
-      })
-      .setCoords();
-
+    const node = ['L', x, y];
+    object.path?.push(node as any);
     //Wrap the resized object in a Promise
     return new Promise<fabric.Object>((resolve) => {
+      console.log(object.path?.length);
       resolve(object);
     });
   }

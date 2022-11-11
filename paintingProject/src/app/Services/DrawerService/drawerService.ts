@@ -96,7 +96,7 @@ export class DrawingEditor {
   public setDrawingTool(tool: DrawingMode) {
     this.cursorMode = CursorMode.Draw;
     this._drawer = this.drawers[tool];
-    this.disableFreeDrawing();
+    //this.disableFreeDrawing();
   }
 
   public enableFreeDrawing() {
@@ -201,8 +201,15 @@ export class DrawingEditor {
         }
         break;
       }
+      /*
+      case ObjectType.FreeDraw: {
+        if (!this.object) {
+          //need to check path length
+          this.canvas.remove(this.object);
+        }
+        break;
+      }*/
     }
-
     //Making element default as none selective
     this.canvas.setActiveObject(this.object);
     this.canvas.discardActiveObject().renderAll();
