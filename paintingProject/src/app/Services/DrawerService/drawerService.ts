@@ -63,7 +63,7 @@ export class DrawingEditor {
   // ---- need to add validations for the input value ---//
   //Change the color for the current selection
   public setDrawingColor(color: string) {
-    // otherwise it will require click on free draw icon to reset color
+    this.drawerOptions.stroke = color;
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
         await this._drawer.changeProperty(
