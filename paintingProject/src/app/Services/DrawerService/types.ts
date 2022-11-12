@@ -18,7 +18,6 @@ export const enum ObjectType {
 }
 
 export const enum CursorMode {
-  Free,
   Draw,
   Select,
 }
