@@ -208,13 +208,7 @@ export class DrawingEditor {
 
   //Method which allows any drawer to Promise their resize() function
   private async resize(x: number, y: number): Promise<fabric.Object> {
-    return await this._drawer.resize(
-      this.object,
-      x,
-      y,
-      this.drawerOptions,
-      this.canvas
-    );
+    return await this._drawer.resize(this.object, x, y, {}, this.canvas);
   }
 
   //Method which allows any drawer to Promise their resize() function

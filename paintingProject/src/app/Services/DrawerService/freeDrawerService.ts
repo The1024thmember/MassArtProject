@@ -5,6 +5,7 @@ export class FreeDrawer implements IObjectDrawer {
   drawingMode: DrawingMode = DrawingMode.FreeDraw;
   nodeArray: fabric.Point[] = [];
   currentObject: fabric.Path;
+  drawOptions: fabric.IObjectOptions;
   make(
     x: number,
     y: number,
@@ -17,6 +18,9 @@ export class FreeDrawer implements IObjectDrawer {
     this.nodeArray = [];
     this.nodeArray.push(node);
 
+    //Get the drawOptions from the initial drawState
+    this.drawOptions = options;
+
     this.currentObject = new fabric.Path(this.nodeArray, {
       fill: '',
       strokeLineCap: 'round',
@@ -25,7 +29,7 @@ export class FreeDrawer implements IObjectDrawer {
       selectable: true,
       hasRotatingPoint: true,
       visible: true,
-      ...options,
+      ...this.drawOptions,
     });
 
     return new Promise<fabric.Object>((resolve) => {
@@ -41,18 +45,12 @@ export class FreeDrawer implements IObjectDrawer {
     canvas?: fabric.Canvas
   ): Promise<fabric.Object> {
     //Change the secondary point (x2, y2) of the object
-    //This resizes the object between starting point (x,y)
-    //and secondary point (x2,y2), where x2 and y2 have new values.
     const end = ['L', x, y] as unknown as fabric.Point;
     this.nodeArray.push(end);
-    /*
-    object
-      .set({
-        path: this.nodeArray,
-        ...options,
-      })
-      .setCoords();
-    */
+
+    //The hacky way of supporting dynamic drawing of path object
+    //the setCoords and set doesn't work. The solution is onmousemove
+    //delete the old path object and create new path object with current node added
     if (canvas) {
       canvas.remove(this.currentObject);
     }
@@ -65,9 +63,11 @@ export class FreeDrawer implements IObjectDrawer {
       selectable: true,
       hasRotatingPoint: true,
       visible: true,
-      ...options,
+      ...this.drawOptions,
     });
 
+    //need to add the new created object back on canvas, as resize function
+    //doesn't add it
     canvas?.add(this.currentObject);
 
     return new Promise<fabric.Object>((resolve) => {
