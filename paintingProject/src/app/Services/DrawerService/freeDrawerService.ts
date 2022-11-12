@@ -3,8 +3,8 @@ import { ChangeObjectProperty, DrawingMode, IObjectDrawer } from './types';
 
 export class FreeDrawer implements IObjectDrawer {
   drawingMode: DrawingMode = DrawingMode.FreeDraw;
-  path: string;
   nodeArray: fabric.Point[] = [];
+  currentObject: fabric.Path;
   make(
     x: number,
     y: number,
@@ -13,22 +13,23 @@ export class FreeDrawer implements IObjectDrawer {
     y2?: number
   ): Promise<fabric.Object> {
     //Return a Promise that will draw a line
-    this.path = `M ${x} ${y}`;
     const node = ['M', x, y] as unknown as fabric.Point;
+    this.nodeArray = [];
     this.nodeArray.push(node);
+
+    this.currentObject = new fabric.Path(this.nodeArray, {
+      fill: '',
+      strokeLineCap: 'round',
+      strokeMiterLimit: 10,
+      strokeLineJoin: 'round',
+      selectable: true,
+      hasRotatingPoint: true,
+      visible: true,
+      ...options,
+    });
+
     return new Promise<fabric.Object>((resolve) => {
-      resolve(
-        new fabric.Path(this.nodeArray, {
-          fill: '',
-          strokeLineCap: 'round',
-          strokeMiterLimit: 10,
-          strokeLineJoin: 'round',
-          selectable: true,
-          hasRotatingPoint: true,
-          visible: true,
-          ...options,
-        })
-      );
+      resolve(this.currentObject);
     });
   }
 
@@ -44,16 +45,33 @@ export class FreeDrawer implements IObjectDrawer {
     //and secondary point (x2,y2), where x2 and y2 have new values.
     const end = ['L', x, y] as unknown as fabric.Point;
     this.nodeArray.push(end);
+    /*
     object
       .set({
         path: this.nodeArray,
         ...options,
       })
       .setCoords();
-    canvas?.renderAll();
-    //Wrap the resized object in a Promise
+    */
+    if (canvas) {
+      canvas.remove(this.currentObject);
+    }
+
+    this.currentObject = new fabric.Path(this.nodeArray, {
+      fill: '',
+      strokeLineCap: 'round',
+      strokeMiterLimit: 10,
+      strokeLineJoin: 'round',
+      selectable: true,
+      hasRotatingPoint: true,
+      visible: true,
+      ...options,
+    });
+
+    canvas?.add(this.currentObject);
+
     return new Promise<fabric.Object>((resolve) => {
-      resolve(object);
+      resolve(this.currentObject);
     });
   }
 

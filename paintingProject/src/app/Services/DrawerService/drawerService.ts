@@ -63,8 +63,6 @@ export class DrawingEditor {
   // ---- need to add validations for the input value ---//
   //Change the color for the current selection
   public setDrawingColor(color: string) {
-    this.drawerOptions.stroke = color;
-    this.canvas.freeDrawingBrush.color = color; // we want the free draw color to be updated in here as well,
     // otherwise it will require click on free draw icon to reset color
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
@@ -96,17 +94,6 @@ export class DrawingEditor {
   public setDrawingTool(tool: DrawingMode) {
     this.cursorMode = CursorMode.Draw;
     this._drawer = this.drawers[tool];
-    this.disableFreeDrawing();
-  }
-
-  public enableFreeDrawing() {
-    this.cursorMode = CursorMode.Free;
-    this.canvas.isDrawingMode = true;
-    this.canvas.freeDrawingBrush.width = this.drawerOptions.strokeWidth || 2;
-  }
-
-  public disableFreeDrawing() {
-    this.canvas.isDrawingMode = false;
   }
 
   //is this optimal? since everytime I need to loop every single object one user has created
@@ -119,13 +106,13 @@ export class DrawingEditor {
       element.hoverCursor = 'move';
     });
     this.cursorMode = CursorMode.Select;
-    this.disableFreeDrawing();
     this.canvas.renderAll();
   }
 
   //is this optimal? since everytime I need to loop every single object one user has created
   //and whenever the user select other tools I need to make the object none selectable
   public makeObjectsNoneSeletable() {
+    this.canvas.discardActiveObject();
     this.canvas.getObjects().forEach((element) => {
       element.selectable = false;
       element.hasBorders = false;
@@ -201,14 +188,13 @@ export class DrawingEditor {
         }
         break;
       }
-      /*
       case ObjectType.FreeDraw: {
         if (!this.object) {
           //need to check path length
           this.canvas.remove(this.object);
         }
         break;
-      }*/
+      }
     }
     //Making element default as none selective
     this.canvas.setActiveObject(this.object);
@@ -222,7 +208,13 @@ export class DrawingEditor {
 
   //Method which allows any drawer to Promise their resize() function
   private async resize(x: number, y: number): Promise<fabric.Object> {
-    return await this._drawer.resize(this.object, x, y, {}, this.canvas);
+    return await this._drawer.resize(
+      this.object,
+      x,
+      y,
+      this.drawerOptions,
+      this.canvas
+    );
   }
 
   //Method which allows any drawer to Promise their resize() function

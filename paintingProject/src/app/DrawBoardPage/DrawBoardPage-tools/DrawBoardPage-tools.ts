@@ -192,7 +192,6 @@ export class DrawBoardToolsComponent implements OnInit, OnChanges {
   }
 
   setWeightHandler($event: any) {
-    console.log('the selected weight is:', $event);
     this.selectWeightSelect.emit($event);
   }
 
