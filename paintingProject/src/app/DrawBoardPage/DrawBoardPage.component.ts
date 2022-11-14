@@ -115,6 +115,7 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       this.isSelectLastAction = false;
       this._drawEditor.makeObjectsNoneSeletable();
     }
+    this._drawEditor.setDrawingTool(DrawingMode.FreeDraw);
   }
 
   setRectangleHandler($event: any) {
