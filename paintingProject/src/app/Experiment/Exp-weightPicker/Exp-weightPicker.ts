@@ -19,7 +19,7 @@ import { ColorEvent } from 'ngx-color';
         type="range"
         min="1"
         [max]="maxWeight"
-        [value]="2"
+        [value]="setWidthValueFromSelection"
         (input)="setWeightValueContinuous(weightSetter.value)"
       />
     </my-container>
@@ -28,6 +28,7 @@ import { ColorEvent } from 'ngx-color';
 })
 export class ExpColorWeightComponent implements OnInit, OnChanges {
   @Input() maxWeight: number;
+  @Input() setWidthValueFromSelection: number;
   //Set whenever the cursor moves
   @Output() selectedWeight: EventEmitter<ColorEvent> = new EventEmitter();
   ngOnInit() {}

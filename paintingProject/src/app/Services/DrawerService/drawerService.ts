@@ -79,6 +79,7 @@ export class DrawingEditor {
   // ---- need to add validations for the input value ---//
   //Change the width for the current selection
   public setDrawingWeight(weight: number) {
+    this.drawerOptions.strokeWidth = weight;
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
         await this._drawer.changeProperty(

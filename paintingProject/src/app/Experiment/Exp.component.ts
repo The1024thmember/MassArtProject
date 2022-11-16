@@ -16,6 +16,7 @@ import { InteractService } from '../Services/InteractService';
       <my-grid class="Container-firstRowTools">
         <my-col [col]="6">
           <Exp-tools
+            [ObjectWeight]="selectedObjectWidth$"
             (selectLine)="setLineHandler($event)"
             (selectCurve)="setCurveHandler($event)"
             (selectRectangle)="setRectangleHandler($event)"
@@ -95,6 +96,15 @@ export class ExpComponent implements OnInit, OnDestroy {
         }
       )
     );
+
+    // Set the draw width to the merge result of selecton and set
+    this.subscription$.add(
+      Rx.merge(this.selectedObjectWidth$, this.emittedSelectedWidth$).subscribe(
+        (drawingWidth) => {
+          this._drawEditor.setDrawingWeight(drawingWidth);
+        }
+      )
+    );
   }
 
   ngOnDestroy() {
@@ -145,7 +155,7 @@ export class ExpComponent implements OnInit, OnDestroy {
   }
 
   setWeightHandler($event: number) {
-    this._drawEditor.setDrawingWeight($event);
+    this.emittedSelectedWidth$.next($event);
   }
 
   //iterating all canvas objects, make all of them selectable

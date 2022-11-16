@@ -1,10 +1,13 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnChanges,
   OnInit,
   Output,
 } from '@angular/core';
+import * as Rx from 'rxjs';
+import { tap } from 'rxjs';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -131,6 +134,9 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
     <ng-container *ngIf="showWeightPicker">
       <Exp-weightPicker
         [maxWeight]="20"
+        [setWidthValueFromSelection]="
+          (selectedWidthOrFromObject$ | myAsync) ?? currentWeight
+        "
         (selectedWeight)="setWeightHandler($event)"
       ></Exp-weightPicker>
     </ng-container>
@@ -145,6 +151,11 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   Margin = Margin;
   showWeightPicker: boolean = false;
 
+  currentWeight: number = 1;
+  selectedWidthOrFromObject$ = new Rx.Observable<number>();
+  currentWidthObservable$ = new Rx.Subject<number>();
+
+  @Input() ObjectWeight: Rx.Observable<number>; // The selected object width
   @Output() selectLine: EventEmitter<any> = new EventEmitter();
   @Output() selectCurve: EventEmitter<any> = new EventEmitter();
   @Output() selectRectangle: EventEmitter<any> = new EventEmitter();
@@ -153,7 +164,19 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   @Output() selectMultiSelect: EventEmitter<any> = new EventEmitter();
   @Output() selectWeightSelect: EventEmitter<any> = new EventEmitter();
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.selectedWidthOrFromObject$ = Rx.merge(
+      this.ObjectWeight, // The selected object color
+      this.currentWidthObservable$ // The color from color picker or history
+    ).pipe(
+      Rx.distinctUntilChanged(),
+      tap((result) => {
+        console.error('selectedWidthFromObject:', result);
+      })
+    );
+
+    console.log('exp-weightPicker input ObjectColor:', this.ObjectWeight);
+  }
 
   ngOnChanges() {}
 
@@ -192,6 +215,8 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   }
 
   setWeightHandler($event: any) {
+    this.currentWeight = $event;
+    this.currentWidthObservable$.next($event);
     this.selectWeightSelect.emit($event);
   }
 
