@@ -64,6 +64,18 @@ export class InteractService {
     this.canvas.on('selection:cleared', (o) => {
       // mouse click on empty canvas, so no object is selected
     });
+
+    this.canvas.on('object:scaling', (e) => {
+      var o = e.target;
+      // how to make object on scale strokeWidth not change
+      // TODO: https://app.clickup.com/t/3ak2xtp
+    });
+
+    this.canvas.on('object:modified', (e) => {
+      var o = e.target;
+      // how to make object on scale strokeWidth not change
+      // TODO: https://app.clickup.com/t/3ak2xtp
+    });
   }
 
   private getCurrentActiveObjects() {
