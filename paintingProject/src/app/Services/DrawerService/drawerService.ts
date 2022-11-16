@@ -25,6 +25,7 @@ export class DrawingEditor {
   private readonly drawers: IObjectDrawer[]; //All possible drawers
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
+  private currentDrawWidth: number = 1;
 
   constructor(canvas: fabric.Canvas) {
     //Create the Fabric canvas
@@ -79,7 +80,7 @@ export class DrawingEditor {
   // ---- need to add validations for the input value ---//
   //Change the width for the current selection
   public setDrawingWeight(weight: number) {
-    this.drawerOptions.strokeWidth = weight;
+    this.drawerOptions.strokeWidth = Math.floor(weight);
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
         await this._drawer.changeProperty(
@@ -126,7 +127,7 @@ export class DrawingEditor {
   private initializeCanvasEvents() {
     this.canvas.on('mouse:down', (o) => {
       const e = <MouseEvent>o.e;
-      const pointer = this.canvas.getPointer(o.e);
+      var pointer = this.canvas.getPointer(o.e);
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseDown(pointer.x, pointer.y);
       }

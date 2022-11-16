@@ -133,7 +133,7 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
     </my-container>
     <ng-container *ngIf="showWeightPicker">
       <Exp-weightPicker
-        [maxWeight]="20"
+        [maxWeight]="50"
         [setWidthValueFromSelection]="
           (selectedWidthOrFromObject$ | myAsync) ?? currentWeight
         "

@@ -15,6 +15,8 @@ export class CircleDrawer implements IObjectDrawer {
     //Return a Promise that will draw a circle
     this.origX = x;
     this.origY = y;
+    console.log('x:', x);
+    console.log('y:', y);
     return new Promise<fabric.Object>((resolve) => {
       //Inside the Promise, draw the actual line from (x,y) to (x2,y2)
       resolve(
