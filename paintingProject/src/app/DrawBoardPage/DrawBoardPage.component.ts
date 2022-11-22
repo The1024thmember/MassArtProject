@@ -16,6 +16,7 @@ import { InteractService } from '../Services/InteractService';
       <my-grid class="Container-firstRowTools">
         <my-col [col]="6">
           <drawBoardPage-tools
+            [ObjectWeight]="selectedObjectWidth$"
             (selectLine)="setLineHandler($event)"
             (selectCurve)="setCurveHandler($event)"
             (selectRectangle)="setRectangleHandler($event)"
@@ -92,6 +93,15 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       Rx.merge(this.selectedObjectColor$, this.emittedSelectedColor$).subscribe(
         (drawingColor) => {
           this._drawEditor.setDrawingColor(drawingColor);
+        }
+      )
+    );
+
+    // Set the draw width to the merge result of selecton and set
+    this.subscription$.add(
+      Rx.merge(this.selectedObjectWidth$, this.emittedSelectedWidth$).subscribe(
+        (drawingWidth) => {
+          this._drawEditor.setDrawingWeight(drawingWidth);
         }
       )
     );
