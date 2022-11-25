@@ -2,7 +2,7 @@ import * as Rx from 'rxjs';
 /*
   All the functionality within this service is exectuable when it is in selection mode
   The function for this service is to:
-  1. Read the property of the objects in the canvas and reflect them in tools
+  1. Read the property of the objects in the canvas and reflect them in tools via selectedObjectColor and selectedObjectWidth
   2. Delete objects
 */
 export class InteractService {
