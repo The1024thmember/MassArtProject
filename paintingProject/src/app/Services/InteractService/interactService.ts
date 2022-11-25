@@ -4,6 +4,8 @@ import * as Rx from 'rxjs';
   The function for this service is to:
   1. Read the property of the objects in the canvas and reflect them in tools via selectedObjectColor and selectedObjectWidth
   2. Delete objects
+
+  // input for the service: canvas, selectedObjectColor, selectedObjectWidth
 */
 export class InteractService {
   canvas: fabric.Canvas;
