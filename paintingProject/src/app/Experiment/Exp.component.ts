@@ -9,6 +9,8 @@ import * as Rx from 'rxjs';
 import { Margin } from '../Directives/Margin';
 import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
+import { RedoUndoService } from '../Services/RedoUndoService/redoUndoService';
+import { EventObject } from '../Services/RedoUndoService/types';
 
 @Component({
   template: `
@@ -61,12 +63,17 @@ export class ExpComponent implements OnInit, OnDestroy {
   emittedSelectedColor$ = new Rx.Subject<string>();
   emittedSelectedWidth$ = new Rx.Subject<number>();
 
+  // The emitted event result from RedoUndoService when redo/undo button is clicked
+  emittedUndoEventObject$ = new Rx.Subject<EventObject>();
+  emittedRedoEventObject$ = new Rx.Subject<EventObject>();
+
   subscription$ = new Rx.Subscription();
 
   private _canvas: fabric.Canvas;
   private isSelectLastAction: boolean = false;
   private _drawEditor: DrawingEditor;
   private _interactService: InteractService;
+  private _redoUndoService: RedoUndoService;
 
   constructor() {}
 
@@ -81,11 +88,17 @@ export class ExpComponent implements OnInit, OnDestroy {
     this._canvas.selection = true; //group selection
     this._drawEditor = new DrawingEditor(this._canvas);
 
-    //Gettting the selected object color
+    //Getting the selected object color
     this._interactService = new InteractService(
       this._canvas,
       this.selectedObjectColor$,
       this.selectedObjectWidth$
+    );
+
+    //Getting event from canvas to redoUndoService
+    this._redoUndoService = new RedoUndoService(
+      this.emittedUndoEventObject$,
+      this.emittedRedoEventObject$
     );
 
     // Set the draw color to the merge result of selecton and set
