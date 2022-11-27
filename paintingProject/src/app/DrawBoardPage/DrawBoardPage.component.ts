@@ -10,6 +10,7 @@ import { Margin } from '../Directives/Margin';
 import { DrawingMode, DrawingService } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
 import { RedoUndoService } from '../Services/RedoUndoService/redoUndoService';
+import { EventObject } from '../Services/RedoUndoService/types';
 
 @Component({
   template: `
@@ -62,6 +63,10 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
   emittedSelectedColor$ = new Rx.Subject<string>();
   emittedSelectedWidth$ = new Rx.Subject<number>();
 
+  // The emitted event result from RedoUndoService when redo/undo button is clicked
+  emittedUndoEventObject$ = new Rx.Subject<EventObject>();
+  emittedRedoEventObject$ = new Rx.Subject<EventObject>();
+
   subscription$ = new Rx.Subscription();
 
   private _canvas: fabric.Canvas;
@@ -81,7 +86,20 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       perPixelTargetFind: true, //when selecting using the actual object instead of the whole bounding box
     });
     this._canvas.selection = true; //group selection
-    this._drawService = new DrawingService(this._canvas, this._redoUndoService);
+
+    //Getting event from canvas to redoUndoService
+    this._redoUndoService = new RedoUndoService(
+      this.emittedUndoEventObject$,
+      this.emittedRedoEventObject$
+    );
+
+    // Set the drawing service for drawing object and change object property
+    this._drawService = new DrawingService(
+      this._canvas,
+      this._redoUndoService,
+      this.emittedUndoEventObject$,
+      this.emittedRedoEventObject$
+    );
 
     //Gettting the selected object color
     this._interactService = new InteractService(

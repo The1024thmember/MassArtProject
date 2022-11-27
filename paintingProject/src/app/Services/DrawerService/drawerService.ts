@@ -22,8 +22,8 @@ import {
 */
 export class DrawingService {
   canvas: fabric.Canvas;
-  emittedUndoEventObject: Rx.Subject<EventObject>;
-  emittedRedoEventObject: Rx.Subject<EventObject>;
+  emittedUndoEventObject$: Rx.Subject<EventObject>;
+  emittedRedoEventObject$: Rx.Subject<EventObject>;
   _redoUndoService: RedoUndoService;
   public _drawer: IObjectDrawer; //Current drawer
   private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
@@ -37,12 +37,15 @@ export class DrawingService {
   constructor(
     canvas: fabric.Canvas,
     _redoUndoService: RedoUndoService,
-    emittedUndoEventObject: Rx.Subject<EventObject>,
-    emittedRedoEventObject: Rx.Subject<EventObject>
+    emittedUndoEventObject$: Rx.Subject<EventObject>,
+    emittedRedoEventObject$: Rx.Subject<EventObject>
   ) {
     //Create the Fabric canvas
     this.canvas = canvas;
     this._redoUndoService = _redoUndoService;
+
+    this.emittedUndoEventObject$ = emittedUndoEventObject$;
+    this.emittedRedoEventObject$ = emittedRedoEventObject$;
 
     //Create a collection of all possible "drawer" classes
     this.drawers = [
@@ -165,7 +168,7 @@ export class DrawingService {
 
     // handle redo/undo action
     this.subscription.add(
-      this.emittedUndoEventObject.subscribe((undoEvent) => {
+      this.emittedUndoEventObject$.subscribe((undoEvent) => {
         console.log(undoEvent);
         // calling changeProperty to change the property of the object
 
@@ -174,7 +177,7 @@ export class DrawingService {
     );
 
     this.subscription.add(
-      this.emittedRedoEventObject.subscribe((redoEvent) => {
+      this.emittedRedoEventObject$.subscribe((redoEvent) => {
         console.log(redoEvent);
         // calling changeProperty to change the property of the object
 

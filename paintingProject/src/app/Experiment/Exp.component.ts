@@ -98,7 +98,12 @@ export class ExpComponent implements OnInit, OnDestroy {
     );
 
     // Set the drawing service for drawing object and change object property
-    this._drawService = new DrawingService(this._canvas, this._redoUndoService);
+    this._drawService = new DrawingService(
+      this._canvas,
+      this._redoUndoService,
+      this.emittedUndoEventObject$,
+      this.emittedRedoEventObject$
+    );
 
     //Getting the selected object color
     this._interactService = new InteractService(
