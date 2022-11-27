@@ -31,10 +31,12 @@ export class RedoUndoService {
 
   public undo() {
     this.undoAction.next(true);
+    console.log('this.undoStack:', this.undoStack);
   }
 
   public redo() {
     this.redoAction.next(true);
+    console.log('this.redoStack:', this.redoStack);
   }
 
   private initializer() {
@@ -73,7 +75,7 @@ export class RedoUndoService {
     const poppedEvent = this.redoStack.pop();
     if (poppedEvent) {
       this.emittedRedoEventObject$.next(poppedEvent);
-      this.redoStack.push(poppedEvent);
+      this.undoStack.push(poppedEvent);
     }
   }
 }

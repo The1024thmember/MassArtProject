@@ -170,19 +170,53 @@ export class DrawingService {
     // handle redo/undo action
     this.subscription.add(
       this.emittedUndoEventObject$.subscribe((undoEvent) => {
-        console.log(undoEvent);
-        // calling changeProperty to change the property of the object
+        console.log('undo event:', undoEvent);
+        // Based on command calling changeProperty to change the property of the object
+        // Or delete/create accordingly
+        switch (undoEvent.command) {
+          case CommandType.Create: {
+            // No matter what the object is, just simply delete it based on canvasObjectId
+            this.canvas._objects[undoEvent.canvasObjectId - 1] =
+              new fabric.Line([0, 0, 0, 0]); //can have a placeholder object for temperal solution, proper one needs to introduce the correlation between canvasObject and eventObject
+            console.log(this.canvas._objects);
 
-        // Or delete accordingly
+            break;
+          }
+          case CommandType.Delete: {
+            break;
+          }
+          case CommandType.ChangeProperty: {
+            break;
+          }
+        }
+        this.canvas.renderAll();
       })
     );
 
     this.subscription.add(
       this.emittedRedoEventObject$.subscribe((redoEvent) => {
-        console.log(redoEvent);
+        console.log('redo event:', redoEvent);
         // calling changeProperty to change the property of the object
+        // Or delete/create accordingly
+        switch (redoEvent.command) {
+          case CommandType.Create: {
+            // No matter what the object is, just simply delete it based on canvasObjectId
+            this.canvas._objects[redoEvent.canvasObjectId - 1] =
+              this.canvas._objects[redoEvent.canvasObjectId - 1]
+                .set({ ...redoEvent.snapShotAfter })
+                .setCoords(); //can have a placeholder object for temperal solution, proper one needs to introduce the correlation between canvasObject and eventObject
+            console.log(this.canvas._objects);
 
-        // Or delete accordingly
+            break;
+          }
+          case CommandType.Delete: {
+            break;
+          }
+          case CommandType.ChangeProperty: {
+            break;
+          }
+        }
+        this.canvas.renderAll();
       })
     );
   }
