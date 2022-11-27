@@ -1,5 +1,7 @@
 import { fabric } from 'fabric';
+import * as Rx from 'rxjs';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
+import { CommandType, EventObject } from '../RedoUndoService/types';
 import { CircleDrawer } from './circleDrawerService';
 import { FreeDrawer } from './freeDrawerService';
 import { LineDrawer } from './lineDrawerService';
@@ -20,6 +22,9 @@ import {
 */
 export class DrawingService {
   canvas: fabric.Canvas;
+  emittedUndoEventObject: Rx.Subject<EventObject>;
+  emittedRedoEventObject: Rx.Subject<EventObject>;
+  _redoUndoService: RedoUndoService;
   public _drawer: IObjectDrawer; //Current drawer
   private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
   private drawerOptions: fabric.IObjectOptions; //Current drawer options
@@ -27,9 +32,14 @@ export class DrawingService {
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
   private objectNumber: number = 0;
-  _redoUndoService: RedoUndoService;
+  private subscription = new Rx.Subscription();
 
-  constructor(canvas: fabric.Canvas, _redoUndoService: RedoUndoService) {
+  constructor(
+    canvas: fabric.Canvas,
+    _redoUndoService: RedoUndoService,
+    emittedUndoEventObject: Rx.Subject<EventObject>,
+    emittedRedoEventObject: Rx.Subject<EventObject>
+  ) {
     //Create the Fabric canvas
     this.canvas = canvas;
     this._redoUndoService = _redoUndoService;
@@ -128,6 +138,7 @@ export class DrawingService {
   }
 
   private initializeCanvasEvents() {
+    // handle canvas draw action
     this.canvas.on('mouse:down', (o) => {
       const e = <MouseEvent>o.e;
       const pointer = this.canvas.getPointer(o.e);
@@ -151,6 +162,25 @@ export class DrawingService {
         this.mouseUp();
       }
     });
+
+    // handle redo/undo action
+    this.subscription.add(
+      this.emittedUndoEventObject.subscribe((undoEvent) => {
+        console.log(undoEvent);
+        // calling changeProperty to change the property of the object
+
+        // Or delete accordingly
+      })
+    );
+
+    this.subscription.add(
+      this.emittedRedoEventObject.subscribe((redoEvent) => {
+        console.log(redoEvent);
+        // calling changeProperty to change the property of the object
+
+        // Or delete accordingly
+      })
+    );
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
@@ -174,12 +204,14 @@ export class DrawingService {
 
   private async mouseUp(): Promise<any> {
     // Delete the object that is created on clear selection (or without drag movement)
+    const creationEvent: EventObject = new EventObject();
     switch (this.object.type) {
       case ObjectType.Line: {
         if (this.object.width === 0 && this.object.height === 0) {
           this.canvas.remove(this.object);
           return;
         }
+        creationEvent.canvasObjectType = ObjectType.Line;
         break;
       }
       case ObjectType.Rectangle: {
@@ -187,6 +219,7 @@ export class DrawingService {
           this.canvas.remove(this.object);
           return;
         }
+        creationEvent.canvasObjectType = ObjectType.Rectangle;
         break;
       }
       case ObjectType.Circle: {
@@ -194,6 +227,7 @@ export class DrawingService {
           this.canvas.remove(this.object);
           return;
         }
+        creationEvent.canvasObjectType = ObjectType.Circle;
         break;
       }
       case ObjectType.FreeDraw: {
@@ -202,6 +236,7 @@ export class DrawingService {
           this.canvas.remove(this.object);
           return;
         }
+        creationEvent.canvasObjectType = ObjectType.FreeDraw;
         break;
       }
     }
@@ -209,9 +244,15 @@ export class DrawingService {
     this.canvas.setActiveObject(this.object);
     this.canvas.discardActiveObject().renderAll();
 
+    //Increase the number for object created
+    this.objectNumber += 1;
+
     //Sending create new object event to redoUndoService
     console.log(this.object);
-    // this._redoUndoService.emitEvent();
+    creationEvent.canvasObjectId = this.objectNumber;
+    creationEvent.command = CommandType.Create;
+
+    this._redoUndoService.emitEvent(creationEvent);
   }
 
   //Method which allows any drawer to Promise their make() function

@@ -6,11 +6,11 @@ export const enum CommandType {
   ChangeProperty = 'changeProperty',
 }
 
-export interface EventObject {
-  readonly id: number; // event id
-  readonly canvasObjectId: number; // canvas object id attached with this event
-  readonly canvasObjectType: ObjectType;
-  readonly command: CommandType;
-  readonly snapShotBefore: object;
-  readonly snapShotAfter: object;
+export class EventObject {
+  public id: number; // event id
+  public canvasObjectId: number; // canvas object id attached with this event
+  public canvasObjectType: ObjectType;
+  public command: CommandType;
+  public snapShotBefore: object;
+  public snapShotAfter: object;
 }
