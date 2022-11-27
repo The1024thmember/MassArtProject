@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -16,12 +16,12 @@ import { Margin } from 'src/app/Directives/Margin';
         [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER"
       >
         <my-col [col]="2">
-          <my-button>
+          <my-button (click)="undoHandler()">
             <i class="bi bi-arrow-counterclockwise"></i>
           </my-button>
         </my-col>
         <my-col [col]="2">
-          <my-button>
+          <my-button (click)="redoHandler()">
             <i class="bi bi-arrow-clockwise"></i>
           </my-button>
         </my-col>
@@ -50,9 +50,20 @@ import { Margin } from 'src/app/Directives/Margin';
   styleUrls: ['./Exp-controls.scss'],
 })
 export class ExpControlsComponent {
+  @Output() undoClicked: EventEmitter<boolean> = new EventEmitter();
+  @Output() redoClicked: EventEmitter<boolean> = new EventEmitter();
+
   HeadingType = HeadingType;
   HorizontalAlignment = HorizontalAlignment;
   VerticalAlignment = VerticalAlignment;
   BarColor = BarColor;
   Margin = Margin;
+
+  undoHandler() {
+    this.undoClicked.emit(true);
+  }
+
+  redoHandler() {
+    this.redoClicked.emit(true);
+  }
 }

@@ -7,8 +7,9 @@ import {
 import { fabric } from 'fabric';
 import * as Rx from 'rxjs';
 import { Margin } from '../Directives/Margin';
-import { DrawingEditor, DrawingMode } from '../Services/DrawerService';
+import { DrawingMode, DrawingService } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
+import { RedoUndoService } from '../Services/RedoUndoService/redoUndoService';
 
 @Component({
   template: `
@@ -65,8 +66,9 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
 
   private _canvas: fabric.Canvas;
   private isSelectLastAction: boolean = false;
-  private _drawEditor: DrawingEditor;
+  private _drawService: DrawingService;
   private _interactService: InteractService;
+  private _redoUndoService: RedoUndoService;
 
   constructor() {}
 
@@ -79,20 +81,21 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       perPixelTargetFind: true, //when selecting using the actual object instead of the whole bounding box
     });
     this._canvas.selection = true; //group selection
-    this._drawEditor = new DrawingEditor(this._canvas);
+    this._drawService = new DrawingService(this._canvas, this._redoUndoService);
 
     //Gettting the selected object color
     this._interactService = new InteractService(
       this._canvas,
       this.selectedObjectColor$,
-      this.selectedObjectWidth$
+      this.selectedObjectWidth$,
+      this._redoUndoService
     );
 
     // Set the draw color to the merge result of selecton and set
     this.subscription$.add(
       Rx.merge(this.selectedObjectColor$, this.emittedSelectedColor$).subscribe(
         (drawingColor) => {
-          this._drawEditor.setDrawingColor(drawingColor);
+          this._drawService.setDrawingColor(drawingColor);
         }
       )
     );
@@ -101,7 +104,7 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
     this.subscription$.add(
       Rx.merge(this.selectedObjectWidth$, this.emittedSelectedWidth$).subscribe(
         (drawingWidth) => {
-          this._drawEditor.setDrawingWeight(drawingWidth);
+          this._drawService.setDrawingWeight(drawingWidth);
         }
       )
     );
@@ -114,34 +117,34 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
   setLineHandler($event: any) {
     if (this.isSelectLastAction) {
       this.isSelectLastAction = false;
-      this._drawEditor.makeObjectsNoneSeletable();
+      this._drawService.makeObjectsNoneSeletable();
     }
-    this._drawEditor.setDrawingTool(DrawingMode.Line);
+    this._drawService.setDrawingTool(DrawingMode.Line);
   }
 
   //start free drawing
   setCurveHandler($event: any) {
     if (this.isSelectLastAction) {
       this.isSelectLastAction = false;
-      this._drawEditor.makeObjectsNoneSeletable();
+      this._drawService.makeObjectsNoneSeletable();
     }
-    this._drawEditor.setDrawingTool(DrawingMode.FreeDraw);
+    this._drawService.setDrawingTool(DrawingMode.FreeDraw);
   }
 
   setRectangleHandler($event: any) {
     if (this.isSelectLastAction) {
       this.isSelectLastAction = false;
-      this._drawEditor.makeObjectsNoneSeletable();
+      this._drawService.makeObjectsNoneSeletable();
     }
-    this._drawEditor.setDrawingTool(DrawingMode.Rectangle);
+    this._drawService.setDrawingTool(DrawingMode.Rectangle);
   }
 
   setCircleHandler($event: any) {
     if (this.isSelectLastAction) {
       this.isSelectLastAction = false;
-      this._drawEditor.makeObjectsNoneSeletable();
+      this._drawService.makeObjectsNoneSeletable();
     }
-    this._drawEditor.setDrawingTool(DrawingMode.Circle);
+    this._drawService.setDrawingTool(DrawingMode.Circle);
   }
 
   setTriangleHandler($event: any) {}
@@ -155,12 +158,12 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
   }
 
   setWeightHandler($event: number) {
-    this._drawEditor.setDrawingWeight($event);
+    this._drawService.setDrawingWeight($event);
   }
 
   //iterating all canvas objects, make all of them selectable
   setMultiSelectHandler($event: any) {
     this.isSelectLastAction = true;
-    this._drawEditor.makeObjectsSeletable();
+    this._drawService.makeObjectsSeletable();
   }
 }

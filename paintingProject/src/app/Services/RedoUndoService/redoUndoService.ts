@@ -48,14 +48,14 @@ export class RedoUndoService {
 
     this.subscription.add(
       this.undoAction.subscribe((isUndo) => {
-        console.log('event received:', isUndo);
+        console.log('undo received:', isUndo);
         this.emitUndoEvent();
       })
     );
 
     this.subscription.add(
       this.redoAction.subscribe((isRedo) => {
-        console.log('event received:', isRedo);
+        console.log('redo received:', isRedo);
         this.emitRedoEvent();
       })
     );

@@ -1,4 +1,5 @@
 import * as Rx from 'rxjs';
+import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 /*
   All the functionality within this service is exectuable when it is in selection mode
   The function for this service is to:
@@ -11,6 +12,7 @@ export class InteractService {
   canvas: fabric.Canvas;
   selectedObjectColor$: Rx.Subject<string>;
   selectedObjectWidth$: Rx.Subject<number>;
+  _redoUndoService: RedoUndoService;
 
   private currentSelectObject: fabric.Object | null;
   private activeObjects: fabric.Object[];
@@ -18,12 +20,14 @@ export class InteractService {
   constructor(
     canvas: fabric.Canvas,
     selectedObjectColor$: Rx.Subject<string>,
-    selectedObjectWidth$: Rx.Subject<number>
+    selectedObjectWidth$: Rx.Subject<number>,
+    _redoUndoService: RedoUndoService
   ) {
     //Create the Fabric canvas
     this.canvas = canvas;
     this.selectedObjectColor$ = selectedObjectColor$;
     this.selectedObjectWidth$ = selectedObjectWidth$;
+    this._redoUndoService = _redoUndoService;
 
     //Create event listener on canvas
     this.initializeCanvasEvents();

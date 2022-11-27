@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 import { CircleDrawer } from './circleDrawerService';
 import { FreeDrawer } from './freeDrawerService';
 import { LineDrawer } from './lineDrawerService';
@@ -17,7 +18,7 @@ import {
   The function for this service is to:
   Create new objects or modify existing objects
 */
-export class DrawingEditor {
+export class DrawingService {
   canvas: fabric.Canvas;
   public _drawer: IObjectDrawer; //Current drawer
   private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
@@ -25,10 +26,13 @@ export class DrawingEditor {
   private readonly drawers: IObjectDrawer[]; //All possible drawers
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
+  private objectNumber: number = 0;
+  _redoUndoService: RedoUndoService;
 
-  constructor(canvas: fabric.Canvas) {
+  constructor(canvas: fabric.Canvas, _redoUndoService: RedoUndoService) {
     //Create the Fabric canvas
     this.canvas = canvas;
+    this._redoUndoService = _redoUndoService;
 
     //Create a collection of all possible "drawer" classes
     this.drawers = [
@@ -174,18 +178,21 @@ export class DrawingEditor {
       case ObjectType.Line: {
         if (this.object.width === 0 && this.object.height === 0) {
           this.canvas.remove(this.object);
+          return;
         }
         break;
       }
       case ObjectType.Rectangle: {
         if (this.object.width === 0 || this.object.height === 0) {
           this.canvas.remove(this.object);
+          return;
         }
         break;
       }
       case ObjectType.Circle: {
         if (this.object.width === 0) {
           this.canvas.remove(this.object);
+          return;
         }
         break;
       }
@@ -193,6 +200,7 @@ export class DrawingEditor {
         if (!this.object) {
           //need to check path length
           this.canvas.remove(this.object);
+          return;
         }
         break;
       }
@@ -200,6 +208,10 @@ export class DrawingEditor {
     //Making element default as none selective
     this.canvas.setActiveObject(this.object);
     this.canvas.discardActiveObject().renderAll();
+
+    //Sending create new object event to redoUndoService
+    console.log(this.object);
+    // this._redoUndoService.emitEvent();
   }
 
   //Method which allows any drawer to Promise their make() function

@@ -1,3 +1,5 @@
+import { ObjectType } from '../DrawerService';
+
 export const enum CommandType {
   Create = 'create',
   Delete = 'delete',
@@ -7,7 +9,8 @@ export const enum CommandType {
 export interface EventObject {
   readonly id: number; // event id
   readonly canvasObjectId: number; // canvas object id attached with this event
+  readonly canvasObjectType: ObjectType;
   readonly command: CommandType;
-  readonly snapShotBefore: any;
-  readonly snapShotAfter: any;
+  readonly snapShotBefore: object;
+  readonly snapShotAfter: object;
 }
