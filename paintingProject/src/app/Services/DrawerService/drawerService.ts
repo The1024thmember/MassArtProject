@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 import { CommandType, EventObject } from '../RedoUndoService/types';
@@ -215,6 +216,15 @@ export class DrawingService {
           return;
         }
         creationEvent.canvasObjectType = ObjectType.Line;
+        const lineObject = this.object as ILineOptions;
+        creationEvent.snapShotAfter = {
+          left: lineObject.left,
+          top: lineObject.top,
+          x1: lineObject.x1,
+          y1: lineObject.y1,
+          x2: lineObject.x2,
+          y2: lineObject.y2,
+        };
         break;
       }
       case ObjectType.Rectangle: {
@@ -252,7 +262,10 @@ export class DrawingService {
 
     //Sending create new object event to redoUndoService
     console.log(this.object);
+
     creationEvent.canvasObjectId = this.objectNumber;
+    creationEvent.snapShotBefore = {};
+    Object.assign(creationEvent.snapShotAfter, this.drawerOptions);
     creationEvent.command = CommandType.Create;
 
     this._redoUndoService.emitEvent(creationEvent);
