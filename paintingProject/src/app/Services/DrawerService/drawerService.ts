@@ -18,7 +18,7 @@ import {
 } from './types';
 
 /*
-  The function for this service is to:
+  The function for this service is to: excute write (include modification) operation on object
   Create new objects or modify existing objects
 */
 export class DrawingService {
@@ -321,5 +321,15 @@ export class DrawingService {
     value: string
   ): Promise<fabric.Object> {
     return await this._drawer.changeProperty(this.object, option, value);
+  }
+
+  // Remove active (selected) objects
+  private removeActiveObject() {
+    if (this.cursorMode == CursorMode.Select) {
+      this.canvas.getActiveObjects().forEach((obj) => {
+        this.canvas.remove(obj);
+      });
+      this.canvas.discardActiveObject().renderAll();
+    }
   }
 }

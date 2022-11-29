@@ -2,9 +2,8 @@ import * as Rx from 'rxjs';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 /*
   All the functionality within this service is exectuable when it is in selection mode
-  The function for this service is to:
+  The function for this service is to: excute read operation on object
   1. Read the property of the objects in the canvas and reflect them in tools via selectedObjectColor and selectedObjectWidth
-  2. Delete objects
 
   // input for the service: canvas, selectedObjectColor, selectedObjectWidth
 */
@@ -125,13 +124,5 @@ export class InteractService {
       return true;
     }
     return false;
-  }
-
-  // Remove active (selected) objects
-  private removeActiveObject() {
-    this.canvas.getActiveObjects().forEach((obj) => {
-      this.canvas.remove(obj);
-    });
-    this.canvas.discardActiveObject().renderAll();
   }
 }
