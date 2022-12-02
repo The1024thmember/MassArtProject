@@ -1,6 +1,7 @@
 import { fabric } from 'fabric';
 import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
+import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 import { CommandType, EventObject } from '../RedoUndoService/types';
 import { CircleDrawer } from './circleDrawerService';
@@ -25,14 +26,16 @@ export class DrawingService {
   canvas: fabric.Canvas;
   emittedUndoEventObject$: Rx.Subject<EventObject>;
   emittedRedoEventObject$: Rx.Subject<EventObject>;
+
   _redoUndoService: RedoUndoService;
+  _canvasToEventObjectCorrelationService: CanvasToEventObjectCorrelationService;
+
   public _drawer: IObjectDrawer; //Current drawer
   private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
   private drawerOptions: fabric.IObjectOptions; //Current drawer options
   private readonly drawers: IObjectDrawer[]; //All possible drawers
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
-  private objectNumber: number = 0;
   private subscription = new Rx.Subscription();
 
   constructor(
@@ -44,6 +47,8 @@ export class DrawingService {
     //Create the Fabric canvas
     this.canvas = canvas;
     this._redoUndoService = _redoUndoService;
+    this._canvasToEventObjectCorrelationService =
+      new CanvasToEventObjectCorrelationService();
 
     this.emittedUndoEventObject$ = emittedUndoEventObject$;
     this.emittedRedoEventObject$ = emittedRedoEventObject$;
@@ -176,10 +181,11 @@ export class DrawingService {
         switch (undoEvent.command) {
           case CommandType.Create: {
             // No matter what the object is, just simply delete it based on canvasObjectId
-            this.canvas._objects[undoEvent.canvasObjectId - 1] =
-              new fabric.Line([0, 0, 0, 0]); //can have a placeholder object for temperal solution, proper one needs to introduce the correlation between canvasObject and eventObject
-            console.log(this.canvas._objects);
-
+            this.undoCreateEvent(undoEvent, () =>
+              this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                undoEvent
+              )
+            );
             break;
           }
           case CommandType.Delete: {
@@ -292,12 +298,14 @@ export class DrawingService {
     this.canvas.discardActiveObject().renderAll();
 
     //Increase the number for object created
-    this.objectNumber += 1;
+    this._canvasToEventObjectCorrelationService.addNewObject();
 
     //Sending create new object event to redoUndoService
     console.log(this.object);
 
-    creationEvent.canvasObjectId = this.objectNumber;
+    creationEvent.canvasObjectId =
+      this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId();
+
     creationEvent.snapShotBefore = {};
     Object.assign(creationEvent.snapShotAfter, this.drawerOptions);
     creationEvent.command = CommandType.Create;
@@ -330,6 +338,31 @@ export class DrawingService {
         this.canvas.remove(obj);
       });
       this.canvas.discardActiveObject().renderAll();
+    }
+  }
+
+  // undo a create event
+  private undoCreateEvent(
+    undoEvent: EventObject,
+    canvasObjectLocator: Function
+  ) {
+    switch (undoEvent.canvasObjectType) {
+      case 'line': {
+        this.canvas._objects[canvasObjectLocator()] = new fabric.Line([
+          0, 0, 0, 0,
+        ]); //can have a placeholder object for temperal solution, proper one needs to introduce the correlation between canvasObject and eventObject
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'rect': {
+        break;
+      }
+      case 'circle': {
+        break;
+      }
+      case 'FreeDraw': {
+        break;
+      }
     }
   }
 }
