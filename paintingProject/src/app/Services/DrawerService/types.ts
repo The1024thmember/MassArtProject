@@ -15,6 +15,7 @@ export const enum ObjectType {
   Rectangle = 'rect',
   Circle = 'circle',
   FreeDraw = 'FreeDraw',
+  Path = 'path',
 }
 
 export const enum CursorMode {

@@ -1,5 +1,10 @@
 import { fabric } from 'fabric';
-import { ILineOptions } from 'fabric/fabric-impl';
+import {
+  ICircleOptions,
+  ILineOptions,
+  IPathOptions,
+  IRectOptions,
+} from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
@@ -181,10 +186,13 @@ export class DrawingService {
         switch (undoEvent.command) {
           case CommandType.Create: {
             // No matter what the object is, just simply delete it based on canvasObjectId
-            this.undoCreateEvent(undoEvent, () =>
-              this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
-                undoEvent
-              )
+            this.undoCreateEvent(
+              undoEvent,
+              () =>
+                this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                  undoEvent
+                ),
+              this._canvasToEventObjectCorrelationService.ghostObjectProperty
             );
             break;
           }
@@ -273,6 +281,13 @@ export class DrawingService {
           return;
         }
         creationEvent.canvasObjectType = ObjectType.Rectangle;
+        const rectObject = this.object as IRectOptions;
+        creationEvent.snapShotAfter = {
+          left: rectObject.left,
+          top: rectObject.top,
+          width: rectObject.width,
+          height: rectObject.height,
+        };
         break;
       }
       case ObjectType.Circle: {
@@ -281,15 +296,27 @@ export class DrawingService {
           return;
         }
         creationEvent.canvasObjectType = ObjectType.Circle;
+        const circleObject = this.object as ICircleOptions;
+        creationEvent.snapShotAfter = {
+          left: circleObject.left,
+          top: circleObject.top,
+          radius: circleObject.radius,
+        };
         break;
       }
-      case ObjectType.FreeDraw: {
+      case ObjectType.Path: {
+        console.warn('selecting free draw');
         if (!this.object) {
           //need to check path length
           this.canvas.remove(this.object);
           return;
         }
-        creationEvent.canvasObjectType = ObjectType.FreeDraw;
+        creationEvent.canvasObjectType = ObjectType.Path;
+        const pathObject = this.object as IPathOptions;
+        console.log('pathObject:', pathObject);
+        creationEvent.snapShotAfter = {
+          path: pathObject.path,
+        };
         break;
       }
     }
@@ -307,6 +334,7 @@ export class DrawingService {
       this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId();
 
     creationEvent.snapShotBefore = {};
+    //Set position, width/height data, and appending draweroptions for rect,circle and line Object
     Object.assign(creationEvent.snapShotAfter, this.drawerOptions);
     creationEvent.command = CommandType.Create;
 
@@ -344,23 +372,47 @@ export class DrawingService {
   // undo a create event
   private undoCreateEvent(
     undoEvent: EventObject,
-    canvasObjectLocator: Function
+    canvasObjectLocator: Function,
+    additionalProperty: any
   ) {
+    const canvasObjectLocation = canvasObjectLocator();
+    // still not the best way for handling redo & undo, since the logic here is
+    // still re-assgin to new object, which doesn't give flexibility for real
+    // deletion.
     switch (undoEvent.canvasObjectType) {
       case 'line': {
-        this.canvas._objects[canvasObjectLocator()] = new fabric.Line([
-          0, 0, 0, 0,
-        ]); //can have a placeholder object for temperal solution, proper one needs to introduce the correlation between canvasObject and eventObject
+        this.canvas._objects[canvasObjectLocation] = new fabric.Line(
+          [0, 0, 0, 0],
+          additionalProperty
+        );
         console.log(this.canvas._objects);
         break;
       }
       case 'rect': {
+        this.canvas._objects[canvasObjectLocation] = new fabric.Rect({
+          left: 0,
+          top: 0,
+          ...additionalProperty,
+        });
+        console.log(this.canvas._objects);
         break;
       }
       case 'circle': {
+        this.canvas._objects[canvasObjectLocation] = new fabric.Circle({
+          left: 0,
+          top: 0,
+          radius: 0,
+          ...additionalProperty,
+        });
+        console.log(this.canvas._objects);
         break;
       }
-      case 'FreeDraw': {
+      case 'path': {
+        this.canvas._objects[canvasObjectLocation] = new fabric.Path(
+          [['M', 0, 0] as unknown as fabric.Point],
+          additionalProperty
+        );
+        console.log(this.canvas._objects);
         break;
       }
     }
