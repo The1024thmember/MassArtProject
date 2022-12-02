@@ -454,18 +454,11 @@ export class DrawingService {
       case 'path': {
         console.log(' redoEvent.snapShotAfter:', redoEvent.snapShotAfter);
         var pathPoints: unknown = [];
-        var properties: object = {};
         Object.entries(redoEvent.snapShotAfter).forEach((entries) => {
           if (entries[0] === 'path') {
             pathPoints = entries[1];
-          } else {
-            const key = entries[0];
-            properties = {
-              [key]: entries[1],
-            };
           }
         });
-        console.log('properties:', properties);
         this.canvas._objects[canvasObjectLocation] = new fabric.Path(
           pathPoints as unknown as fabric.Point[],
           redoEvent.snapShotAfter
