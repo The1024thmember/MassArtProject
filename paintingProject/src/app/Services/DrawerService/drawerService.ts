@@ -215,12 +215,11 @@ export class DrawingService {
         switch (redoEvent.command) {
           case CommandType.Create: {
             // No matter what the object is, just simply delete it based on canvasObjectId
-            this.canvas._objects[redoEvent.canvasObjectId - 1] =
-              this.canvas._objects[redoEvent.canvasObjectId - 1]
-                .set({ ...redoEvent.snapShotAfter })
-                .setCoords(); //can have a placeholder object for temperal solution, proper one needs to introduce the correlation between canvasObject and eventObject
-            console.log(this.canvas._objects);
-
+            this.redoCreateEvent(redoEvent, () =>
+              this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                redoEvent
+              )
+            );
             break;
           }
           case CommandType.Delete: {
@@ -411,6 +410,65 @@ export class DrawingService {
         this.canvas._objects[canvasObjectLocation] = new fabric.Path(
           [['M', 0, 0] as unknown as fabric.Point],
           additionalProperty
+        );
+        console.log(this.canvas._objects);
+        break;
+      }
+    }
+  }
+
+  // redo a create event
+  private redoCreateEvent(
+    redoEvent: EventObject,
+    canvasObjectLocator: Function
+  ) {
+    const canvasObjectLocation = canvasObjectLocator();
+    switch (redoEvent.canvasObjectType) {
+      case 'line': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...redoEvent.snapShotAfter })
+          .setCoords();
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'rect': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...redoEvent.snapShotAfter })
+          .setCoords();
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'circle': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...redoEvent.snapShotAfter })
+          .setCoords();
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'path': {
+        console.log(' redoEvent.snapShotAfter:', redoEvent.snapShotAfter);
+        var pathPoints: unknown = [];
+        var properties: object = {};
+        Object.entries(redoEvent.snapShotAfter).forEach((entries) => {
+          if (entries[0] === 'path') {
+            pathPoints = entries[1];
+          } else {
+            const key = entries[0];
+            properties = {
+              [key]: entries[1],
+            };
+          }
+        });
+        console.log('properties:', properties);
+        this.canvas._objects[canvasObjectLocation] = new fabric.Path(
+          pathPoints as unknown as fabric.Point[],
+          redoEvent.snapShotAfter
         );
         console.log(this.canvas._objects);
         break;
