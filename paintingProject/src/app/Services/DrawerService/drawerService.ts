@@ -110,6 +110,7 @@ export class DrawingService {
     this.drawerOptions.strokeWidth = Math.floor(weight);
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
+        console.warn('activeObjct:', obj);
         await this._drawer.changeProperty(
           obj,
           ChangeObjectProperty.StrokeWeight,
@@ -312,7 +313,6 @@ export class DrawingService {
         }
         creationEvent.canvasObjectType = ObjectType.Path;
         const pathObject = this.object as IPathOptions;
-        console.log('pathObject:', pathObject);
         creationEvent.snapShotAfter = {
           path: pathObject.path,
         };
@@ -335,6 +335,9 @@ export class DrawingService {
     creationEvent.snapShotBefore = {};
     //Set position, width/height data, and appending draweroptions for rect,circle and line Object
     Object.assign(creationEvent.snapShotAfter, this.drawerOptions);
+
+    //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will by buggy
+    creationEvent._canvas = this.object.canvas;
     creationEvent.command = CommandType.Create;
 
     this._redoUndoService.emitEvent(creationEvent);
@@ -430,7 +433,7 @@ export class DrawingService {
         ]
           .set({ ...redoEvent.snapShotAfter })
           .setCoords();
-        console.log(this.canvas._objects);
+
         break;
       }
       case 'rect': {
@@ -439,7 +442,7 @@ export class DrawingService {
         ]
           .set({ ...redoEvent.snapShotAfter })
           .setCoords();
-        console.log(this.canvas._objects);
+
         break;
       }
       case 'circle': {
@@ -448,7 +451,7 @@ export class DrawingService {
         ]
           .set({ ...redoEvent.snapShotAfter })
           .setCoords();
-        console.log(this.canvas._objects);
+
         break;
       }
       case 'path': {
@@ -463,9 +466,14 @@ export class DrawingService {
           pathPoints as unknown as fabric.Point[],
           redoEvent.snapShotAfter
         );
-        console.log(this.canvas._objects);
+
         break;
       }
     }
+    this.canvas._objects[canvasObjectLocation].canvas = redoEvent._canvas;
+    console.warn(
+      'after redo create:',
+      this.canvas._objects[canvasObjectLocation]
+    );
   }
 }
