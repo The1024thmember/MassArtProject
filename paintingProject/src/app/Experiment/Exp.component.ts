@@ -43,7 +43,11 @@ import { EventObject } from '../Services/RedoUndoService/types';
         [ObjectColor]="selectedObjectColor$"
         (selectedColor)="setColorHandler($event)"
       ></Exp-colorPlatte>
-      <my-container class="MyCanvas">
+      <my-container
+        class="MyCanvas"
+        contenteditable="true"
+        (keydown)="onCanvasKeydown($event)"
+      >
         <canvas width="900" height="700" id="fabricSurface"></canvas>
       </my-container>
     </my-container>
@@ -190,5 +194,9 @@ export class ExpComponent implements OnInit, OnDestroy {
       this.isSelectLastAction = false;
       this._drawService.makeObjectsNoneSeletable();
     }
+  }
+
+  onCanvasKeydown($event: any) {
+    this._drawService.handleKeyDown($event);
   }
 }

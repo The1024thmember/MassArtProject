@@ -20,6 +20,7 @@ import {
   CursorMode,
   DrawingMode,
   IObjectDrawer,
+  KeyDownEvent,
   ObjectType,
 } from './types';
 
@@ -149,6 +150,40 @@ export class DrawingService {
       element.hasControls = false;
       element.hoverCursor = 'default';
     });
+    this.canvas.renderAll();
+  }
+
+  // Handle keydown event, such as object deletion
+  public handleKeyDown(e: any) {
+    switch (e.key) {
+      case KeyDownEvent.Delete: {
+        if (this.cursorMode === CursorMode.Select) {
+          this.canvas.getActiveObjects().forEach((activeObject) => {
+            var index = this.canvas.getObjects().indexOf(activeObject);
+            // Create a delete event object
+            const deletionEvent: EventObject = new EventObject();
+            // Delete the object by calling the undoCreateEvent
+            deletionEvent.canvasObjectId = index + 1;
+            deletionEvent.command = CommandType.Delete;
+            Object.assign(
+              deletionEvent,
+              this._redoUndoService.buildDeletionEventObject(
+                deletionEvent,
+                activeObject
+              )
+            );
+            this.undoCreateEvent(
+              deletionEvent,
+              () =>
+                this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                  deletionEvent
+                ),
+              this._canvasToEventObjectCorrelationService.ghostObjectProperty
+            );
+          });
+        }
+      }
+    }
     this.canvas.renderAll();
   }
 

@@ -46,6 +46,10 @@ export const enum CornerSize {
   mobile = 6,
 }
 
+export const enum KeyDownEvent {
+  Delete = 'Delete',
+}
+
 export interface IObjectDrawer {
   drawingMode: DrawingMode;
   //Makes the current object

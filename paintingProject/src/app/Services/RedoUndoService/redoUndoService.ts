@@ -1,4 +1,11 @@
+import {
+  ICircleOptions,
+  ILineOptions,
+  IPathOptions,
+  IRectOptions,
+} from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
+import { ObjectType } from '../DrawerService';
 import { EventObject } from './types';
 /*
   Keeps redo and undo stack
@@ -23,6 +30,59 @@ export class RedoUndoService {
     this.emittedUndoEventObject$ = emittedUndoEventObject;
     this.emittedRedoEventObject$ = emittedRedoEventObject;
     this.initializer();
+  }
+
+  public buildDeletionEventObject(
+    eventObject: EventObject,
+    canvasObject: fabric.Object
+  ): EventObject {
+    switch (canvasObject.type) {
+      case ObjectType.Line: {
+        eventObject.canvasObjectType = ObjectType.Line;
+        const lineObject = canvasObject as ILineOptions;
+        eventObject.snapShotBefore = {
+          left: lineObject.left,
+          top: lineObject.top,
+          x1: lineObject.x1,
+          y1: lineObject.y1,
+          x2: lineObject.x2,
+          y2: lineObject.y2,
+        };
+        break;
+      }
+      case ObjectType.Rectangle: {
+        eventObject.canvasObjectType = ObjectType.Rectangle;
+        const rectObject = canvasObject as IRectOptions;
+        eventObject.snapShotBefore = {
+          left: rectObject.left,
+          top: rectObject.top,
+          width: rectObject.width,
+          height: rectObject.height,
+        };
+        break;
+      }
+      case ObjectType.Circle: {
+        eventObject.canvasObjectType = ObjectType.Circle;
+        const circleObject = canvasObject as ICircleOptions;
+        eventObject.snapShotBefore = {
+          left: circleObject.left,
+          top: circleObject.top,
+          radius: circleObject.radius,
+        };
+        break;
+      }
+      case ObjectType.Path: {
+        eventObject.canvasObjectType = ObjectType.Path;
+        const pathObject = canvasObject as IPathOptions;
+        eventObject.snapShotBefore = {
+          path: pathObject.path,
+        };
+        break;
+      }
+    }
+    eventObject.snapShotAfter = {};
+    eventObject._canvas = canvasObject.canvas;
+    return eventObject;
   }
 
   public emitEvent(event: EventObject) {
