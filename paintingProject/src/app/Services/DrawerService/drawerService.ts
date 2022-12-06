@@ -471,6 +471,10 @@ export class DrawingService {
       }
     }
     this.canvas._objects[canvasObjectLocation].canvas = redoEvent._canvas;
+    if (this.cursorMode == CursorMode.Select) {
+      this.canvas._objects[canvasObjectLocation].selectable = true;
+      this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
+    }
     console.warn(
       'after redo create:',
       this.canvas._objects[canvasObjectLocation]
