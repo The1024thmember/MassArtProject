@@ -334,7 +334,11 @@ export class DrawingService {
 
     creationEvent.snapShotBefore = {};
     //Set position, width/height data, and appending draweroptions for rect,circle and line Object
-    Object.assign(creationEvent.snapShotAfter, this.drawerOptions);
+    Object.assign(creationEvent.snapShotAfter, {
+      ...this.drawerOptions,
+      originX: this.object.originX,
+      originY: this.object.originY,
+    });
 
     //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will by buggy
     creationEvent._canvas = this.object.canvas;

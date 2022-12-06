@@ -137,35 +137,23 @@ export class ExpComponent implements OnInit, OnDestroy {
   }
 
   setLineHandler($event: any) {
-    if (this.isSelectLastAction) {
-      this.isSelectLastAction = false;
-      this._drawService.makeObjectsNoneSeletable();
-    }
+    this.switchToNonSelectMode();
     this._drawService.setDrawingTool(DrawingMode.Line);
   }
 
   //start free drawing
   setCurveHandler($event: any) {
-    if (this.isSelectLastAction) {
-      this.isSelectLastAction = false;
-      this._drawService.makeObjectsNoneSeletable();
-    }
+    this.switchToNonSelectMode();
     this._drawService.setDrawingTool(DrawingMode.FreeDraw);
   }
 
   setRectangleHandler($event: any) {
-    if (this.isSelectLastAction) {
-      this.isSelectLastAction = false;
-      this._drawService.makeObjectsNoneSeletable();
-    }
+    this.switchToNonSelectMode();
     this._drawService.setDrawingTool(DrawingMode.Rectangle);
   }
 
   setCircleHandler($event: any) {
-    if (this.isSelectLastAction) {
-      this.isSelectLastAction = false;
-      this._drawService.makeObjectsNoneSeletable();
-    }
+    this.switchToNonSelectMode();
     this._drawService.setDrawingTool(DrawingMode.Circle);
   }
 
@@ -195,5 +183,12 @@ export class ExpComponent implements OnInit, OnDestroy {
 
   redoClickedHandler($event: any) {
     this._redoUndoService.redo();
+  }
+
+  switchToNonSelectMode() {
+    if (this.isSelectLastAction) {
+      this.isSelectLastAction = false;
+      this._drawService.makeObjectsNoneSeletable();
+    }
   }
 }
