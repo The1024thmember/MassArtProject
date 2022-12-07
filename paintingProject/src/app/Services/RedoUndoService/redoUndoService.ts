@@ -6,7 +6,7 @@ import {
 } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
 import { ObjectType } from '../DrawerService';
-import { EventObject } from './types';
+import { CommandType, EventObject } from './types';
 /*
   Keeps redo and undo stack
   input: event stream
@@ -33,9 +33,11 @@ export class RedoUndoService {
   }
 
   public buildDeletionEventObject(
-    eventObject: EventObject,
-    canvasObject: fabric.Object
+    canvasObjectId: number,
+    canvasObject: fabric.Object,
+    additionalProperties: object
   ): EventObject {
+    const eventObject: EventObject = new EventObject();
     switch (canvasObject.type) {
       case ObjectType.Line: {
         eventObject.canvasObjectType = ObjectType.Line;
@@ -47,6 +49,7 @@ export class RedoUndoService {
           y1: lineObject.y1,
           x2: lineObject.x2,
           y2: lineObject.y2,
+          ...additionalProperties,
         };
         break;
       }
@@ -58,6 +61,7 @@ export class RedoUndoService {
           top: rectObject.top,
           width: rectObject.width,
           height: rectObject.height,
+          ...additionalProperties,
         };
         break;
       }
@@ -68,6 +72,7 @@ export class RedoUndoService {
           left: circleObject.left,
           top: circleObject.top,
           radius: circleObject.radius,
+          ...additionalProperties,
         };
         break;
       }
@@ -76,10 +81,13 @@ export class RedoUndoService {
         const pathObject = canvasObject as IPathOptions;
         eventObject.snapShotBefore = {
           path: pathObject.path,
+          ...additionalProperties,
         };
         break;
       }
     }
+    eventObject.canvasObjectId = canvasObjectId;
+    eventObject.command = CommandType.Delete;
     eventObject.snapShotAfter = {};
     eventObject._canvas = canvasObject.canvas;
     return eventObject;

@@ -161,25 +161,50 @@ export class DrawingService {
           this.canvas.getActiveObjects().forEach((activeObject) => {
             var index = this.canvas.getObjects().indexOf(activeObject);
             // Create a delete event object
-            const deletionEvent: EventObject = new EventObject();
-            // Delete the object by calling the undoCreateEvent
-            deletionEvent.canvasObjectId = index + 1;
-            deletionEvent.command = CommandType.Delete;
-            Object.assign(
-              deletionEvent,
+            const deletionEvent =
               this._redoUndoService.buildDeletionEventObject(
-                deletionEvent,
-                activeObject
-              )
-            );
-            this.undoCreateEvent(
-              deletionEvent,
-              () =>
-                this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
-                  deletionEvent
-                ),
-              this._canvasToEventObjectCorrelationService.ghostObjectProperty
-            );
+                index + 1,
+                activeObject,
+                this.drawerOptions
+              );
+            // Put event into event queue
+            this._redoUndoService.emitEvent(deletionEvent);
+            // Do the actual deletion
+            switch (activeObject.type) {
+              case 'line': {
+                this.canvas._objects[index] = new fabric.Line(
+                  [0, 0, 0, 0],
+                  this._canvasToEventObjectCorrelationService.ghostObjectProperty
+                );
+                break;
+              }
+              case 'rect': {
+                this.canvas._objects[index] = new fabric.Rect({
+                  left: 0,
+                  top: 0,
+                  ...this._canvasToEventObjectCorrelationService
+                    .ghostObjectProperty,
+                });
+                break;
+              }
+              case 'circle': {
+                this.canvas._objects[index] = new fabric.Circle({
+                  left: 0,
+                  top: 0,
+                  radius: 0,
+                  ...this._canvasToEventObjectCorrelationService
+                    .ghostObjectProperty,
+                });
+                break;
+              }
+              case 'path': {
+                this.canvas._objects[index] = new fabric.Path(
+                  [['M', 0, 0] as unknown as fabric.Point],
+                  this._canvasToEventObjectCorrelationService.ghostObjectProperty
+                );
+                break;
+              }
+            }
           });
         }
       }
@@ -222,7 +247,7 @@ export class DrawingService {
         switch (undoEvent.command) {
           case CommandType.Create: {
             // No matter what the object is, just simply delete it based on canvasObjectId
-            this.undoCreateEvent(
+            this.undoCreationEvent(
               undoEvent,
               () =>
                 this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
@@ -233,6 +258,12 @@ export class DrawingService {
             break;
           }
           case CommandType.Delete: {
+            console.error('undo Deletion');
+            this.undoDeletionEvent(undoEvent, () =>
+              this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                undoEvent
+              )
+            );
             break;
           }
           case CommandType.ChangeProperty: {
@@ -251,7 +282,7 @@ export class DrawingService {
         switch (redoEvent.command) {
           case CommandType.Create: {
             // No matter what the object is, just simply delete it based on canvasObjectId
-            this.redoCreateEvent(redoEvent, () =>
+            this.redoCreationEvent(redoEvent, () =>
               this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
                 redoEvent
               )
@@ -259,6 +290,14 @@ export class DrawingService {
             break;
           }
           case CommandType.Delete: {
+            this.redoDeletionEvent(
+              redoEvent,
+              () =>
+                this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                  redoEvent
+                ),
+              this._canvasToEventObjectCorrelationService.ghostObjectProperty
+            );
             break;
           }
           case CommandType.ChangeProperty: {
@@ -340,7 +379,6 @@ export class DrawingService {
         break;
       }
       case ObjectType.Path: {
-        console.warn('selecting free draw');
         if (!this.object) {
           //need to check path length
           this.canvas.remove(this.object);
@@ -361,9 +399,6 @@ export class DrawingService {
     //Increase the number for object created
     this._canvasToEventObjectCorrelationService.addNewObject();
 
-    //Sending create new object event to redoUndoService
-    console.log(this.object);
-
     creationEvent.canvasObjectId =
       this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId();
 
@@ -379,6 +414,7 @@ export class DrawingService {
     creationEvent._canvas = this.object.canvas;
     creationEvent.command = CommandType.Create;
 
+    //Sending create new object event to redoUndoService
     this._redoUndoService.emitEvent(creationEvent);
   }
 
@@ -411,7 +447,7 @@ export class DrawingService {
   }
 
   // undo a create event
-  private undoCreateEvent(
+  private undoCreationEvent(
     undoEvent: EventObject,
     canvasObjectLocator: Function,
     additionalProperty: any
@@ -459,8 +495,69 @@ export class DrawingService {
     }
   }
 
+  // undo a deletion event
+  private undoDeletionEvent(
+    undoEvent: EventObject,
+    canvasObjectLocator: Function
+  ) {
+    const canvasObjectLocation = canvasObjectLocator();
+    switch (undoEvent.canvasObjectType) {
+      case 'line': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...undoEvent.snapShotBefore })
+          .setCoords();
+
+        break;
+      }
+      case 'rect': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...undoEvent.snapShotBefore })
+          .setCoords();
+
+        break;
+      }
+      case 'circle': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...undoEvent.snapShotBefore })
+          .setCoords();
+
+        break;
+      }
+      case 'path': {
+        console.log(' undoEvent.snapShotBefore:', undoEvent.snapShotBefore);
+        var pathPoints: unknown = [];
+        Object.entries(undoEvent.snapShotBefore).forEach((entries) => {
+          if (entries[0] === 'path') {
+            pathPoints = entries[1];
+          }
+        });
+        this.canvas._objects[canvasObjectLocation] = new fabric.Path(
+          pathPoints as unknown as fabric.Point[],
+          undoEvent.snapShotBefore
+        );
+
+        break;
+      }
+    }
+    this.canvas._objects[canvasObjectLocation].canvas = undoEvent._canvas;
+    if (this.cursorMode == CursorMode.Select) {
+      this.canvas._objects[canvasObjectLocation].selectable = true;
+      this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
+    }
+    console.warn(
+      'after undo deletion:',
+      this.canvas._objects[canvasObjectLocation]
+    );
+  }
+
   // redo a create event
-  private redoCreateEvent(
+  private redoCreationEvent(
     redoEvent: EventObject,
     canvasObjectLocator: Function
   ) {
@@ -518,5 +615,54 @@ export class DrawingService {
       'after redo create:',
       this.canvas._objects[canvasObjectLocation]
     );
+  }
+
+  // redo a deletion event
+  private redoDeletionEvent(
+    redoEvent: EventObject,
+    canvasObjectLocator: Function,
+    additionalProperty: any
+  ) {
+    const canvasObjectLocation = canvasObjectLocator();
+    // still not the best way for handling redo & undo, since the logic here is
+    // still re-assgin to new object, which doesn't give flexibility for real
+    // deletion.
+    switch (redoEvent.canvasObjectType) {
+      case 'line': {
+        this.canvas._objects[canvasObjectLocation] = new fabric.Line(
+          [0, 0, 0, 0],
+          additionalProperty
+        );
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'rect': {
+        this.canvas._objects[canvasObjectLocation] = new fabric.Rect({
+          left: 0,
+          top: 0,
+          ...additionalProperty,
+        });
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'circle': {
+        this.canvas._objects[canvasObjectLocation] = new fabric.Circle({
+          left: 0,
+          top: 0,
+          radius: 0,
+          ...additionalProperty,
+        });
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'path': {
+        this.canvas._objects[canvasObjectLocation] = new fabric.Path(
+          [['M', 0, 0] as unknown as fabric.Point],
+          additionalProperty
+        );
+        console.log(this.canvas._objects);
+        break;
+      }
+    }
   }
 }

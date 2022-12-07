@@ -7,7 +7,6 @@ import {
   Output,
 } from '@angular/core';
 import * as Rx from 'rxjs';
-import { tap } from 'rxjs';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -168,35 +167,24 @@ export class ExpToolsComponent implements OnInit, OnChanges {
     this.selectedWidthOrFromObject$ = Rx.merge(
       this.ObjectWeight, // The selected object color
       this.currentWidthObservable$ // The color from color picker or history
-    ).pipe(
-      Rx.distinctUntilChanged(),
-      tap((result) => {
-        console.error('selectedWidthFromObject:', result);
-      })
-    );
-
-    console.log('exp-weightPicker input ObjectColor:', this.ObjectWeight);
+    ).pipe(Rx.distinctUntilChanged());
   }
 
   ngOnChanges() {}
 
   selectLineHandler() {
-    console.log('selecting the line');
     this.selectLine.emit(true);
   }
 
   selectCurveHandler() {
     this.selectCurve.emit(true);
-    console.log('selecting the curve');
   }
 
   selectRectHandler() {
-    console.log('selecting the rect');
     this.selectRectangle.emit(true);
   }
 
   selectCircleHandler() {
-    console.log('selecting the circle');
     this.selectCircle.emit(true);
   }
 
@@ -205,12 +193,10 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   }
 
   selectMultiSelectHandler() {
-    console.log('selecting the multiple selection');
     this.selectMultiSelect.emit(true);
   }
 
   selectWeightHandler() {
-    console.log('selecting the weight');
     this.showWeightPicker = true;
   }
 

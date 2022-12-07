@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { ColorEvent } from 'ngx-color';
 import * as Rx from 'rxjs';
-import { tap } from 'rxjs';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -143,14 +142,7 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
     this.selectedColorFromHistoryOrObject$ = Rx.merge(
       this.ObjectColor, // The selected object color
       this.currentColorObservable$ // The color from color picker or history
-    ).pipe(
-      Rx.distinctUntilChanged(),
-      tap((result) => {
-        console.error('selectedColorFromHistoryOrObject:', result);
-      })
-    );
-
-    console.log('exp-colorPlatte input ObjectColor:', this.ObjectColor);
+    ).pipe(Rx.distinctUntilChanged());
   }
 
   ngOnChanges(changes: any) {}
