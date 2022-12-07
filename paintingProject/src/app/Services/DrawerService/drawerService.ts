@@ -1,10 +1,4 @@
 import { fabric } from 'fabric';
-import {
-  ICircleOptions,
-  ILineOptions,
-  IPathOptions,
-  IRectOptions,
-} from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
@@ -167,8 +161,6 @@ export class DrawingService {
                 activeObject,
                 this.drawerOptions
               );
-            // Put event into event queue
-            this._redoUndoService.emitEvent(deletionEvent);
             // Do the actual deletion
             switch (activeObject.type) {
               case 'line': {
@@ -258,7 +250,7 @@ export class DrawingService {
             break;
           }
           case CommandType.Delete: {
-            console.error('undo Deletion');
+            console.log('undo Deletion');
             this.undoDeletionEvent(undoEvent, () =>
               this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
                 undoEvent
@@ -330,23 +322,12 @@ export class DrawingService {
 
   private async mouseUp(): Promise<any> {
     // Delete the object that is created on clear selection (or without drag movement)
-    const creationEvent: EventObject = new EventObject();
     switch (this.object.type) {
       case ObjectType.Line: {
         if (this.object.width === 0 && this.object.height === 0) {
           this.canvas.remove(this.object);
           return;
         }
-        creationEvent.canvasObjectType = ObjectType.Line;
-        const lineObject = this.object as ILineOptions;
-        creationEvent.snapShotAfter = {
-          left: lineObject.left,
-          top: lineObject.top,
-          x1: lineObject.x1,
-          y1: lineObject.y1,
-          x2: lineObject.x2,
-          y2: lineObject.y2,
-        };
         break;
       }
       case ObjectType.Rectangle: {
@@ -354,14 +335,6 @@ export class DrawingService {
           this.canvas.remove(this.object);
           return;
         }
-        creationEvent.canvasObjectType = ObjectType.Rectangle;
-        const rectObject = this.object as IRectOptions;
-        creationEvent.snapShotAfter = {
-          left: rectObject.left,
-          top: rectObject.top,
-          width: rectObject.width,
-          height: rectObject.height,
-        };
         break;
       }
       case ObjectType.Circle: {
@@ -369,13 +342,6 @@ export class DrawingService {
           this.canvas.remove(this.object);
           return;
         }
-        creationEvent.canvasObjectType = ObjectType.Circle;
-        const circleObject = this.object as ICircleOptions;
-        creationEvent.snapShotAfter = {
-          left: circleObject.left,
-          top: circleObject.top,
-          radius: circleObject.radius,
-        };
         break;
       }
       case ObjectType.Path: {
@@ -384,11 +350,6 @@ export class DrawingService {
           this.canvas.remove(this.object);
           return;
         }
-        creationEvent.canvasObjectType = ObjectType.Path;
-        const pathObject = this.object as IPathOptions;
-        creationEvent.snapShotAfter = {
-          path: pathObject.path,
-        };
         break;
       }
     }
@@ -399,23 +360,12 @@ export class DrawingService {
     //Increase the number for object created
     this._canvasToEventObjectCorrelationService.addNewObject();
 
-    creationEvent.canvasObjectId =
-      this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId();
-
-    creationEvent.snapShotBefore = {};
-    //Set position, width/height data, and appending draweroptions for rect,circle and line Object
-    Object.assign(creationEvent.snapShotAfter, {
-      ...this.drawerOptions,
-      originX: this.object.originX,
-      originY: this.object.originY,
-    });
-
-    //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will by buggy
-    creationEvent._canvas = this.object.canvas;
-    creationEvent.command = CommandType.Create;
-
     //Sending create new object event to redoUndoService
-    this._redoUndoService.emitEvent(creationEvent);
+    const creationEvent = this._redoUndoService.buildCreationEventObject(
+      this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId(),
+      this.object,
+      this.drawerOptions
+    );
   }
 
   //Method which allows any drawer to Promise their make() function
@@ -493,6 +443,10 @@ export class DrawingService {
         break;
       }
     }
+    console.warn(
+      'after undo creation:',
+      this.canvas._objects[canvasObjectLocation]
+    );
   }
 
   // undo a deletion event
@@ -664,5 +618,10 @@ export class DrawingService {
         break;
       }
     }
+
+    console.warn(
+      'after redo deletion:',
+      this.canvas._objects[canvasObjectLocation]
+    );
   }
 }
