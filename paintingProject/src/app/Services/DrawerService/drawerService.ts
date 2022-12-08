@@ -24,8 +24,8 @@ import {
 */
 export class DrawingService {
   canvas: fabric.Canvas;
-  emittedUndoEventObject$: Rx.Subject<EventObject>;
-  emittedRedoEventObject$: Rx.Subject<EventObject>;
+  emittedUndoEventObject$: Rx.Subject<EventObject[]>;
+  emittedRedoEventObject$: Rx.Subject<EventObject[]>;
 
   _redoUndoService: RedoUndoService;
   _canvasToEventObjectCorrelationService: CanvasToEventObjectCorrelationService;
@@ -41,8 +41,8 @@ export class DrawingService {
   constructor(
     canvas: fabric.Canvas,
     _redoUndoService: RedoUndoService,
-    emittedUndoEventObject$: Rx.Subject<EventObject>,
-    emittedRedoEventObject$: Rx.Subject<EventObject>
+    emittedUndoEventObject$: Rx.Subject<EventObject[]>,
+    emittedRedoEventObject$: Rx.Subject<EventObject[]>
   ) {
     //Create the Fabric canvas
     this.canvas = canvas;
@@ -152,6 +152,7 @@ export class DrawingService {
     switch (e.key) {
       case KeyDownEvent.Delete: {
         if (this.cursorMode === CursorMode.Select) {
+          const deletionEventsBatch: EventObject[] = [];
           this.canvas.getActiveObjects().forEach((activeObject) => {
             var index = this.canvas.getObjects().indexOf(activeObject);
             // Create a delete event object
@@ -161,6 +162,9 @@ export class DrawingService {
                 activeObject,
                 this.drawerOptions
               );
+
+            deletionEventsBatch.push(deletionEvent);
+
             // Do the actual deletion
             switch (activeObject.type) {
               case 'line': {
@@ -198,6 +202,11 @@ export class DrawingService {
               }
             }
           });
+
+          // Emit the events
+          if (deletionEventsBatch.length) {
+            this._redoUndoService.emitEvent(deletionEventsBatch);
+          }
         }
       }
     }
@@ -232,70 +241,74 @@ export class DrawingService {
 
     // handle redo/undo action
     this.subscription.add(
-      this.emittedUndoEventObject$.subscribe((undoEvent) => {
-        console.log('undo event:', undoEvent);
+      this.emittedUndoEventObject$.subscribe((undoEvents) => {
+        console.log('undo event:', undoEvents);
         // Based on command calling changeProperty to change the property of the object
         // Or delete/create accordingly
-        switch (undoEvent.command) {
-          case CommandType.Create: {
-            // No matter what the object is, just simply delete it based on canvasObjectId
-            this.undoCreationEvent(
-              undoEvent,
-              () =>
+        undoEvents.forEach((undoEvent) => {
+          switch (undoEvent.command) {
+            case CommandType.Create: {
+              // No matter what the object is, just simply delete it based on canvasObjectId
+              this.undoCreationEvent(
+                undoEvent,
+                () =>
+                  this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                    undoEvent
+                  ),
+                this._canvasToEventObjectCorrelationService.ghostObjectProperty
+              );
+              break;
+            }
+            case CommandType.Delete: {
+              console.log('undo Deletion');
+              this.undoDeletionEvent(undoEvent, () =>
                 this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
                   undoEvent
-                ),
-              this._canvasToEventObjectCorrelationService.ghostObjectProperty
-            );
-            break;
+                )
+              );
+              break;
+            }
+            case CommandType.ChangeProperty: {
+              break;
+            }
           }
-          case CommandType.Delete: {
-            console.log('undo Deletion');
-            this.undoDeletionEvent(undoEvent, () =>
-              this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
-                undoEvent
-              )
-            );
-            break;
-          }
-          case CommandType.ChangeProperty: {
-            break;
-          }
-        }
+        });
         this.canvas.renderAll();
       })
     );
 
     this.subscription.add(
-      this.emittedRedoEventObject$.subscribe((redoEvent) => {
-        console.log('redo event:', redoEvent);
+      this.emittedRedoEventObject$.subscribe((redoEvents) => {
+        console.log('redo event:', redoEvents);
         // calling changeProperty to change the property of the object
         // Or delete/create accordingly
-        switch (redoEvent.command) {
-          case CommandType.Create: {
-            // No matter what the object is, just simply delete it based on canvasObjectId
-            this.redoCreationEvent(redoEvent, () =>
-              this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
-                redoEvent
-              )
-            );
-            break;
-          }
-          case CommandType.Delete: {
-            this.redoDeletionEvent(
-              redoEvent,
-              () =>
+        redoEvents.forEach((redoEvent) => {
+          switch (redoEvent.command) {
+            case CommandType.Create: {
+              // No matter what the object is, just simply delete it based on canvasObjectId
+              this.redoCreationEvent(redoEvent, () =>
                 this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
                   redoEvent
-                ),
-              this._canvasToEventObjectCorrelationService.ghostObjectProperty
-            );
-            break;
+                )
+              );
+              break;
+            }
+            case CommandType.Delete: {
+              this.redoDeletionEvent(
+                redoEvent,
+                () =>
+                  this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                    redoEvent
+                  ),
+                this._canvasToEventObjectCorrelationService.ghostObjectProperty
+              );
+              break;
+            }
+            case CommandType.ChangeProperty: {
+              break;
+            }
           }
-          case CommandType.ChangeProperty: {
-            break;
-          }
-        }
+        });
         this.canvas.renderAll();
       })
     );
@@ -366,6 +379,9 @@ export class DrawingService {
       this.object,
       this.drawerOptions
     );
+
+    // Emit the event
+    this._redoUndoService.emitEvent([creationEvent]);
   }
 
   //Method which allows any drawer to Promise their make() function

@@ -14,18 +14,18 @@ import { CommandType, EventObject } from './types';
 */
 export class RedoUndoService {
   private static STACKLIMIT: number = 10;
-  private redoStack: EventObject[] = [];
-  private undoStack: EventObject[] = [];
-  emittedUndoEventObject$: Rx.Subject<EventObject>; // To emit the result of undo action
-  emittedRedoEventObject$: Rx.Subject<EventObject>; // To emit the result of redo action
-  private eventLisenter = new Rx.Subject<EventObject>(); // To listen to the stream of canvas event
+  private redoStack: EventObject[][] = [];
+  private undoStack: EventObject[][] = [];
+  emittedUndoEventObject$: Rx.Subject<EventObject[]>; // To emit the result of undo action
+  emittedRedoEventObject$: Rx.Subject<EventObject[]>; // To emit the result of redo action
+  private eventLisenter = new Rx.Subject<EventObject[]>(); // To listen to the stream of canvas event
   private undoAction = new Rx.Subject<boolean>();
   private redoAction = new Rx.Subject<boolean>();
   private subscription = new Rx.Subscription();
 
   constructor(
-    emittedUndoEventObject: Rx.Subject<EventObject>,
-    emittedRedoEventObject: Rx.Subject<EventObject>
+    emittedUndoEventObject: Rx.Subject<EventObject[]>,
+    emittedRedoEventObject: Rx.Subject<EventObject[]>
   ) {
     this.emittedUndoEventObject$ = emittedUndoEventObject;
     this.emittedRedoEventObject$ = emittedRedoEventObject;
@@ -92,9 +92,6 @@ export class RedoUndoService {
       originY: canvasObject.originY,
     });
     eventObject._canvas = canvasObject.canvas;
-
-    // Emit the event
-    this.emitEvent(eventObject);
     return eventObject;
   }
 
@@ -161,12 +158,10 @@ export class RedoUndoService {
     eventObject._canvas = canvasObject.canvas;
     eventObject.command = CommandType.Create;
 
-    // Emit the event
-    this.emitEvent(eventObject);
     return eventObject;
   }
 
-  public emitEvent(event: EventObject) {
+  public emitEvent(event: EventObject[]) {
     this.eventLisenter.next(event);
   }
 

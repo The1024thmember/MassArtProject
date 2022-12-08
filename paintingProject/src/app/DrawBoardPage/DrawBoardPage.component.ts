@@ -64,8 +64,8 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
   emittedSelectedWidth$ = new Rx.Subject<number>();
 
   // The emitted event result from RedoUndoService when redo/undo button is clicked
-  emittedUndoEventObject$ = new Rx.Subject<EventObject>();
-  emittedRedoEventObject$ = new Rx.Subject<EventObject>();
+  emittedUndoEventObject$ = new Rx.Subject<EventObject[]>();
+  emittedRedoEventObject$ = new Rx.Subject<EventObject[]>();
 
   subscription$ = new Rx.Subscription();
 
