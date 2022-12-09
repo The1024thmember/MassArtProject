@@ -43,34 +43,42 @@ export class RedoUndoService {
         eventObject.canvasObjectType = ObjectType.Line;
         const lineObject = canvasObject as ILineOptions;
         eventObject.snapShotBefore = {
-          left: lineObject.left,
-          top: lineObject.top,
           x1: lineObject.x1,
           y1: lineObject.y1,
           x2: lineObject.x2,
           y2: lineObject.y2,
         };
+
+        Object.assign(
+          eventObject.snapShotBefore,
+          this.getObjectAbsolutePosition(canvasObject)
+        );
+
         break;
       }
       case ObjectType.Rectangle: {
         eventObject.canvasObjectType = ObjectType.Rectangle;
         const rectObject = canvasObject as IRectOptions;
         eventObject.snapShotBefore = {
-          left: rectObject.left,
-          top: rectObject.top,
           width: rectObject.width,
           height: rectObject.height,
         };
+        Object.assign(
+          eventObject.snapShotBefore,
+          this.getObjectAbsolutePosition(canvasObject)
+        );
         break;
       }
       case ObjectType.Circle: {
         eventObject.canvasObjectType = ObjectType.Circle;
         const circleObject = canvasObject as ICircleOptions;
         eventObject.snapShotBefore = {
-          left: circleObject.left,
-          top: circleObject.top,
           radius: circleObject.radius,
         };
+        Object.assign(
+          eventObject.snapShotBefore,
+          this.getObjectAbsolutePosition(canvasObject)
+        );
         break;
       }
       case ObjectType.Path: {
@@ -213,5 +221,30 @@ export class RedoUndoService {
       this.emittedRedoEventObject$.next(poppedEvent);
       this.undoStack.push(poppedEvent);
     }
+  }
+
+  private getObjectAbsolutePosition(canvasObject: fabric.Object): object {
+    // Getting the position of the object, if its group selection, then need to do calculation
+    // refer to: https://stackoverflow.com/a/29926545
+    var topFromCanvas = canvasObject.top ? canvasObject.top : 0;
+    var leftFromCanvas = canvasObject.left ? canvasObject.left : 0;
+
+    if (canvasObject.group) {
+      const leftFromGroup = canvasObject.group.left
+        ? canvasObject.group.left
+        : 0;
+      const widthOfGroup = canvasObject.group.width
+        ? canvasObject.group.width
+        : 0;
+      const topFromGroup = canvasObject.group.top ? canvasObject.group.top : 0;
+      const heightOfGroup = canvasObject.group.height
+        ? canvasObject.group.height
+        : 0;
+
+      topFromCanvas = topFromGroup + topFromCanvas + heightOfGroup / 2;
+      leftFromCanvas = leftFromGroup + leftFromCanvas + widthOfGroup / 2;
+    }
+
+    return { top: topFromCanvas, left: leftFromCanvas };
   }
 }

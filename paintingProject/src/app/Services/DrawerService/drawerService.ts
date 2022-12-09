@@ -154,6 +154,7 @@ export class DrawingService {
         if (this.cursorMode === CursorMode.Select) {
           const deletionEventsBatch: EventObject[] = [];
           this.canvas.getActiveObjects().forEach((activeObject) => {
+            console.warn('deleted object:', activeObject);
             var index = this.canvas.getObjects().indexOf(activeObject);
             // Create a delete event object
             const deletionEvent =
@@ -366,6 +367,9 @@ export class DrawingService {
         break;
       }
     }
+
+    console.log('created object:', this.object);
+
     //Making element default as none selective
     this.canvas.setActiveObject(this.object);
     this.canvas.discardActiveObject().renderAll();
