@@ -85,11 +85,12 @@ export class DrawingService {
 
   // ---- need to add validations for the input value ---//
   //Change the color for the current selection
-  public setDrawingColor(color: string) {
+  public async setDrawingColor(color: string) {
     this.drawerOptions.stroke = color;
-    const changePropertyEventsBatch: EventObject[] = [];
     if (this.cursorMode == CursorMode.Select) {
-      this.canvas.getActiveObjects().forEach(async (obj) => {
+      const changePropertyEventsBatch: EventObject[] = [];
+      await this.canvas.getActiveObjects().forEach(async (obj) => {
+        const beforeChangedObj = obj;
         await this._drawer.changeProperty(
           obj,
           ChangeObjectProperty.StrokeColor,
@@ -99,52 +100,65 @@ export class DrawingService {
         console.warn('change propertied object:', obj);
         var index = this.canvas.getObjects().indexOf(obj);
         // Create a change property event object
-        const deletionEvent = this._redoUndoService.buildDeletionEventObject(
-          index + 1,
-          obj,
-          this.drawerOptions
-        );
-        changePropertyEventsBatch.push(deletionEvent);
+        const changePropertyEvent =
+          this._redoUndoService.buildPropertyChangeEventObject(
+            index + 1,
+            beforeChangedObj,
+            obj,
+            this.drawerOptions
+          );
+        changePropertyEventsBatch.push(changePropertyEvent);
       });
 
       // Emit the events
       if (changePropertyEventsBatch.length) {
+        console.log('emitting color changing event');
         this._redoUndoService.emitEvent(changePropertyEventsBatch);
       }
-      this.canvas.renderAll();
     }
+    this.canvas.renderAll();
   }
 
   // ---- need to add validations for the input value ---//
   //Change the width for the current selection
-  public setDrawingWeight(weight: number) {
+  public async setDrawingWeight(weight: number) {
     this.drawerOptions.strokeWidth = Math.floor(weight);
-    const changePropertyEventsBatch: EventObject[] = [];
     if (this.cursorMode == CursorMode.Select) {
-      this.canvas.getActiveObjects().forEach(async (obj) => {
-        console.warn('activeObjct:', obj);
+      const changePropertyEventsBatch: EventObject[] = [];
+      // Need to refactor the code to make before object and after object avaliable,
+      // now due to async function, before object is already changed, since it run changeProperty first before getting the before value
+      await this.canvas.getActiveObjects().forEach(async (obj) => {
+        console.log('active loop');
+        const beforeChangedObj = obj;
+        console.log('before:', beforeChangedObj);
+
         await this._drawer.changeProperty(
           obj,
           ChangeObjectProperty.StrokeWeight,
           String(weight)
         );
-        console.warn('change propertied object:', obj);
+        console.log('after:', obj);
         var index = this.canvas.getObjects().indexOf(obj);
         // Create a change property event object
-        const deletionEvent = this._redoUndoService.buildDeletionEventObject(
-          index + 1,
-          obj,
-          this.drawerOptions
-        );
-        changePropertyEventsBatch.push(deletionEvent);
+        const changePropertyEvent =
+          this._redoUndoService.buildPropertyChangeEventObject(
+            index + 1,
+            beforeChangedObj,
+            obj,
+            this.drawerOptions
+          );
+        changePropertyEventsBatch.push(changePropertyEvent);
+        console.log('changePropertyEventsBatch:', changePropertyEventsBatch);
       });
 
       // Emit the events
+      console.log('changePropertyEventsBatch:', changePropertyEventsBatch);
       if (changePropertyEventsBatch.length) {
+        console.log('emitting weight changing event');
         this._redoUndoService.emitEvent(changePropertyEventsBatch);
       }
-      this.canvas.renderAll();
     }
+    this.canvas.renderAll();
   }
 
   public setDrawingTool(tool: DrawingMode) {
@@ -292,7 +306,6 @@ export class DrawingService {
               break;
             }
             case CommandType.Delete: {
-              console.log('undo Deletion');
               this.undoDeletionEvent(undoEvent, () =>
                 this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
                   undoEvent
@@ -301,6 +314,12 @@ export class DrawingService {
               break;
             }
             case CommandType.ChangeProperty: {
+              console.log('undo ChangeProperty');
+              this.undoChangePropertyEvent(undoEvent, () =>
+                this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
+                  undoEvent
+                )
+              );
               break;
             }
           }
@@ -557,6 +576,59 @@ export class DrawingService {
     }
     console.warn(
       'after undo deletion:',
+      this.canvas._objects[canvasObjectLocation]
+    );
+  }
+
+  // undo a change property Event
+  private undoChangePropertyEvent(
+    undoEvent: EventObject,
+    canvasObjectLocator: Function
+  ) {
+    const canvasObjectLocation = canvasObjectLocator();
+    // still not the best way for handling redo & undo, since the logic here is
+    // still re-assgin to new object, which doesn't give flexibility for real
+    // deletion.
+    switch (undoEvent.canvasObjectType) {
+      case 'line': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...undoEvent.snapShotBefore })
+          .setCoords();
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'rect': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...undoEvent.snapShotBefore })
+          .setCoords();
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'circle': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...undoEvent.snapShotBefore })
+          .setCoords();
+        console.log(this.canvas._objects);
+        break;
+      }
+      case 'path': {
+        this.canvas._objects[canvasObjectLocation] = this.canvas._objects[
+          canvasObjectLocation
+        ]
+          .set({ ...undoEvent.snapShotBefore })
+          .setCoords();
+        console.log(this.canvas._objects);
+        break;
+      }
+    }
+    console.warn(
+      'after undo Change Property Event:',
       this.canvas._objects[canvasObjectLocation]
     );
   }

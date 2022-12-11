@@ -34,24 +34,114 @@ export class RedoUndoService {
 
   public buildPropertyChangeEventObject(
     canvasObjectId: number,
-    canvasObject: fabric.Object,
+    canvasObjectBefore: fabric.Object,
+    canvasObjectAfter: fabric.Object,
     additionalProperties: object
   ): EventObject {
     const eventObject: EventObject = new EventObject();
-    eventObject._canvas = canvasObject.canvas;
+    switch (canvasObjectBefore.type) {
+      case ObjectType.Line: {
+        eventObject.canvasObjectType = ObjectType.Line;
+        const lineObjectBefore = canvasObjectBefore as ILineOptions;
+        eventObject.snapShotBefore = {
+          left: lineObjectBefore.left,
+          top: lineObjectBefore.top,
+          x1: lineObjectBefore.x1,
+          y1: lineObjectBefore.y1,
+          x2: lineObjectBefore.x2,
+          y2: lineObjectBefore.y2,
+          stroke: lineObjectBefore.stroke,
+          strokeWidth: lineObjectBefore.strokeWidth,
+        };
+        const lineObjectAfter = canvasObjectAfter as ILineOptions;
+        eventObject.snapShotAfter = {
+          left: lineObjectAfter.left,
+          top: lineObjectAfter.top,
+          x1: lineObjectAfter.x1,
+          y1: lineObjectAfter.y1,
+          x2: lineObjectAfter.x2,
+          y2: lineObjectAfter.y2,
+          stroke: lineObjectAfter.stroke,
+          strokeWidth: lineObjectAfter.strokeWidth,
+        };
+        break;
+      }
+      case ObjectType.Rectangle: {
+        eventObject.canvasObjectType = ObjectType.Rectangle;
+        const rectObjectBefore = canvasObjectBefore as IRectOptions;
+        eventObject.snapShotBefore = {
+          left: rectObjectBefore.left,
+          top: rectObjectBefore.top,
+          width: rectObjectBefore.width,
+          height: rectObjectBefore.height,
+        };
+        const rectObjectAfter = canvasObjectAfter as IRectOptions;
+        eventObject.snapShotAfter = {
+          left: rectObjectAfter.left,
+          top: rectObjectAfter.top,
+          width: rectObjectAfter.width,
+          height: rectObjectAfter.height,
+        };
+        break;
+      }
+      case ObjectType.Circle: {
+        eventObject.canvasObjectType = ObjectType.Circle;
+        const circleObjectBefore = canvasObjectBefore as ICircleOptions;
+        eventObject.snapShotBefore = {
+          left: circleObjectBefore.left,
+          top: circleObjectBefore.top,
+          radius: circleObjectBefore.radius,
+        };
+        const circleObjectAfter = canvasObjectAfter as ICircleOptions;
+        eventObject.snapShotAfter = {
+          left: circleObjectAfter.left,
+          top: circleObjectAfter.top,
+          radius: circleObjectAfter.radius,
+        };
+        break;
+      }
+      case ObjectType.Path: {
+        eventObject.canvasObjectType = ObjectType.Path;
+        const pathObjectBefore = canvasObjectBefore as IPathOptions;
+        eventObject.snapShotBefore = {
+          path: pathObjectBefore.path,
+        };
+        const pathObjectAfter = canvasObjectAfter as IPathOptions;
+        eventObject.snapShotAfter = {
+          path: pathObjectAfter.path,
+        };
+        break;
+      }
+    }
+    //Set position, width/height data, and appending draweroptions for rect,circle and line Object
+    Object.assign(eventObject.snapShotAfter, {
+      originX: canvasObjectAfter.originX,
+      originY: canvasObjectAfter.originY,
+    });
+
+    Object.assign(eventObject.snapShotBefore, {
+      originX: canvasObjectBefore.originX,
+      originY: canvasObjectBefore.originY,
+    });
+
+    //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will be buggy
+    eventObject.canvasObjectId = canvasObjectId;
+    eventObject._canvas = canvasObjectBefore.canvas;
+    eventObject.command = CommandType.ChangeProperty;
+    console.log('assmly property change event');
     return eventObject;
   }
 
   public buildDeletionEventObject(
     canvasObjectId: number,
-    canvasObject: fabric.Object,
+    canvasObjectBefore: fabric.Object,
     additionalProperties: object
   ): EventObject {
     const eventObject: EventObject = new EventObject();
-    switch (canvasObject.type) {
+    switch (canvasObjectBefore.type) {
       case ObjectType.Line: {
         eventObject.canvasObjectType = ObjectType.Line;
-        const lineObject = canvasObject as ILineOptions;
+        const lineObject = canvasObjectBefore as ILineOptions;
         eventObject.snapShotBefore = {
           x1: lineObject.x1,
           y1: lineObject.y1,
@@ -61,38 +151,38 @@ export class RedoUndoService {
 
         Object.assign(
           eventObject.snapShotBefore,
-          this.getObjectAbsolutePosition(canvasObject)
+          this.getObjectAbsolutePosition(canvasObjectBefore)
         );
         break;
       }
       case ObjectType.Rectangle: {
         eventObject.canvasObjectType = ObjectType.Rectangle;
-        const rectObject = canvasObject as IRectOptions;
+        const rectObject = canvasObjectBefore as IRectOptions;
         eventObject.snapShotBefore = {
           width: rectObject.width,
           height: rectObject.height,
         };
         Object.assign(
           eventObject.snapShotBefore,
-          this.getObjectAbsolutePosition(canvasObject)
+          this.getObjectAbsolutePosition(canvasObjectBefore)
         );
         break;
       }
       case ObjectType.Circle: {
         eventObject.canvasObjectType = ObjectType.Circle;
-        const circleObject = canvasObject as ICircleOptions;
+        const circleObject = canvasObjectBefore as ICircleOptions;
         eventObject.snapShotBefore = {
           radius: circleObject.radius,
         };
         Object.assign(
           eventObject.snapShotBefore,
-          this.getObjectAbsolutePosition(canvasObject)
+          this.getObjectAbsolutePosition(canvasObjectBefore)
         );
         break;
       }
       case ObjectType.Path: {
         eventObject.canvasObjectType = ObjectType.Path;
-        const pathObject = canvasObject as IPathOptions;
+        const pathObject = canvasObjectBefore as IPathOptions;
         eventObject.snapShotBefore = {
           path: pathObject.path,
         };
@@ -105,10 +195,10 @@ export class RedoUndoService {
     //Set position, width/height data, and appending draweroptions for rect,circle and line Object
     Object.assign(eventObject.snapShotBefore, {
       ...additionalProperties,
-      originX: canvasObject.originX,
-      originY: canvasObject.originY,
+      originX: canvasObjectBefore.originX,
+      originY: canvasObjectBefore.originY,
     });
-    eventObject._canvas = canvasObject.canvas;
+    eventObject._canvas = canvasObjectBefore.canvas;
     return eventObject;
   }
 

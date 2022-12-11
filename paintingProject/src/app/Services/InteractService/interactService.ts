@@ -74,6 +74,7 @@ export class InteractService {
       var o = e.target;
       // how to make object on scale strokeWidth not change
       // TODO: https://app.clickup.com/t/3ak2xtp
+      console.error('scaleing:', o);
     });
 
     this.canvas.on('object:modified', (e) => {
