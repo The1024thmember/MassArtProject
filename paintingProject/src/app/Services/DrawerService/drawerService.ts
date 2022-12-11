@@ -87,6 +87,7 @@ export class DrawingService {
   //Change the color for the current selection
   public setDrawingColor(color: string) {
     this.drawerOptions.stroke = color;
+    const changePropertyEventsBatch: EventObject[] = [];
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
         await this._drawer.changeProperty(
@@ -94,7 +95,22 @@ export class DrawingService {
           ChangeObjectProperty.StrokeColor,
           color
         );
+
+        console.warn('change propertied object:', obj);
+        var index = this.canvas.getObjects().indexOf(obj);
+        // Create a change property event object
+        const deletionEvent = this._redoUndoService.buildDeletionEventObject(
+          index + 1,
+          obj,
+          this.drawerOptions
+        );
+        changePropertyEventsBatch.push(deletionEvent);
       });
+
+      // Emit the events
+      if (changePropertyEventsBatch.length) {
+        this._redoUndoService.emitEvent(changePropertyEventsBatch);
+      }
       this.canvas.renderAll();
     }
   }
@@ -103,6 +119,7 @@ export class DrawingService {
   //Change the width for the current selection
   public setDrawingWeight(weight: number) {
     this.drawerOptions.strokeWidth = Math.floor(weight);
+    const changePropertyEventsBatch: EventObject[] = [];
     if (this.cursorMode == CursorMode.Select) {
       this.canvas.getActiveObjects().forEach(async (obj) => {
         console.warn('activeObjct:', obj);
@@ -111,7 +128,21 @@ export class DrawingService {
           ChangeObjectProperty.StrokeWeight,
           String(weight)
         );
+        console.warn('change propertied object:', obj);
+        var index = this.canvas.getObjects().indexOf(obj);
+        // Create a change property event object
+        const deletionEvent = this._redoUndoService.buildDeletionEventObject(
+          index + 1,
+          obj,
+          this.drawerOptions
+        );
+        changePropertyEventsBatch.push(deletionEvent);
       });
+
+      // Emit the events
+      if (changePropertyEventsBatch.length) {
+        this._redoUndoService.emitEvent(changePropertyEventsBatch);
+      }
       this.canvas.renderAll();
     }
   }

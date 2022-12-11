@@ -32,6 +32,16 @@ export class RedoUndoService {
     this.initializer();
   }
 
+  public buildPropertyChangeEventObject(
+    canvasObjectId: number,
+    canvasObject: fabric.Object,
+    additionalProperties: object
+  ): EventObject {
+    const eventObject: EventObject = new EventObject();
+    eventObject._canvas = canvasObject.canvas;
+    return eventObject;
+  }
+
   public buildDeletionEventObject(
     canvasObjectId: number,
     canvasObject: fabric.Object,
@@ -53,7 +63,6 @@ export class RedoUndoService {
           eventObject.snapShotBefore,
           this.getObjectAbsolutePosition(canvasObject)
         );
-
         break;
       }
       case ObjectType.Rectangle: {
