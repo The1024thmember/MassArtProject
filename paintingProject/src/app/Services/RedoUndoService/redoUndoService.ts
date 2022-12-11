@@ -39,11 +39,15 @@ export class RedoUndoService {
     additionalProperties: object
   ): EventObject {
     const eventObject: EventObject = new EventObject();
+
+    // Assign before hand to allow overwrite later, since some property may not be overwrote, don't need to re-assgin later
+    eventObject.snapShotAfter = { ...additionalProperties };
+    eventObject.snapShotBefore = { ...additionalProperties };
     switch (canvasObjectBefore.type) {
       case ObjectType.Line: {
         eventObject.canvasObjectType = ObjectType.Line;
         const lineObjectBefore = canvasObjectBefore as ILineOptions;
-        eventObject.snapShotBefore = {
+        Object.assign(eventObject.snapShotBefore, {
           left: lineObjectBefore.left,
           top: lineObjectBefore.top,
           x1: lineObjectBefore.x1,
@@ -52,9 +56,9 @@ export class RedoUndoService {
           y2: lineObjectBefore.y2,
           stroke: lineObjectBefore.stroke,
           strokeWidth: lineObjectBefore.strokeWidth,
-        };
+        });
         const lineObjectAfter = canvasObjectAfter as ILineOptions;
-        eventObject.snapShotAfter = {
+        Object.assign(eventObject.snapShotAfter, {
           left: lineObjectAfter.left,
           top: lineObjectAfter.top,
           x1: lineObjectAfter.x1,
@@ -63,53 +67,53 @@ export class RedoUndoService {
           y2: lineObjectAfter.y2,
           stroke: lineObjectAfter.stroke,
           strokeWidth: lineObjectAfter.strokeWidth,
-        };
+        });
         break;
       }
       case ObjectType.Rectangle: {
         eventObject.canvasObjectType = ObjectType.Rectangle;
         const rectObjectBefore = canvasObjectBefore as IRectOptions;
-        eventObject.snapShotBefore = {
+        Object.assign(eventObject.snapShotBefore, {
           left: rectObjectBefore.left,
           top: rectObjectBefore.top,
           width: rectObjectBefore.width,
           height: rectObjectBefore.height,
-        };
+        });
         const rectObjectAfter = canvasObjectAfter as IRectOptions;
-        eventObject.snapShotAfter = {
+        Object.assign(eventObject.snapShotAfter, {
           left: rectObjectAfter.left,
           top: rectObjectAfter.top,
           width: rectObjectAfter.width,
           height: rectObjectAfter.height,
-        };
+        });
         break;
       }
       case ObjectType.Circle: {
         eventObject.canvasObjectType = ObjectType.Circle;
         const circleObjectBefore = canvasObjectBefore as ICircleOptions;
-        eventObject.snapShotBefore = {
+        Object.assign(eventObject.snapShotBefore, {
           left: circleObjectBefore.left,
           top: circleObjectBefore.top,
           radius: circleObjectBefore.radius,
-        };
+        });
         const circleObjectAfter = canvasObjectAfter as ICircleOptions;
-        eventObject.snapShotAfter = {
+        Object.assign(eventObject.snapShotAfter, {
           left: circleObjectAfter.left,
           top: circleObjectAfter.top,
           radius: circleObjectAfter.radius,
-        };
+        });
         break;
       }
       case ObjectType.Path: {
         eventObject.canvasObjectType = ObjectType.Path;
         const pathObjectBefore = canvasObjectBefore as IPathOptions;
-        eventObject.snapShotBefore = {
+        Object.assign(eventObject.snapShotBefore, {
           path: pathObjectBefore.path,
-        };
+        });
         const pathObjectAfter = canvasObjectAfter as IPathOptions;
-        eventObject.snapShotAfter = {
+        Object.assign(eventObject.snapShotAfter, {
           path: pathObjectAfter.path,
-        };
+        });
         break;
       }
     }
