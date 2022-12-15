@@ -37,6 +37,8 @@ export class DrawingService {
   private object: fabric.Object; //The object currently being drawn
   private isDown: boolean; //Is user dragging the mouse?
   private subscription = new Rx.Subscription();
+  private oldColor: string = 'black';
+  private oldWeight: number = 1;
 
   constructor(
     canvas: fabric.Canvas,
@@ -86,79 +88,82 @@ export class DrawingService {
   // ---- need to add validations for the input value ---//
   //Change the color for the current selection
   public async setDrawingColor(color: string) {
-    this.drawerOptions.stroke = color;
-    if (this.cursorMode == CursorMode.Select) {
-      const changePropertyEventsBatch: EventObject[] = [];
-      await this.canvas.getActiveObjects().forEach(async (obj) => {
-        const beforeChangedObj = obj;
-        await this._drawer.changeProperty(
-          obj,
-          ChangeObjectProperty.StrokeColor,
-          color
-        );
+    if (this.oldColor != color) {
+      this.drawerOptions.stroke = color;
+      if (this.cursorMode == CursorMode.Select) {
+        let changePropertyEventsBatch: (EventObject | undefined)[] = [];
+        // returns a promise
+        const promises = this.canvas.getActiveObjects().map(async (obj) => {
+          if (obj.stroke != color) {
+            const changePropertyEvent = await this.changeProperty(
+              obj,
+              ChangeObjectProperty.StrokeColor,
+              color
+            );
+            return changePropertyEvent;
+          }
+          return;
+        });
 
-        console.warn('change propertied object:', obj);
-        var index = this.canvas.getObjects().indexOf(obj);
-        // Create a change property event object
-        const changePropertyEvent =
-          this._redoUndoService.buildPropertyChangeEventObject(
-            index + 1,
-            beforeChangedObj,
-            obj,
-            this.drawerOptions
-          );
-        changePropertyEventsBatch.push(changePropertyEvent);
-      });
-
-      // Emit the events
-      if (changePropertyEventsBatch.length) {
-        console.log('emitting color changing event');
-        this._redoUndoService.emitEvent(changePropertyEventsBatch);
+        // Emit the events
+        changePropertyEventsBatch = await Promise.all(promises);
+        const changePropertyEventsBatchValidated =
+          changePropertyEventsBatch.filter(
+            (changePropertyEvent) => changePropertyEvent
+          ) as EventObject[];
+        if (changePropertyEventsBatchValidated.length) {
+          console.log('emitting color changing event');
+          this._redoUndoService.emitEvent(changePropertyEventsBatchValidated);
+        }
       }
+      this.canvas.renderAll();
+      this.oldColor = color;
     }
-    this.canvas.renderAll();
   }
 
   // ---- need to add validations for the input value ---//
   //Change the width for the current selection
   public async setDrawingWeight(weight: number) {
-    this.drawerOptions.strokeWidth = Math.floor(weight);
-    if (this.cursorMode == CursorMode.Select) {
-      const changePropertyEventsBatch: EventObject[] = [];
-      // Need to refactor the code to make before object and after object avaliable,
-      // now due to async function, before object is already changed, since it run changeProperty first before getting the before value
-      await this.canvas.getActiveObjects().forEach(async (obj) => {
-        console.log('active loop');
-        const beforeChangedObj = obj;
-        console.log('before:', beforeChangedObj);
+    if (this.oldWeight != weight) {
+      this.drawerOptions.strokeWidth = Math.floor(weight);
+      if (this.cursorMode == CursorMode.Select) {
+        const changePropertyEventsBatch: EventObject[] = [];
+        // Need to refactor the code to make before object and after object avaliable,
+        // now due to async function, before object is already changed, since it run changeProperty first before getting the before value
+        await this.canvas.getActiveObjects().forEach(async (obj) => {
+          console.log('active loop');
+          const beforeChangedObj = obj;
+          console.log('before:', beforeChangedObj);
 
-        await this._drawer.changeProperty(
-          obj,
-          ChangeObjectProperty.StrokeWeight,
-          String(weight)
-        );
-        console.log('after:', obj);
-        var index = this.canvas.getObjects().indexOf(obj);
-        // Create a change property event object
-        const changePropertyEvent =
-          this._redoUndoService.buildPropertyChangeEventObject(
-            index + 1,
-            beforeChangedObj,
+          await this._drawer.changeProperty(
             obj,
-            this.drawerOptions
+            ChangeObjectProperty.StrokeWeight,
+            String(weight)
           );
-        changePropertyEventsBatch.push(changePropertyEvent);
-        console.log('changePropertyEventsBatch:', changePropertyEventsBatch);
-      });
+          console.log('after:', obj);
+          var index = this.canvas.getObjects().indexOf(obj);
+          // Create a change property event object
+          const changePropertyEvent =
+            this._redoUndoService.buildPropertyChangeEventObject(
+              index + 1,
+              beforeChangedObj,
+              obj,
+              this.drawerOptions
+            );
+          changePropertyEventsBatch.push(changePropertyEvent);
+          console.log('changePropertyEventsBatch:', changePropertyEventsBatch);
+        });
 
-      // Emit the events
-      console.log('changePropertyEventsBatch:', changePropertyEventsBatch);
-      if (changePropertyEventsBatch.length) {
-        console.log('emitting weight changing event');
-        this._redoUndoService.emitEvent(changePropertyEventsBatch);
+        // Emit the events
+        console.log('changePropertyEventsBatch:', changePropertyEventsBatch);
+        if (changePropertyEventsBatch.length) {
+          console.log('emitting weight changing event');
+          this._redoUndoService.emitEvent(changePropertyEventsBatch);
+        }
       }
+      this.canvas.renderAll();
+      this.oldWeight = weight;
     }
-    this.canvas.renderAll();
   }
 
   public setDrawingTool(tool: DrawingMode) {
@@ -450,10 +455,28 @@ export class DrawingService {
 
   //Method which allows any drawer to Promise their resize() function
   private async changeProperty(
+    canvasObject: fabric.Object,
     option: ChangeObjectProperty,
     value: string
-  ): Promise<fabric.Object> {
-    return await this._drawer.changeProperty(this.object, option, value);
+  ): Promise<EventObject> {
+    var index = this.canvas.getObjects().indexOf(canvasObject);
+    const beforeChangedObj = canvasObject;
+    const afterChangedObj = await this._drawer.changeProperty(
+      canvasObject,
+      option,
+      value
+    );
+    console.warn('change propertied object:', canvasObject);
+    // Create a change property event object
+    const changePropertyEvent =
+      this._redoUndoService.buildPropertyChangeEventObject(
+        index + 1,
+        beforeChangedObj,
+        afterChangedObj,
+        this.drawerOptions
+      );
+
+    return changePropertyEvent;
   }
 
   // Remove active (selected) objects
