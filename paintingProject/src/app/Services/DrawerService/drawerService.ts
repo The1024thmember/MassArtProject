@@ -92,7 +92,7 @@ export class DrawingService {
       this.drawerOptions.stroke = color;
       if (this.cursorMode == CursorMode.Select) {
         let changePropertyEventsBatch: (EventObject | undefined)[] = [];
-        // returns a promise
+        // returns a promise refer: https://zellwk.com/blog/async-await-in-loops/
         const promises = this.canvas.getActiveObjects().map(async (obj) => {
           if (obj.stroke != color) {
             const changePropertyEvent = await this.changeProperty(
