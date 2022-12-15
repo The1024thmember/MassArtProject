@@ -460,7 +460,7 @@ export class DrawingService {
     value: string
   ): Promise<EventObject> {
     var index = this.canvas.getObjects().indexOf(canvasObject);
-    const beforeChangedObj = canvasObject;
+    const beforeChangedObj = JSON.parse(JSON.stringify(canvasObject));
     const afterChangedObj = await this._drawer.changeProperty(
       canvasObject,
       option,
