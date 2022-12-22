@@ -644,6 +644,12 @@ export class DrawingService {
         break;
       }
     }
+    this.canvas._objects[canvasObjectLocation].canvas = undoEvent._canvas;
+    console.log('cursorMode in redo property change:', this.cursorMode);
+    if (this.cursorMode == CursorMode.Select) {
+      this.canvas._objects[canvasObjectLocation].selectable = true;
+      this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
+    }
     console.warn(
       'after undo Change Property Event:',
       this.canvas._objects[canvasObjectLocation]
@@ -808,6 +814,12 @@ export class DrawingService {
         console.log(this.canvas._objects);
         break;
       }
+    }
+    this.canvas._objects[canvasObjectLocation].canvas = redoEvent._canvas;
+    console.log('cursorMode in redo property change:', this.cursorMode);
+    if (this.cursorMode == CursorMode.Select) {
+      this.canvas._objects[canvasObjectLocation].selectable = true;
+      this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
     }
     console.warn(
       'after redo Change Property Event:',

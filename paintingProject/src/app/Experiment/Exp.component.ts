@@ -196,6 +196,7 @@ export class ExpComponent implements OnInit, OnDestroy {
     }
   }
 
+  // For deletion at the moment
   onCanvasKeydown($event: any) {
     this._drawService.handleKeyDown($event);
   }
