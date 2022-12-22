@@ -50,10 +50,7 @@ export class RedoUndoService {
         Object.assign(eventObject.snapShotBefore, {
           left: lineObjectBefore.left,
           top: lineObjectBefore.top,
-          x1: lineObjectBefore.x1,
-          y1: lineObjectBefore.y1,
-          x2: lineObjectBefore.x2,
-          y2: lineObjectBefore.y2,
+
           stroke: lineObjectBefore.stroke,
           strokeWidth: lineObjectBefore.strokeWidth,
         });
@@ -61,10 +58,7 @@ export class RedoUndoService {
         Object.assign(eventObject.snapShotAfter, {
           left: lineObjectAfter.left,
           top: lineObjectAfter.top,
-          x1: lineObjectAfter.x1,
-          y1: lineObjectAfter.y1,
-          x2: lineObjectAfter.x2,
-          y2: lineObjectAfter.y2,
+
           stroke: lineObjectAfter.stroke,
           strokeWidth: lineObjectAfter.strokeWidth,
         });
@@ -78,6 +72,8 @@ export class RedoUndoService {
           top: rectObjectBefore.top,
           width: rectObjectBefore.width,
           height: rectObjectBefore.height,
+          stroke: rectObjectBefore.stroke,
+          strokeWidth: rectObjectBefore.strokeWidth,
         });
         const rectObjectAfter = canvasObjectAfter as IRectOptions;
         Object.assign(eventObject.snapShotAfter, {
@@ -85,6 +81,8 @@ export class RedoUndoService {
           top: rectObjectAfter.top,
           width: rectObjectAfter.width,
           height: rectObjectAfter.height,
+          stroke: rectObjectAfter.stroke,
+          strokeWidth: rectObjectAfter.strokeWidth,
         });
         break;
       }
@@ -95,12 +93,16 @@ export class RedoUndoService {
           left: circleObjectBefore.left,
           top: circleObjectBefore.top,
           radius: circleObjectBefore.radius,
+          stroke: circleObjectBefore.stroke,
+          strokeWidth: circleObjectBefore.strokeWidth,
         });
         const circleObjectAfter = canvasObjectAfter as ICircleOptions;
         Object.assign(eventObject.snapShotAfter, {
           left: circleObjectAfter.left,
           top: circleObjectAfter.top,
           radius: circleObjectAfter.radius,
+          stroke: circleObjectAfter.stroke,
+          strokeWidth: circleObjectAfter.strokeWidth,
         });
         break;
       }
@@ -109,10 +111,14 @@ export class RedoUndoService {
         const pathObjectBefore = canvasObjectBefore as IPathOptions;
         Object.assign(eventObject.snapShotBefore, {
           path: pathObjectBefore.path,
+          stroke: pathObjectBefore.stroke,
+          strokeWidth: pathObjectBefore.strokeWidth,
         });
         const pathObjectAfter = canvasObjectAfter as IPathOptions;
         Object.assign(eventObject.snapShotAfter, {
           path: pathObjectAfter.path,
+          stroke: pathObjectAfter.stroke,
+          strokeWidth: pathObjectAfter.strokeWidth,
         });
         break;
       }
