@@ -202,7 +202,11 @@ export class DrawingService {
               this._redoUndoService.buildDeletionEventObject(
                 index + 1,
                 activeObject,
-                this.drawerOptions
+                {
+                  ...this.drawerOptions,
+                  stroke: activeObject.stroke,
+                  strokeWidth: activeObject.strokeWidth,
+                }
               );
 
             deletionEventsBatch.push(deletionEvent);
@@ -284,7 +288,6 @@ export class DrawingService {
     // handle redo/undo action
     this.subscription.add(
       this.emittedUndoEventObject$.subscribe((undoEvents) => {
-        console.log('undo event:', undoEvents);
         // Based on command calling changeProperty to change the property of the object
         // Or delete/create accordingly
         undoEvents.forEach((undoEvent) => {
@@ -310,7 +313,6 @@ export class DrawingService {
               break;
             }
             case CommandType.ChangeProperty: {
-              console.log('undo ChangeProperty');
               this.undoChangePropertyEvent(undoEvent, () =>
                 this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
                   undoEvent
@@ -326,7 +328,6 @@ export class DrawingService {
 
     this.subscription.add(
       this.emittedRedoEventObject$.subscribe((redoEvents) => {
-        console.log('redo event:', redoEvents);
         // calling changeProperty to change the property of the object
         // Or delete/create accordingly
         redoEvents.forEach((redoEvent) => {
