@@ -148,7 +148,6 @@ export class DrawingService {
             (changePropertyEvent) => changePropertyEvent
           ) as EventObject[];
         if (changePropertyEventsBatchValidated.length) {
-          console.log('emitting weight changing event');
           this._redoUndoService.emitEvent(changePropertyEventsBatchValidated);
         }
       }
@@ -420,8 +419,6 @@ export class DrawingService {
       }
     }
 
-    console.log('created object:', this.object);
-
     //Making element default as none selective
     this.canvas.setActiveObject(this.object);
     this.canvas.discardActiveObject().renderAll();
@@ -502,7 +499,6 @@ export class DrawingService {
           [0, 0, 0, 0],
           additionalProperty
         );
-        console.log(this.canvas._objects);
         break;
       }
       case 'rect': {
@@ -511,7 +507,6 @@ export class DrawingService {
           top: 0,
           ...additionalProperty,
         });
-        console.log(this.canvas._objects);
         break;
       }
       case 'circle': {
@@ -521,7 +516,6 @@ export class DrawingService {
           radius: 0,
           ...additionalProperty,
         });
-        console.log(this.canvas._objects);
         break;
       }
       case 'path': {
@@ -529,7 +523,6 @@ export class DrawingService {
           [['M', 0, 0] as unknown as fabric.Point],
           additionalProperty
         );
-        console.log(this.canvas._objects);
         break;
       }
     }
@@ -574,7 +567,6 @@ export class DrawingService {
         break;
       }
       case 'path': {
-        console.log(' undoEvent.snapShotBefore:', undoEvent.snapShotBefore);
         var pathPoints: unknown = [];
         Object.entries(undoEvent.snapShotBefore).forEach((entries) => {
           if (entries[0] === 'path') {
@@ -613,7 +605,6 @@ export class DrawingService {
         ]
           .set({ ...undoEvent.snapShotBefore })
           .setCoords();
-        console.log(this.canvas._objects);
         break;
       }
       case 'rect': {
@@ -622,7 +613,6 @@ export class DrawingService {
         ]
           .set({ ...undoEvent.snapShotBefore })
           .setCoords();
-        console.log(this.canvas._objects);
         break;
       }
       case 'circle': {
@@ -631,7 +621,6 @@ export class DrawingService {
         ]
           .set({ ...undoEvent.snapShotBefore })
           .setCoords();
-        console.log(this.canvas._objects);
         break;
       }
       case 'path': {
@@ -640,12 +629,10 @@ export class DrawingService {
         ]
           .set({ ...undoEvent.snapShotBefore })
           .setCoords();
-        console.log(this.canvas._objects);
         break;
       }
     }
     this.canvas._objects[canvasObjectLocation].canvas = undoEvent._canvas;
-    console.log('cursorMode in redo property change:', this.cursorMode);
     if (this.cursorMode == CursorMode.Select) {
       this.canvas._objects[canvasObjectLocation].selectable = true;
       this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
@@ -691,7 +678,6 @@ export class DrawingService {
         break;
       }
       case 'path': {
-        console.log(' redoEvent.snapShotAfter:', redoEvent.snapShotAfter);
         var pathPoints: unknown = [];
         Object.entries(redoEvent.snapShotAfter).forEach((entries) => {
           if (entries[0] === 'path') {
@@ -733,7 +719,6 @@ export class DrawingService {
           [0, 0, 0, 0],
           additionalProperty
         );
-        console.log(this.canvas._objects);
         break;
       }
       case 'rect': {
@@ -742,7 +727,6 @@ export class DrawingService {
           top: 0,
           ...additionalProperty,
         });
-        console.log(this.canvas._objects);
         break;
       }
       case 'circle': {
@@ -752,7 +736,6 @@ export class DrawingService {
           radius: 0,
           ...additionalProperty,
         });
-        console.log(this.canvas._objects);
         break;
       }
       case 'path': {
@@ -760,7 +743,6 @@ export class DrawingService {
           [['M', 0, 0] as unknown as fabric.Point],
           additionalProperty
         );
-        console.log(this.canvas._objects);
         break;
       }
     }
@@ -784,7 +766,6 @@ export class DrawingService {
         ]
           .set({ ...redoEvent.snapShotAfter })
           .setCoords();
-        console.log(this.canvas._objects);
         break;
       }
       case 'rect': {
@@ -793,7 +774,6 @@ export class DrawingService {
         ]
           .set({ ...redoEvent.snapShotAfter })
           .setCoords();
-        console.log(this.canvas._objects);
         break;
       }
       case 'circle': {
@@ -802,7 +782,6 @@ export class DrawingService {
         ]
           .set({ ...redoEvent.snapShotAfter })
           .setCoords();
-        console.log(this.canvas._objects);
         break;
       }
       case 'path': {
@@ -811,12 +790,10 @@ export class DrawingService {
         ]
           .set({ ...redoEvent.snapShotAfter })
           .setCoords();
-        console.log(this.canvas._objects);
         break;
       }
     }
     this.canvas._objects[canvasObjectLocation].canvas = redoEvent._canvas;
-    console.log('cursorMode in redo property change:', this.cursorMode);
     if (this.cursorMode == CursorMode.Select) {
       this.canvas._objects[canvasObjectLocation].selectable = true;
       this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';

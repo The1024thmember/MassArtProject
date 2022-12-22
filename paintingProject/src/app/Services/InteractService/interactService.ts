@@ -1,5 +1,6 @@
 import * as Rx from 'rxjs';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
+import { EventObject } from '../RedoUndoService/types';
 /*
   All the functionality within this service is exectuable when it is in selection mode
   The function for this service is to: excute read operation on object
@@ -15,6 +16,7 @@ export class InteractService {
 
   private currentSelectObject: fabric.Object | null;
   private activeObjects: fabric.Object[];
+  private activeObjectsOriginal: { [key: number]: fabric.Object } = {};
 
   constructor(
     canvas: fabric.Canvas,
@@ -70,22 +72,53 @@ export class InteractService {
       // mouse click on empty canvas, so no object is selected
     });
 
+    /* This will always emits before release the mouse
     this.canvas.on('object:scaling', (e) => {
       var o = e.target;
       // how to make object on scale strokeWidth not change
       // TODO: https://app.clickup.com/t/3ak2xtp
       console.error('scaleing:', o);
     });
+    */
 
+    /* object:modified listener won't fire if it is color change or weight change
+       change position, scale and rotating will trigger this
+    */
     this.canvas.on('object:modified', (e) => {
       var o = e.target;
       // how to make object on scale strokeWidth not change
       // TODO: https://app.clickup.com/t/3ak2xtp
+      console.log('objects before modification:', this.activeObjectsOriginal);
+      console.error('object modified', o);
+      const changePropertyEventsBatch: EventObject[] = [];
+      Object.keys(this.activeObjectsOriginal).forEach((index) => {
+        const indexAsNumber = parseInt(index);
+        const changePropertyEvent =
+          this._redoUndoService.buildPropertyChangeEventObject(
+            indexAsNumber + 1,
+            this.activeObjectsOriginal[indexAsNumber],
+            this.canvas._objects[indexAsNumber],
+            {}
+          );
+        changePropertyEventsBatch.push(changePropertyEvent);
+      });
+
+      // Emit the events
+      if (changePropertyEventsBatch.length) {
+        this._redoUndoService.emitEvent(changePropertyEventsBatch);
+      }
+      // this where to send these event to backend
     });
   }
 
   private getCurrentActiveObjects() {
     this.activeObjects = this.canvas.getActiveObjects();
+    this.activeObjectsOriginal = {};
+    this.activeObjects.forEach((obj) => {
+      this.activeObjectsOriginal[this.canvas.getObjects().indexOf(obj)] =
+        JSON.parse(JSON.stringify(obj));
+    });
+
     if (this.activeObjects.length === 1) {
       this.currentSelectObject = this.activeObjects[0];
     } else {
