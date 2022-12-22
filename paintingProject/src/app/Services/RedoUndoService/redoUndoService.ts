@@ -284,18 +284,15 @@ export class RedoUndoService {
 
   public undo() {
     this.undoAction.next(true);
-    console.log('this.undoStack:', this.undoStack);
   }
 
   public redo() {
     this.redoAction.next(true);
-    console.log('this.redoStack:', this.redoStack);
   }
 
   private initializer() {
     this.subscription.add(
       this.eventLisenter.subscribe((event) => {
-        console.log('event received:', event);
         this.undoStack.push(event);
         // some logic then fire backend request
       })
@@ -303,14 +300,12 @@ export class RedoUndoService {
 
     this.subscription.add(
       this.undoAction.subscribe((isUndo) => {
-        console.log('undo received:', isUndo);
         this.emitUndoEvent();
       })
     );
 
     this.subscription.add(
       this.redoAction.subscribe((isRedo) => {
-        console.log('redo received:', isRedo);
         this.emitRedoEvent();
       })
     );
@@ -320,6 +315,7 @@ export class RedoUndoService {
     const poppedEvent = this.undoStack.pop();
     if (poppedEvent) {
       this.emittedUndoEventObject$.next(poppedEvent);
+      console.log('poppedEvent adding on redo stack:', poppedEvent);
       this.redoStack.push(poppedEvent);
     }
   }
@@ -328,6 +324,7 @@ export class RedoUndoService {
     const poppedEvent = this.redoStack.pop();
     if (poppedEvent) {
       this.emittedRedoEventObject$.next(poppedEvent);
+      console.log('poppedEvent adding on undo stack:', poppedEvent);
       this.undoStack.push(poppedEvent);
     }
   }
