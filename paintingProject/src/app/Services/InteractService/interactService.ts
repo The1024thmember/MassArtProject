@@ -82,7 +82,9 @@ export class InteractService {
     */
 
     /* object:modified listener won't fire if it is color change or weight change
-       change position, scale and rotating will trigger this
+       change position, scale and rotating will trigger this. A bug for this is that
+       if select an object, do move, scale up and rotate, then the undo stack before
+       changes will always be the status of the object on selection.
     */
     this.canvas.on('object:modified', (e) => {
       var o = e.target;
@@ -91,19 +93,29 @@ export class InteractService {
       const changePropertyEventsBatch: EventObject[] = [];
       Object.keys(this.activeObjectsOriginal).forEach((index) => {
         const indexAsNumber = parseInt(index);
+        const updatedObj = this.canvas._objects[indexAsNumber];
         console.log(
           'objects before modification:',
           this.activeObjectsOriginal[indexAsNumber]
         );
-        console.error('object modified', this.canvas._objects[indexAsNumber]);
         const changePropertyEvent =
           this._redoUndoService.buildPropertyChangeEventObject(
             indexAsNumber + 1,
             this.activeObjectsOriginal[indexAsNumber],
-            this.canvas._objects[indexAsNumber],
+            updatedObj,
             {}
           );
         changePropertyEventsBatch.push(changePropertyEvent);
+
+        /* update the original snapshot before of an object once the object has been modified,
+         so that multiple operation on the same object without reselection will be separatable
+        */
+        this.activeObjectsOriginal[indexAsNumber] = JSON.parse(
+          JSON.stringify(updatedObj)
+        );
+        Object.assign(this.activeObjectsOriginal[indexAsNumber], {
+          canvas: updatedObj.canvas,
+        });
       });
 
       // Emit the events
