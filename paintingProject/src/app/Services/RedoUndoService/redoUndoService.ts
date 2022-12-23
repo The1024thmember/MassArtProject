@@ -97,10 +97,14 @@ export class RedoUndoService {
         const pathObjectBefore = canvasObjectBefore as IPathOptions;
         Object.assign(eventObject.snapShotBefore, {
           path: pathObjectBefore.path,
+          left: pathObjectBefore.left,
+          top: pathObjectBefore.top,
         });
         const pathObjectAfter = canvasObjectAfter as IPathOptions;
         Object.assign(eventObject.snapShotAfter, {
           path: pathObjectAfter.path,
+          left: pathObjectAfter.left,
+          top: pathObjectAfter.top,
         });
         break;
       }
@@ -187,6 +191,8 @@ export class RedoUndoService {
         const pathObject = canvasObjectBefore as IPathOptions;
         eventObject.snapShotBefore = {
           path: pathObject.path,
+          left: pathObject.left,
+          top: pathObject.top,
         };
         break;
       }
@@ -197,6 +203,9 @@ export class RedoUndoService {
     //Set position, width/height data, and appending draweroptions for rect,circle and line Object
     Object.assign(eventObject.snapShotBefore, {
       ...additionalProperties,
+      angle: canvasObjectBefore.angle,
+      scaleX: canvasObjectBefore.scaleX,
+      scaleY: canvasObjectBefore.scaleY,
       originX: canvasObjectBefore.originX,
       originY: canvasObjectBefore.originY,
     });
