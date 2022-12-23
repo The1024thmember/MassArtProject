@@ -121,7 +121,7 @@ export class DrawingService {
   }
 
   // ---- need to add validations for the input value ---//
-  //Change the width for the current selection
+  // Change the width for the current selection
   public async setDrawingWeight(weight: number) {
     if (this.oldWeight != weight) {
       this.drawerOptions.strokeWidth = Math.floor(weight);

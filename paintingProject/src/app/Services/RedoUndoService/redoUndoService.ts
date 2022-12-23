@@ -46,31 +46,17 @@ export class RedoUndoService {
     switch (canvasObjectBefore.type) {
       case ObjectType.Line: {
         eventObject.canvasObjectType = ObjectType.Line;
-        const lineObjectBefore = canvasObjectBefore as ILineOptions;
-        Object.assign(eventObject.snapShotBefore, {
-          // left: lineObjectBefore.left,
-          // top: lineObjectBefore.top,
-        });
-        const lineObjectAfter = canvasObjectAfter as ILineOptions;
-        Object.assign(eventObject.snapShotAfter, {
-          // left: lineObjectAfter.left,
-          // top: lineObjectAfter.top,
-        });
         break;
       }
       case ObjectType.Rectangle: {
         eventObject.canvasObjectType = ObjectType.Rectangle;
         const rectObjectBefore = canvasObjectBefore as IRectOptions;
         Object.assign(eventObject.snapShotBefore, {
-          // left: rectObjectBefore.left,
-          // top: rectObjectBefore.top,
           width: rectObjectBefore.width,
           height: rectObjectBefore.height,
         });
         const rectObjectAfter = canvasObjectAfter as IRectOptions;
         Object.assign(eventObject.snapShotAfter, {
-          // left: rectObjectAfter.left,
-          // top: rectObjectAfter.top,
           width: rectObjectAfter.width,
           height: rectObjectAfter.height,
         });
@@ -80,14 +66,10 @@ export class RedoUndoService {
         eventObject.canvasObjectType = ObjectType.Circle;
         const circleObjectBefore = canvasObjectBefore as ICircleOptions;
         Object.assign(eventObject.snapShotBefore, {
-          // left: circleObjectBefore.left,
-          // top: circleObjectBefore.top,
           radius: circleObjectBefore.radius,
         });
         const circleObjectAfter = canvasObjectAfter as ICircleOptions;
         Object.assign(eventObject.snapShotAfter, {
-          // left: circleObjectAfter.left,
-          // top: circleObjectAfter.top,
           radius: circleObjectAfter.radius,
         });
         break;
@@ -97,14 +79,10 @@ export class RedoUndoService {
         const pathObjectBefore = canvasObjectBefore as IPathOptions;
         Object.assign(eventObject.snapShotBefore, {
           path: pathObjectBefore.path,
-          left: pathObjectBefore.left,
-          top: pathObjectBefore.top,
         });
         const pathObjectAfter = canvasObjectAfter as IPathOptions;
         Object.assign(eventObject.snapShotAfter, {
           path: pathObjectAfter.path,
-          left: pathObjectAfter.left,
-          top: pathObjectAfter.top,
         });
         break;
       }
