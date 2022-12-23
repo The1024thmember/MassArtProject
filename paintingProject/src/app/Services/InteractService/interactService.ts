@@ -88,11 +88,14 @@ export class InteractService {
       var o = e.target;
       // how to make object on scale strokeWidth not change
       // TODO: https://app.clickup.com/t/3ak2xtp
-      console.log('objects before modification:', this.activeObjectsOriginal);
-      console.error('object modified', o);
       const changePropertyEventsBatch: EventObject[] = [];
       Object.keys(this.activeObjectsOriginal).forEach((index) => {
         const indexAsNumber = parseInt(index);
+        console.log(
+          'objects before modification:',
+          this.activeObjectsOriginal[indexAsNumber]
+        );
+        console.error('object modified', this.canvas._objects[indexAsNumber]);
         const changePropertyEvent =
           this._redoUndoService.buildPropertyChangeEventObject(
             indexAsNumber + 1,
@@ -115,8 +118,11 @@ export class InteractService {
     this.activeObjects = this.canvas.getActiveObjects();
     this.activeObjectsOriginal = {};
     this.activeObjects.forEach((obj) => {
-      this.activeObjectsOriginal[this.canvas.getObjects().indexOf(obj)] =
-        JSON.parse(JSON.stringify(obj));
+      console.log('active objects:', obj);
+      const index = this.canvas.getObjects().indexOf(obj);
+      // Json.stringify will discard the functions, but in this case we need the functions
+      this.activeObjectsOriginal[index] = JSON.parse(JSON.stringify(obj));
+      Object.assign(this.activeObjectsOriginal[index], { canvas: obj.canvas });
     });
 
     if (this.activeObjects.length === 1) {

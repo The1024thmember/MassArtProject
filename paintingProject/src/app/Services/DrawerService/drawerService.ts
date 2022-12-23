@@ -454,7 +454,9 @@ export class DrawingService {
     value: string
   ): Promise<EventObject> {
     var index = this.canvas.getObjects().indexOf(canvasObject);
+    // Json.stringify will discard the functions, but in this case we need the functions
     const beforeChangedObj = JSON.parse(JSON.stringify(canvasObject));
+    Object.assign(beforeChangedObj, { canvas: canvasObject.canvas });
     const afterChangedObj = await this._drawer.changeProperty(
       canvasObject,
       option,
