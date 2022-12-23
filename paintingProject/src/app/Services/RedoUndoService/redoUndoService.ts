@@ -50,10 +50,6 @@ export class RedoUndoService {
         Object.assign(eventObject.snapShotBefore, {
           left: lineObjectBefore.left,
           top: lineObjectBefore.top,
-          x1: lineObjectBefore.x1,
-          y1: lineObjectBefore.y1,
-          x2: lineObjectBefore.x2,
-          y2: lineObjectBefore.y2,
         });
         const lineObjectAfter = canvasObjectAfter as ILineOptions;
         Object.assign(eventObject.snapShotAfter, {
