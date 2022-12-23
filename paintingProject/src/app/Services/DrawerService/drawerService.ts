@@ -194,7 +194,6 @@ export class DrawingService {
         if (this.cursorMode === CursorMode.Select) {
           const deletionEventsBatch: EventObject[] = [];
           this.canvas.getActiveObjects().forEach((activeObject) => {
-            console.warn('deleted object:', activeObject);
             var index = this.canvas.getObjects().indexOf(activeObject);
             // Create a delete event object
             const deletionEvent =
@@ -456,13 +455,15 @@ export class DrawingService {
     var index = this.canvas.getObjects().indexOf(canvasObject);
     // Json.stringify will discard the functions, but in this case we need the functions
     const beforeChangedObj = JSON.parse(JSON.stringify(canvasObject));
-    Object.assign(beforeChangedObj, { canvas: canvasObject.canvas });
+    Object.assign(beforeChangedObj, {
+      group: { ...canvasObject.group },
+      canvas: canvasObject.canvas,
+    });
     const afterChangedObj = await this._drawer.changeProperty(
       canvasObject,
       option,
       value
     );
-    console.warn('change propertied object:', canvasObject);
     // Create a change property event object
     const changePropertyEvent =
       this._redoUndoService.buildPropertyChangeEventObject(
@@ -528,10 +529,6 @@ export class DrawingService {
         break;
       }
     }
-    console.warn(
-      'after undo creation:',
-      this.canvas._objects[canvasObjectLocation]
-    );
   }
 
   // undo a deletion event
@@ -588,10 +585,6 @@ export class DrawingService {
       this.canvas._objects[canvasObjectLocation].selectable = true;
       this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
     }
-    console.warn(
-      'after undo deletion:',
-      this.canvas._objects[canvasObjectLocation]
-    );
   }
 
   // undo a change property Event
@@ -639,10 +632,6 @@ export class DrawingService {
       this.canvas._objects[canvasObjectLocation].selectable = true;
       this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
     }
-    console.warn(
-      'after undo Change Property Event:',
-      this.canvas._objects[canvasObjectLocation]
-    );
   }
 
   // redo a create event
@@ -699,10 +688,6 @@ export class DrawingService {
       this.canvas._objects[canvasObjectLocation].selectable = true;
       this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
     }
-    console.warn(
-      'after redo create:',
-      this.canvas._objects[canvasObjectLocation]
-    );
   }
 
   // redo a deletion event
@@ -748,11 +733,6 @@ export class DrawingService {
         break;
       }
     }
-
-    console.warn(
-      'after redo deletion:',
-      this.canvas._objects[canvasObjectLocation]
-    );
   }
 
   // redo a change property Event
@@ -800,9 +780,5 @@ export class DrawingService {
       this.canvas._objects[canvasObjectLocation].selectable = true;
       this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
     }
-    console.warn(
-      'after redo Change Property Event:',
-      this.canvas._objects[canvasObjectLocation]
-    );
   }
 }

@@ -95,10 +95,6 @@ export class InteractService {
       Object.keys(this.activeObjectsOriginal).forEach((index) => {
         const indexAsNumber = parseInt(index);
         const updatedObj = this.canvas._objects[indexAsNumber];
-        console.log(
-          'objects before modification:',
-          this.activeObjectsOriginal[indexAsNumber]
-        );
         const changePropertyEvent =
           this._redoUndoService.buildPropertyChangeEventObject(
             indexAsNumber + 1,
@@ -115,6 +111,7 @@ export class InteractService {
           JSON.stringify(updatedObj)
         );
         Object.assign(this.activeObjectsOriginal[indexAsNumber], {
+          group: { ...updatedObj.group },
           canvas: updatedObj.canvas,
         });
       });
@@ -131,11 +128,13 @@ export class InteractService {
     this.activeObjects = this.canvas.getActiveObjects();
     this.activeObjectsOriginal = {};
     this.activeObjects.forEach((obj) => {
-      console.log('active objects:', obj);
       const index = this.canvas.getObjects().indexOf(obj);
       // Json.stringify will discard the functions, but in this case we need the functions
       this.activeObjectsOriginal[index] = JSON.parse(JSON.stringify(obj));
-      Object.assign(this.activeObjectsOriginal[index], { canvas: obj.canvas });
+      Object.assign(this.activeObjectsOriginal[index], {
+        group: { ...obj.group },
+        canvas: obj.canvas,
+      });
     });
 
     if (this.activeObjects.length === 1) {

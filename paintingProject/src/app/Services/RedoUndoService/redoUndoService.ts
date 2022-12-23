@@ -48,13 +48,13 @@ export class RedoUndoService {
         eventObject.canvasObjectType = ObjectType.Line;
         const lineObjectBefore = canvasObjectBefore as ILineOptions;
         Object.assign(eventObject.snapShotBefore, {
-          left: lineObjectBefore.left,
-          top: lineObjectBefore.top,
+          // left: lineObjectBefore.left,
+          // top: lineObjectBefore.top,
         });
         const lineObjectAfter = canvasObjectAfter as ILineOptions;
         Object.assign(eventObject.snapShotAfter, {
-          left: lineObjectAfter.left,
-          top: lineObjectAfter.top,
+          // left: lineObjectAfter.left,
+          // top: lineObjectAfter.top,
         });
         break;
       }
@@ -62,15 +62,15 @@ export class RedoUndoService {
         eventObject.canvasObjectType = ObjectType.Rectangle;
         const rectObjectBefore = canvasObjectBefore as IRectOptions;
         Object.assign(eventObject.snapShotBefore, {
-          left: rectObjectBefore.left,
-          top: rectObjectBefore.top,
+          // left: rectObjectBefore.left,
+          // top: rectObjectBefore.top,
           width: rectObjectBefore.width,
           height: rectObjectBefore.height,
         });
         const rectObjectAfter = canvasObjectAfter as IRectOptions;
         Object.assign(eventObject.snapShotAfter, {
-          left: rectObjectAfter.left,
-          top: rectObjectAfter.top,
+          // left: rectObjectAfter.left,
+          // top: rectObjectAfter.top,
           width: rectObjectAfter.width,
           height: rectObjectAfter.height,
         });
@@ -80,14 +80,14 @@ export class RedoUndoService {
         eventObject.canvasObjectType = ObjectType.Circle;
         const circleObjectBefore = canvasObjectBefore as ICircleOptions;
         Object.assign(eventObject.snapShotBefore, {
-          left: circleObjectBefore.left,
-          top: circleObjectBefore.top,
+          // left: circleObjectBefore.left,
+          // top: circleObjectBefore.top,
           radius: circleObjectBefore.radius,
         });
         const circleObjectAfter = canvasObjectAfter as ICircleOptions;
         Object.assign(eventObject.snapShotAfter, {
-          left: circleObjectAfter.left,
-          top: circleObjectAfter.top,
+          // left: circleObjectAfter.left,
+          // top: circleObjectAfter.top,
           radius: circleObjectAfter.radius,
         });
         break;
@@ -109,17 +109,9 @@ export class RedoUndoService {
         break;
       }
     }
-    //Set position, width/height data, and appending draweroptions for rect,circle and line Object
-    Object.assign(eventObject.snapShotAfter, {
-      angle: canvasObjectAfter.angle,
-      originX: canvasObjectAfter.originX,
-      originY: canvasObjectAfter.originY,
-      scaleX: canvasObjectAfter.scaleX,
-      scaleY: canvasObjectAfter.scaleY,
-      stroke: canvasObjectAfter.stroke,
-      strokeWidth: canvasObjectAfter.strokeWidth,
-    });
 
+    //Set position, width/height data, and appending draweroptions for rect,circle and line Object
+    console.error('before');
     Object.assign(eventObject.snapShotBefore, {
       angle: canvasObjectBefore.angle,
       originX: canvasObjectBefore.originX,
@@ -128,7 +120,24 @@ export class RedoUndoService {
       scaleY: canvasObjectBefore.scaleY,
       stroke: canvasObjectBefore.stroke,
       strokeWidth: canvasObjectBefore.strokeWidth,
+      ...this.getObjectAbsolutePosition(canvasObjectBefore),
     });
+    console.log('object:', canvasObjectBefore);
+
+    console.error('___________________________');
+    console.error('after');
+    Object.assign(eventObject.snapShotAfter, {
+      angle: canvasObjectAfter.angle,
+      originX: canvasObjectAfter.originX,
+      originY: canvasObjectAfter.originY,
+      scaleX: canvasObjectAfter.scaleX,
+      scaleY: canvasObjectAfter.scaleY,
+      stroke: canvasObjectAfter.stroke,
+      strokeWidth: canvasObjectAfter.strokeWidth,
+      ...this.getObjectAbsolutePosition(canvasObjectAfter),
+    });
+
+    console.log('object:', canvasObjectAfter);
 
     //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will be buggy
     eventObject.canvasObjectId = canvasObjectId;
@@ -344,6 +353,8 @@ export class RedoUndoService {
       leftFromCanvas = leftFromGroup + leftFromCanvas + widthOfGroup / 2;
     }
 
+    console.log('top:', topFromCanvas);
+    console.log('left:', leftFromCanvas);
     return { top: topFromCanvas, left: leftFromCanvas };
   }
 }
