@@ -155,10 +155,7 @@ export class RedoUndoService {
           y2: lineObject.y2,
         };
 
-        Object.assign(
-          eventObject.snapShotBefore,
-          this.getObjectAbsolutePosition(canvasObjectBefore)
-        );
+        Object.assign(eventObject.snapShotBefore);
         break;
       }
       case ObjectType.Rectangle: {
@@ -168,10 +165,7 @@ export class RedoUndoService {
           width: rectObject.width,
           height: rectObject.height,
         };
-        Object.assign(
-          eventObject.snapShotBefore,
-          this.getObjectAbsolutePosition(canvasObjectBefore)
-        );
+        Object.assign(eventObject.snapShotBefore);
         break;
       }
       case ObjectType.Circle: {
@@ -180,10 +174,7 @@ export class RedoUndoService {
         eventObject.snapShotBefore = {
           radius: circleObject.radius,
         };
-        Object.assign(
-          eventObject.snapShotBefore,
-          this.getObjectAbsolutePosition(canvasObjectBefore)
-        );
+        Object.assign(eventObject.snapShotBefore);
         break;
       }
       case ObjectType.Path: {
@@ -208,6 +199,7 @@ export class RedoUndoService {
       scaleY: canvasObjectBefore.scaleY,
       originX: canvasObjectBefore.originX,
       originY: canvasObjectBefore.originY,
+      ...this.getObjectAbsolutePosition(canvasObjectBefore),
     });
     eventObject._canvas = canvasObjectBefore.canvas;
     return eventObject;
