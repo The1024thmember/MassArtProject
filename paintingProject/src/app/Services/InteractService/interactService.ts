@@ -105,7 +105,6 @@ export class InteractService {
       // how to make object on scale strokeWidth not change
       // TODO: https://app.clickup.com/t/3ak2xtp
       const changePropertyEventsBatch: EventObject[] = [];
-      console.log('path:', e.target);
       Object.keys(this.activeObjectsOriginal).forEach((index) => {
         const indexAsNumber = parseInt(index);
         const updatedObj = this.canvas._objects[indexAsNumber];
@@ -121,6 +120,7 @@ export class InteractService {
         /* update the original snapshot before of an object once the object has been modified,
          so that multiple operation on the same object without reselection will be separatable
         */
+        console.error('update object:', updatedObj);
         this.activeObjectsOriginal[indexAsNumber] = JSON.parse(
           JSON.stringify(updatedObj)
         );

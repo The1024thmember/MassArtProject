@@ -89,7 +89,6 @@ export class RedoUndoService {
     }
 
     //Set position, width/height data, and appending draweroptions for rect,circle and line Object
-    console.error('before');
     Object.assign(eventObject.snapShotBefore, {
       angle: canvasObjectBefore.angle,
       originX: canvasObjectBefore.originX,
@@ -100,10 +99,6 @@ export class RedoUndoService {
       strokeWidth: canvasObjectBefore.strokeWidth,
       ...this.getObjectAbsolutePosition(canvasObjectBefore),
     });
-    console.log('object:', canvasObjectBefore);
-
-    console.error('___________________________');
-    console.error('after');
     Object.assign(eventObject.snapShotAfter, {
       angle: canvasObjectAfter.angle,
       originX: canvasObjectAfter.originX,
@@ -114,9 +109,6 @@ export class RedoUndoService {
       strokeWidth: canvasObjectAfter.strokeWidth,
       ...this.getObjectAbsolutePosition(canvasObjectAfter),
     });
-
-    console.log('object:', canvasObjectAfter);
-
     //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will be buggy
     eventObject.canvasObjectId = canvasObjectId;
     eventObject._canvas = canvasObjectBefore.canvas;
