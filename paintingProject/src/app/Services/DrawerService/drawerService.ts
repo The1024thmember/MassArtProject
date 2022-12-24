@@ -247,6 +247,9 @@ export class DrawingService {
             }
           });
 
+          // Need to de-select everything, since after delection we don't want to see the selection box
+          this.canvas.discardActiveObject().renderAll();
+
           // Emit the events
           if (deletionEventsBatch.length) {
             this._redoUndoService.emitEvent(deletionEventsBatch);
@@ -288,6 +291,9 @@ export class DrawingService {
       this.emittedUndoEventObject$.subscribe((undoEvents) => {
         // Based on command calling changeProperty to change the property of the object
         // Or delete/create accordingly
+
+        // Need to de-select everything, since that will make property change on moving, and scale with right position
+        this.canvas.discardActiveObject();
         undoEvents.forEach((undoEvent) => {
           switch (undoEvent.command) {
             case CommandType.Create: {
