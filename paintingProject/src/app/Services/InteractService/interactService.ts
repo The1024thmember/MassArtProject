@@ -10,8 +10,11 @@ import { EventObject } from '../RedoUndoService/types';
 */
 export class InteractService {
   canvas: fabric.Canvas;
+  // This service emits the selected object color & weight
   selectedObjectColor$: Rx.Subject<string>;
   selectedObjectWidth$: Rx.Subject<number>;
+  // Forces the activeObject have the updated property when color or weight changes
+  forceInteractiveServiceGetActiveObjects$: Rx.Subject<boolean>;
   _redoUndoService: RedoUndoService;
 
   private currentSelectObject: fabric.Object | null;
@@ -22,12 +25,15 @@ export class InteractService {
     canvas: fabric.Canvas,
     selectedObjectColor$: Rx.Subject<string>,
     selectedObjectWidth$: Rx.Subject<number>,
+    forceInteractiveServiceGetActiveObjects$: Rx.Subject<boolean>,
     _redoUndoService: RedoUndoService
   ) {
     //Create the Fabric canvas
     this.canvas = canvas;
     this.selectedObjectColor$ = selectedObjectColor$;
     this.selectedObjectWidth$ = selectedObjectWidth$;
+    this.forceInteractiveServiceGetActiveObjects$ =
+      forceInteractiveServiceGetActiveObjects$;
     this._redoUndoService = _redoUndoService;
 
     //Create event listener on canvas
@@ -35,6 +41,14 @@ export class InteractService {
   }
 
   private initializeCanvasEvents() {
+    /*
+      Will be triggered by change weight or color, aims to make get the updated property
+      on active objects
+    */
+    this.forceInteractiveServiceGetActiveObjects$.subscribe(() =>
+      this.getCurrentActiveObjects()
+    );
+
     /*  Will be trigger via:
     1) create new object, the new object will be selected
     2) when currently there is no selection, selected something
@@ -130,6 +144,7 @@ export class InteractService {
     this.activeObjects.forEach((obj) => {
       const index = this.canvas.getObjects().indexOf(obj);
       // Json.stringify will discard the functions, but in this case we need the functions
+      // the activeObjectsOriginal is not accurate, especially after change the color or weight
       this.activeObjectsOriginal[index] = JSON.parse(JSON.stringify(obj));
       Object.assign(this.activeObjectsOriginal[index], {
         group: { ...obj.group },

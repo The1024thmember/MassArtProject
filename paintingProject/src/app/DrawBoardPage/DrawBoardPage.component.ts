@@ -67,6 +67,11 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
   emittedUndoEventObject$ = new Rx.Subject<EventObject[]>();
   emittedRedoEventObject$ = new Rx.Subject<EventObject[]>();
 
+  // When change customized properties for object, the getActiveObjects need to be refreshed
+  // to reflect the new value. This makes sure the redo/undo on property change will separate step
+  // by step.
+  forceInteractiveServiceGetActiveObjects$ = new Rx.Subject<boolean>();
+
   subscription$ = new Rx.Subscription();
 
   private _canvas: fabric.Canvas;
@@ -106,6 +111,7 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       this._canvas,
       this.selectedObjectColor$,
       this.selectedObjectWidth$,
+      this.forceInteractiveServiceGetActiveObjects$,
       this._redoUndoService
     );
 
@@ -173,10 +179,12 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
   // solution is to introduce two-way binding on color-platte component
   setColorHandler($event: string) {
     this.emittedSelectedColor$.next($event);
+    this.forceInteractiveServiceGetActiveObjects$.next(true);
   }
 
   setWeightHandler($event: number) {
     this._drawService.setDrawingWeight($event);
+    this.forceInteractiveServiceGetActiveObjects$.next(true);
   }
 
   //iterating all canvas objects, make all of them selectable
