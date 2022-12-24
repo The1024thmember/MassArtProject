@@ -294,6 +294,7 @@ export class DrawingService {
 
         // Need to de-select everything, since that will make property change on moving, and scale with right position
         this.canvas.discardActiveObject();
+
         undoEvents.forEach((undoEvent) => {
           switch (undoEvent.command) {
             case CommandType.Create: {

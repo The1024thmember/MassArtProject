@@ -88,23 +88,47 @@ export class RedoUndoService {
       }
     }
 
+    console.log('before group:', canvasObjectBefore.group?.canvas?._objects[0]);
+    console.log('before scaleY:', canvasObjectBefore.group?.scaleY);
+    console.log('before scaleX:', canvasObjectBefore.group?.scaleX);
+    const beforeAngle = canvasObjectBefore.angle
+      ? canvasObjectBefore.angle
+      : canvasObjectBefore.group?.angle;
+    const beforeScaleX = canvasObjectBefore.scaleX
+      ? canvasObjectBefore.scaleX
+      : canvasObjectBefore.group?.scaleX;
+    const beforeScaleY = canvasObjectBefore.scaleY
+      ? canvasObjectBefore.scaleY
+      : canvasObjectBefore.group?.scaleY;
+
     //Set position, width/height data, and appending draweroptions for rect,circle and line Object
     Object.assign(eventObject.snapShotBefore, {
-      angle: canvasObjectBefore.angle,
+      angle: beforeAngle,
       originX: canvasObjectBefore.originX,
       originY: canvasObjectBefore.originY,
-      scaleX: canvasObjectBefore.scaleX,
-      scaleY: canvasObjectBefore.scaleY,
+      scaleX: beforeScaleX,
+      scaleY: beforeScaleY,
       stroke: canvasObjectBefore.stroke,
       strokeWidth: canvasObjectBefore.strokeWidth,
       ...this.getObjectAbsolutePosition(canvasObjectBefore),
     });
+
+    const afterAngle = canvasObjectAfter.angle
+      ? canvasObjectAfter.angle
+      : canvasObjectAfter.group?.angle;
+    const afterScaleX = canvasObjectAfter.scaleX
+      ? canvasObjectAfter.scaleX
+      : canvasObjectAfter.group?.scaleX;
+    const afterScaleY = canvasObjectAfter.scaleY
+      ? canvasObjectAfter.scaleY
+      : canvasObjectAfter.group?.scaleY;
+
     Object.assign(eventObject.snapShotAfter, {
-      angle: canvasObjectAfter.angle,
+      angle: afterAngle,
       originX: canvasObjectAfter.originX,
       originY: canvasObjectAfter.originY,
-      scaleX: canvasObjectAfter.scaleX,
-      scaleY: canvasObjectAfter.scaleY,
+      scaleX: afterScaleX,
+      scaleY: afterScaleY,
       stroke: canvasObjectAfter.stroke,
       strokeWidth: canvasObjectAfter.strokeWidth,
       ...this.getObjectAbsolutePosition(canvasObjectAfter),
@@ -326,9 +350,6 @@ export class RedoUndoService {
       topFromCanvas = topFromGroup + topFromCanvas + heightOfGroup / 2;
       leftFromCanvas = leftFromGroup + leftFromCanvas + widthOfGroup / 2;
     }
-
-    console.log('top:', topFromCanvas);
-    console.log('left:', leftFromCanvas);
     return { top: topFromCanvas, left: leftFromCanvas };
   }
 }
