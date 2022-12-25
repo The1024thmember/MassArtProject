@@ -86,15 +86,6 @@ export class InteractService {
       // mouse click on empty canvas, so no object is selected
     });
 
-    /* This will always emits before release the mouse
-    this.canvas.on('object:scaling', (e) => {
-      var o = e.target;
-      // how to make object on scale strokeWidth not change
-      // TODO: https://app.clickup.com/t/3ak2xtp
-      console.error('scaleing:', o);
-    });
-    */
-
     /* object:modified listener won't fire if it is color change or weight change
        change position, scale and rotating will trigger this. A bug for this is that
        if select an object, do move, scale up and rotate, then the undo stack before
@@ -120,13 +111,13 @@ export class InteractService {
         /* update the original snapshot before of an object once the object has been modified,
          so that multiple operation on the same object without reselection will be separatable
         */
-        console.error('update object:', updatedObj);
         this.activeObjectsOriginal[indexAsNumber] = JSON.parse(
           JSON.stringify(updatedObj)
         );
         Object.assign(this.activeObjectsOriginal[indexAsNumber], {
           group: { ...updatedObj.group },
           canvas: updatedObj.canvas,
+          ...updatedObj.getObjectScaling(),
         });
       });
 
@@ -149,6 +140,7 @@ export class InteractService {
       Object.assign(this.activeObjectsOriginal[index], {
         group: { ...obj.group },
         canvas: obj.canvas,
+        ...obj.getObjectScaling(),
       });
     });
 

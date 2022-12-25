@@ -55,13 +55,11 @@ export class LineDrawer implements IObjectDrawer {
         object.set({
           stroke: value,
         });
-        console.log(`change color to be ${value}`);
         break;
       case ChangeObjectProperty.StrokeWeight:
         object.set({
           strokeWidth: parseInt(value),
         });
-        console.log(`change strokeWidth to be ${value}`);
         break;
     }
 

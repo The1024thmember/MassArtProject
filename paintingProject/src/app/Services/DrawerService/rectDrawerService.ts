@@ -62,15 +62,11 @@ export class RectDrawer implements IObjectDrawer {
         object.set({
           stroke: value,
         });
-        console.log(`change ${object} color to be ${value}`);
-        console.log(object);
         break;
       case ChangeObjectProperty.StrokeWeight:
         object.set({
           strokeWidth: parseInt(value),
         });
-        console.log(`change ${object} strokeWidth to be ${value}`);
-        console.log(object);
         break;
     }
 

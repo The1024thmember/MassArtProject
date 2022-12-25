@@ -88,26 +88,17 @@ export class RedoUndoService {
       }
     }
 
-    console.log('before group:', canvasObjectBefore.group?.canvas?._objects[0]);
-    console.log('before scaleY:', canvasObjectBefore.group?.scaleY);
-    console.log('before scaleX:', canvasObjectBefore.group?.scaleX);
     const beforeAngle = canvasObjectBefore.angle
       ? canvasObjectBefore.angle
       : canvasObjectBefore.group?.angle;
-    const beforeScaleX = canvasObjectBefore.scaleX
-      ? canvasObjectBefore.scaleX
-      : canvasObjectBefore.group?.scaleX;
-    const beforeScaleY = canvasObjectBefore.scaleY
-      ? canvasObjectBefore.scaleY
-      : canvasObjectBefore.group?.scaleY;
 
     //Set position, width/height data, and appending draweroptions for rect,circle and line Object
     Object.assign(eventObject.snapShotBefore, {
       angle: beforeAngle,
       originX: canvasObjectBefore.originX,
       originY: canvasObjectBefore.originY,
-      scaleX: beforeScaleX,
-      scaleY: beforeScaleY,
+      scaleX: canvasObjectBefore.scaleX,
+      scaleY: canvasObjectBefore.scaleY,
       stroke: canvasObjectBefore.stroke,
       strokeWidth: canvasObjectBefore.strokeWidth,
       ...this.getObjectAbsolutePosition(canvasObjectBefore),
@@ -116,28 +107,21 @@ export class RedoUndoService {
     const afterAngle = canvasObjectAfter.angle
       ? canvasObjectAfter.angle
       : canvasObjectAfter.group?.angle;
-    const afterScaleX = canvasObjectAfter.scaleX
-      ? canvasObjectAfter.scaleX
-      : canvasObjectAfter.group?.scaleX;
-    const afterScaleY = canvasObjectAfter.scaleY
-      ? canvasObjectAfter.scaleY
-      : canvasObjectAfter.group?.scaleY;
 
     Object.assign(eventObject.snapShotAfter, {
       angle: afterAngle,
       originX: canvasObjectAfter.originX,
       originY: canvasObjectAfter.originY,
-      scaleX: afterScaleX,
-      scaleY: afterScaleY,
+      ...canvasObjectAfter.getObjectScaling(),
       stroke: canvasObjectAfter.stroke,
       strokeWidth: canvasObjectAfter.strokeWidth,
       ...this.getObjectAbsolutePosition(canvasObjectAfter),
     });
+
     //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will be buggy
     eventObject.canvasObjectId = canvasObjectId;
     eventObject._canvas = canvasObjectBefore.canvas;
     eventObject.command = CommandType.ChangeProperty;
-    console.log('assmly property change event');
     return eventObject;
   }
 
@@ -315,7 +299,6 @@ export class RedoUndoService {
     const poppedEvent = this.undoStack.pop();
     if (poppedEvent) {
       this.emittedUndoEventObject$.next(poppedEvent);
-      console.log('poppedEvent adding on redo stack:', poppedEvent);
       this.redoStack.push(poppedEvent);
     }
   }
@@ -324,7 +307,6 @@ export class RedoUndoService {
     const poppedEvent = this.redoStack.pop();
     if (poppedEvent) {
       this.emittedRedoEventObject$.next(poppedEvent);
-      console.log('poppedEvent adding on undo stack:', poppedEvent);
       this.undoStack.push(poppedEvent);
     }
   }
