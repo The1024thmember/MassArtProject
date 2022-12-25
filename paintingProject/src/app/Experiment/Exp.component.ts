@@ -27,6 +27,7 @@ import { EventObject } from '../Services/RedoUndoService/types';
             (selectTriangle)="setTriangleHandler($event)"
             (selectMultiSelect)="setMultiSelectHandler($event)"
             (selectWeightSelect)="setWeightHandler($event)"
+            (selectDelete)="deleteSelectedObject($event)"
           ></Exp-tools>
         </my-col>
         <my-col [col]="4">
@@ -181,6 +182,10 @@ export class ExpComponent implements OnInit, OnDestroy {
   setWeightHandler($event: number) {
     this.emittedSelectedWidth$.next($event);
     this.forceInteractiveServiceGetActiveObjects$.next(true);
+  }
+
+  deleteSelectedObject($event: boolean) {
+    this._drawService.handleDeletion();
   }
 
   //iterating all canvas objects, make all of them selectable

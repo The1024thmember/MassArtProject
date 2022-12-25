@@ -187,74 +187,16 @@ export class DrawingService {
     this.canvas.renderAll();
   }
 
+  // Handle deletion via click delete object button
+  public handleDeletion() {
+    this.handleDelete();
+  }
+
   // Handle keydown event, such as object deletion
   public handleKeyDown(e: any) {
     switch (e.key) {
       case KeyDownEvent.Delete: {
-        if (this.cursorMode === CursorMode.Select) {
-          const deletionEventsBatch: EventObject[] = [];
-          this.canvas.getActiveObjects().forEach((activeObject) => {
-            var index = this.canvas.getObjects().indexOf(activeObject);
-            // Create a delete event object
-            const deletionEvent =
-              this._redoUndoService.buildDeletionEventObject(
-                index + 1,
-                activeObject,
-                {
-                  ...this.drawerOptions,
-                  stroke: activeObject.stroke,
-                  strokeWidth: activeObject.strokeWidth,
-                }
-              );
-
-            deletionEventsBatch.push(deletionEvent);
-
-            // Do the actual deletion
-            switch (activeObject.type) {
-              case 'line': {
-                this.canvas._objects[index] = new fabric.Line(
-                  [0, 0, 0, 0],
-                  this._canvasToEventObjectCorrelationService.ghostObjectProperty
-                );
-                break;
-              }
-              case 'rect': {
-                this.canvas._objects[index] = new fabric.Rect({
-                  left: 0,
-                  top: 0,
-                  ...this._canvasToEventObjectCorrelationService
-                    .ghostObjectProperty,
-                });
-                break;
-              }
-              case 'circle': {
-                this.canvas._objects[index] = new fabric.Circle({
-                  left: 0,
-                  top: 0,
-                  radius: 0,
-                  ...this._canvasToEventObjectCorrelationService
-                    .ghostObjectProperty,
-                });
-                break;
-              }
-              case 'path': {
-                this.canvas._objects[index] = new fabric.Path(
-                  [['M', 0, 0] as unknown as fabric.Point],
-                  this._canvasToEventObjectCorrelationService.ghostObjectProperty
-                );
-                break;
-              }
-            }
-          });
-
-          // Need to de-select everything, since after delection we don't want to see the selection box
-          this.canvas.discardActiveObject().renderAll();
-
-          // Emit the events
-          if (deletionEventsBatch.length) {
-            this._redoUndoService.emitEvent(deletionEventsBatch);
-          }
-        }
+        this.handleDelete();
       }
     }
     this.canvas.renderAll();
@@ -481,6 +423,73 @@ export class DrawingService {
         this.drawerOptions
       );
     return changePropertyEvent;
+  }
+
+  // The deletion handler
+  private handleDelete() {
+    if (this.cursorMode === CursorMode.Select) {
+      const deletionEventsBatch: EventObject[] = [];
+      this.canvas.getActiveObjects().forEach((activeObject) => {
+        var index = this.canvas.getObjects().indexOf(activeObject);
+        // Create a delete event object
+        const deletionEvent = this._redoUndoService.buildDeletionEventObject(
+          index + 1,
+          activeObject,
+          {
+            ...this.drawerOptions,
+            stroke: activeObject.stroke,
+            strokeWidth: activeObject.strokeWidth,
+          }
+        );
+
+        deletionEventsBatch.push(deletionEvent);
+
+        // Do the actual deletion
+        switch (activeObject.type) {
+          case 'line': {
+            this.canvas._objects[index] = new fabric.Line(
+              [0, 0, 0, 0],
+              this._canvasToEventObjectCorrelationService.ghostObjectProperty
+            );
+            break;
+          }
+          case 'rect': {
+            this.canvas._objects[index] = new fabric.Rect({
+              left: 0,
+              top: 0,
+              ...this._canvasToEventObjectCorrelationService
+                .ghostObjectProperty,
+            });
+            break;
+          }
+          case 'circle': {
+            this.canvas._objects[index] = new fabric.Circle({
+              left: 0,
+              top: 0,
+              radius: 0,
+              ...this._canvasToEventObjectCorrelationService
+                .ghostObjectProperty,
+            });
+            break;
+          }
+          case 'path': {
+            this.canvas._objects[index] = new fabric.Path(
+              [['M', 0, 0] as unknown as fabric.Point],
+              this._canvasToEventObjectCorrelationService.ghostObjectProperty
+            );
+            break;
+          }
+        }
+      });
+
+      // Need to de-select everything, since after delection we don't want to see the selection box
+      this.canvas.discardActiveObject().renderAll();
+
+      // Emit the events
+      if (deletionEventsBatch.length) {
+        this._redoUndoService.emitEvent(deletionEventsBatch);
+      }
+    }
   }
 
   // Remove active (selected) objects

@@ -23,8 +23,8 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER"
         [vAlign]="VerticalAlignment.VERTICAL_CENTER"
       >
-        <my-col class="logo" [col]="2">
-          <my-button>Mass Art</my-button>
+        <my-col class="logo" [col]="1">
+          <my-button>MA</my-button>
         </my-col>
         <my-vertical-bar
           [height]="5"
@@ -65,22 +65,25 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
             ></my-vertical-bar>
           </my-grid>
         </my-col>
-        <my-col [col]="3">
+        <my-col [col]="4">
           <my-grid>
-            <my-col [col]="4">
+            <my-col [col]="3">
               <my-button (click)="selectMultiSelectHandler()">
                 <i class="bi bi-app-indicator"></i>
               </my-button>
             </my-col>
-            <my-col [col]="4">
+            <my-col [col]="3">
               <my-button (click)="selectWeightHandler()">
                 <i class="bi bi-border-width"></i>
               </my-button>
             </my-col>
-            <my-col [col]="4">
+            <my-col [col]="3">
               <my-button (click)="selectFillHandler()">
                 <i class="bi bi-paint-bucket"></i>
               </my-button>
+            </my-col>
+            <my-col [col]="3">
+              <my-button (click)="selectDeleteHandler()"> D </my-button>
             </my-col>
           </my-grid>
         </my-col>
@@ -129,6 +132,8 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
       <my-button (click)="selectFillHandler()">
         <i class="bi bi-paint-bucket"></i>
       </my-button>
+
+      <my-button (click)="selectDeleteHandler()"> D </my-button>
     </my-container>
     <ng-container *ngIf="showWeightPicker">
       <Exp-weightPicker
@@ -162,6 +167,7 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   @Output() selectCurveTriangle: EventEmitter<any> = new EventEmitter();
   @Output() selectMultiSelect: EventEmitter<any> = new EventEmitter();
   @Output() selectWeightSelect: EventEmitter<any> = new EventEmitter();
+  @Output() selectDelete: EventEmitter<any> = new EventEmitter();
 
   ngOnInit() {
     this.selectedWidthOrFromObject$ = Rx.merge(
@@ -208,5 +214,10 @@ export class ExpToolsComponent implements OnInit, OnChanges {
 
   selectFillHandler() {
     console.log('selecting the fill');
+  }
+
+  selectDeleteHandler() {
+    this.selectDelete.emit(true);
+    console.log('selecting deletion');
   }
 }
