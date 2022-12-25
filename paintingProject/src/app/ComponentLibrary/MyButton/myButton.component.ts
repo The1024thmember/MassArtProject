@@ -20,4 +20,13 @@ export class MyButtonComponent {
   @Input()
   @HostBinding('attr.data-type')
   status: ButtonStatus = ButtonStatus.ACTIVE;
+
+  @HostBinding('attr.disabled') attrDisabled: true | undefined;
+  @Input() set disabled(value: boolean | undefined) {
+    this.attrDisabled = value ? true : undefined;
+  }
+
+  get disabled(): boolean | undefined {
+    return !!this.attrDisabled;
+  }
 }

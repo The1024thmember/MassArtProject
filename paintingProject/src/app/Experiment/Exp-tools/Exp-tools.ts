@@ -83,7 +83,12 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
               </my-button>
             </my-col>
             <my-col [col]="3">
-              <my-button (click)="selectDeleteHandler()"> D </my-button>
+              <my-button
+                [disabled]="!(haveActiveObject | myAsync)"
+                (click)="selectDeleteHandler()"
+              >
+                D
+              </my-button>
             </my-col>
           </my-grid>
         </my-col>
@@ -133,7 +138,12 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <i class="bi bi-paint-bucket"></i>
       </my-button>
 
-      <my-button (click)="selectDeleteHandler()"> D </my-button>
+      <my-button
+        [disabled]="!(haveActiveObject | myAsync)"
+        (click)="selectDeleteHandler()"
+      >
+        D
+      </my-button>
     </my-container>
     <ng-container *ngIf="showWeightPicker">
       <Exp-weightPicker
@@ -160,6 +170,8 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   currentWidthObservable$ = new Rx.Subject<number>();
 
   @Input() ObjectWeight: Rx.Observable<number>; // The selected object width
+  @Input() haveActiveObject: Rx.Observable<boolean>; // Indicate if there is active object or not.
+
   @Output() selectLine: EventEmitter<any> = new EventEmitter();
   @Output() selectCurve: EventEmitter<any> = new EventEmitter();
   @Output() selectRectangle: EventEmitter<any> = new EventEmitter();
@@ -171,9 +183,11 @@ export class ExpToolsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.selectedWidthOrFromObject$ = Rx.merge(
-      this.ObjectWeight, // The selected object color
-      this.currentWidthObservable$ // The color from color picker or history
+      this.ObjectWeight,
+      this.currentWidthObservable$
     ).pipe(Rx.distinctUntilChanged());
+
+    this.haveActiveObject.subscribe((e) => console.log('disabled:', !e));
   }
 
   ngOnChanges() {}
@@ -218,6 +232,5 @@ export class ExpToolsComponent implements OnInit, OnChanges {
 
   selectDeleteHandler() {
     this.selectDelete.emit(true);
-    console.log('selecting deletion');
   }
 }

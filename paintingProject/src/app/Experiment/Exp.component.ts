@@ -19,6 +19,7 @@ import { EventObject } from '../Services/RedoUndoService/types';
       <my-grid class="Container-firstRowTools">
         <my-col [col]="6">
           <Exp-tools
+            [haveActiveObject]="haveActiveObject$"
             [ObjectWeight]="selectedObjectWidth$"
             (selectLine)="setLineHandler($event)"
             (selectCurve)="setCurveHandler($event)"
@@ -32,6 +33,8 @@ import { EventObject } from '../Services/RedoUndoService/types';
         </my-col>
         <my-col [col]="4">
           <Exp-controls
+            [isRedoable]="isRedoable$"
+            [isUndoable]="isUndoable$"
             (undoClicked)="undoClickedHandler($event)"
             (redoClicked)="redoClickedHandler($event)"
           ></Exp-controls>
@@ -76,10 +79,15 @@ export class ExpComponent implements OnInit, OnDestroy {
   emittedUndoEventObject$ = new Rx.Subject<EventObject[]>();
   emittedRedoEventObject$ = new Rx.Subject<EventObject[]>();
 
+  // Have avaliable redo undo actions.
+  isRedoable$ = new Rx.Subject<boolean>();
+  isUndoable$ = new Rx.Subject<boolean>();
+
   // When change customized properties for object, the getActiveObjects need to be refreshed
   // to reflect the new value. This makes sure the redo/undo on property change will separate step
   // by step.
   forceInteractiveServiceGetActiveObjects$ = new Rx.Subject<boolean>();
+  haveActiveObject$ = new Rx.Subject<boolean>();
 
   subscription$ = new Rx.Subscription();
 
@@ -104,7 +112,9 @@ export class ExpComponent implements OnInit, OnDestroy {
     //Getting event from canvas to redoUndoService
     this._redoUndoService = new RedoUndoService(
       this.emittedUndoEventObject$,
-      this.emittedRedoEventObject$
+      this.emittedRedoEventObject$,
+      this.isRedoable$,
+      this.isUndoable$
     );
 
     // Set the drawing service for drawing object and change object property
@@ -120,6 +130,7 @@ export class ExpComponent implements OnInit, OnDestroy {
       this._canvas,
       this.selectedObjectColor$,
       this.selectedObjectWidth$,
+      this.haveActiveObject$,
       this.forceInteractiveServiceGetActiveObjects$,
       this._redoUndoService
     );

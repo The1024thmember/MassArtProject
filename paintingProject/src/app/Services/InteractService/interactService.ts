@@ -14,6 +14,7 @@ export class InteractService {
   selectedObjectColor$: Rx.Subject<string>;
   selectedObjectWidth$: Rx.Subject<number>;
   // Forces the activeObject have the updated property when color or weight changes
+  haveActiveObject$: Rx.Subject<boolean>;
   forceInteractiveServiceGetActiveObjects$: Rx.Subject<boolean>;
   _redoUndoService: RedoUndoService;
 
@@ -25,6 +26,7 @@ export class InteractService {
     canvas: fabric.Canvas,
     selectedObjectColor$: Rx.Subject<string>,
     selectedObjectWidth$: Rx.Subject<number>,
+    haveActiveObject$: Rx.Subject<boolean>,
     forceInteractiveServiceGetActiveObjects$: Rx.Subject<boolean>,
     _redoUndoService: RedoUndoService
   ) {
@@ -32,6 +34,7 @@ export class InteractService {
     this.canvas = canvas;
     this.selectedObjectColor$ = selectedObjectColor$;
     this.selectedObjectWidth$ = selectedObjectWidth$;
+    this.haveActiveObject$ = haveActiveObject$;
     this.forceInteractiveServiceGetActiveObjects$ =
       forceInteractiveServiceGetActiveObjects$;
     this._redoUndoService = _redoUndoService;
@@ -83,6 +86,7 @@ export class InteractService {
             elsewhere in the canvas
     */
     this.canvas.on('selection:cleared', (o) => {
+      this.haveActiveObject$.next(false);
       // mouse click on empty canvas, so no object is selected
     });
 
@@ -93,6 +97,7 @@ export class InteractService {
     */
     this.canvas.on('object:modified', (e) => {
       var o = e.target;
+      this.haveActiveObject$.next(true);
       // how to make object on scale strokeWidth not change
       // TODO: https://app.clickup.com/t/3ak2xtp
       const changePropertyEventsBatch: EventObject[] = [];
@@ -131,6 +136,7 @@ export class InteractService {
 
   private getCurrentActiveObjects() {
     this.activeObjects = this.canvas.getActiveObjects();
+    this.haveActiveObject$.next(!!this.activeObjects.length);
     this.activeObjectsOriginal = {};
     this.activeObjects.forEach((obj) => {
       const index = this.canvas.getObjects().indexOf(obj);

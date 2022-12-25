@@ -18,6 +18,8 @@ export class RedoUndoService {
   private undoStack: EventObject[][] = [];
   emittedUndoEventObject$: Rx.Subject<EventObject[]>; // To emit the result of undo action
   emittedRedoEventObject$: Rx.Subject<EventObject[]>; // To emit the result of redo action
+  isRedoable$: Rx.Subject<boolean>;
+  isUndoable$: Rx.Subject<boolean>;
   private eventLisenter = new Rx.Subject<EventObject[]>(); // To listen to the stream of canvas event
   private undoAction = new Rx.Subject<boolean>();
   private redoAction = new Rx.Subject<boolean>();
@@ -25,10 +27,14 @@ export class RedoUndoService {
 
   constructor(
     emittedUndoEventObject: Rx.Subject<EventObject[]>,
-    emittedRedoEventObject: Rx.Subject<EventObject[]>
+    emittedRedoEventObject: Rx.Subject<EventObject[]>,
+    isRedoable$: Rx.Subject<boolean>,
+    isUndoable$: Rx.Subject<boolean>
   ) {
     this.emittedUndoEventObject$ = emittedUndoEventObject;
     this.emittedRedoEventObject$ = emittedRedoEventObject;
+    this.isRedoable$ = isRedoable$;
+    this.isUndoable$ = isUndoable$;
     this.initializer();
   }
 
@@ -279,6 +285,8 @@ export class RedoUndoService {
         // push the new event into undo stack
         this.undoStack.push(event);
         // some logic then fire backend request
+        this.isUndoable$.next(!!this.undoStack.length);
+        this.isRedoable$.next(!!this.redoStack.length);
       })
     );
 
@@ -301,6 +309,8 @@ export class RedoUndoService {
       this.emittedUndoEventObject$.next(poppedEvent);
       this.redoStack.push(poppedEvent);
     }
+    this.isUndoable$.next(!!this.undoStack.length);
+    this.isRedoable$.next(!!this.redoStack.length);
   }
 
   private emitRedoEvent() {
@@ -309,6 +319,8 @@ export class RedoUndoService {
       this.emittedRedoEventObject$.next(poppedEvent);
       this.undoStack.push(poppedEvent);
     }
+    this.isUndoable$.next(!!this.undoStack.length);
+    this.isRedoable$.next(!!this.redoStack.length);
   }
 
   private getObjectAbsolutePosition(canvasObject: fabric.Object): object {

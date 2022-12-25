@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import * as Rx from 'rxjs';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -16,12 +17,18 @@ import { Margin } from 'src/app/Directives/Margin';
         [hAlign]="HorizontalAlignment.HORIZONTAL_CENTER"
       >
         <my-col [col]="2">
-          <my-button (click)="undoHandler()">
+          <my-button
+            [disabled]="!(isUndoable | myAsync)"
+            (click)="undoHandler()"
+          >
             <i class="bi bi-arrow-counterclockwise"></i>
           </my-button>
         </my-col>
         <my-col [col]="2">
-          <my-button (click)="redoHandler()">
+          <my-button
+            [disabled]="!(isRedoable | myAsync)"
+            (click)="redoHandler()"
+          >
             <i class="bi bi-arrow-clockwise"></i>
           </my-button>
         </my-col>
@@ -50,6 +57,9 @@ import { Margin } from 'src/app/Directives/Margin';
   styleUrls: ['./Exp-controls.scss'],
 })
 export class ExpControlsComponent {
+  @Input() isRedoable: Rx.Observable<boolean>;
+  @Input() isUndoable: Rx.Observable<boolean>;
+
   @Output() undoClicked: EventEmitter<boolean> = new EventEmitter();
   @Output() redoClicked: EventEmitter<boolean> = new EventEmitter();
 
