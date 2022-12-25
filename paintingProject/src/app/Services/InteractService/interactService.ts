@@ -45,9 +45,9 @@ export class InteractService {
       Will be triggered by change weight or color, aims to make get the updated property
       on active objects
     */
-    this.forceInteractiveServiceGetActiveObjects$.subscribe(() =>
-      this.getCurrentActiveObjects()
-    );
+    this.forceInteractiveServiceGetActiveObjects$.subscribe(() => {
+      this.getCurrentActiveObjects();
+    });
 
     /*  Will be trigger via:
     1) create new object, the new object will be selected

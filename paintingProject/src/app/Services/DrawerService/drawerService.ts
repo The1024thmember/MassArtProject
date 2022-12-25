@@ -465,6 +465,7 @@ export class DrawingService {
     Object.assign(beforeChangedObj, {
       group: { ...canvasObject.group },
       canvas: canvasObject.canvas,
+      ...canvasObject.getObjectScaling(),
     });
     const afterChangedObj = await this._drawer.changeProperty(
       canvasObject,
@@ -479,7 +480,6 @@ export class DrawingService {
         afterChangedObj,
         this.drawerOptions
       );
-
     return changePropertyEvent;
   }
 
