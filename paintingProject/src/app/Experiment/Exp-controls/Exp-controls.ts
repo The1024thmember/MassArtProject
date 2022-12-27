@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import * as Rx from 'rxjs';
+import { ButtonStatus } from 'src/app/ComponentLibrary/MyButton/myButton.types';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -18,7 +19,11 @@ import { Margin } from 'src/app/Directives/Margin';
       >
         <my-col [col]="2">
           <my-button
-            [disabled]="!(isUndoable | myAsync)"
+            [status]="
+              !(isUndoable | myAsync)
+                ? ButtonStatus.DISABLED
+                : ButtonStatus.ACTIVE
+            "
             (click)="undoHandler()"
           >
             <i class="bi bi-arrow-counterclockwise"></i>
@@ -26,7 +31,11 @@ import { Margin } from 'src/app/Directives/Margin';
         </my-col>
         <my-col [col]="2">
           <my-button
-            [disabled]="!(isRedoable | myAsync)"
+            [status]="
+              !(isRedoable | myAsync)
+                ? ButtonStatus.DISABLED
+                : ButtonStatus.ACTIVE
+            "
             (click)="redoHandler()"
           >
             <i class="bi bi-arrow-clockwise"></i>
@@ -63,6 +72,7 @@ export class ExpControlsComponent {
   @Output() undoClicked: EventEmitter<boolean> = new EventEmitter();
   @Output() redoClicked: EventEmitter<boolean> = new EventEmitter();
 
+  ButtonStatus = ButtonStatus;
   HeadingType = HeadingType;
   HorizontalAlignment = HorizontalAlignment;
   VerticalAlignment = VerticalAlignment;

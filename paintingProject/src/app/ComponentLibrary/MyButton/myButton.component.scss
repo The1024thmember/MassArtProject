@@ -12,15 +12,15 @@
     }
 
     &[data-type="disabled"] {
-      background-color: $neutral-xlight;
-    }
-
-    &[disabled="true"] {
       opacity: 0.5;
       &:hover {
         cursor: default;
         opacity: 0.5;
       }
+    }
+
+    &[data-type="inSelection"] {
+      background-color: $neutral-xdark;
     }
 }
 

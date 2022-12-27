@@ -7,7 +7,7 @@ import {
 import { fabric } from 'fabric';
 import * as Rx from 'rxjs';
 import { Margin } from '../Directives/Margin';
-import { DrawingMode } from '../Services/DrawerService';
+import { DrawingMode, ToolsType } from '../Services/DrawerService';
 import { DrawingService } from '../Services/DrawerService/drawerService';
 import { InteractService } from '../Services/InteractService';
 import { RedoUndoService } from '../Services/RedoUndoService/redoUndoService';
@@ -21,6 +21,7 @@ import { EventObject } from '../Services/RedoUndoService/types';
           <Exp-tools
             [haveActiveObject]="haveActiveObject$"
             [ObjectWeight]="selectedObjectWidth$"
+            [toolIndicator]="toolIndicator$"
             (selectLine)="setLineHandler($event)"
             (selectCurve)="setCurveHandler($event)"
             (selectRectangle)="setRectangleHandler($event)"
@@ -82,6 +83,9 @@ export class ExpComponent implements OnInit, OnDestroy {
   // Have avaliable redo undo actions.
   isRedoable$ = new Rx.Subject<boolean>();
   isUndoable$ = new Rx.Subject<boolean>();
+
+  // Indicate the drawing mode and tools selected
+  toolIndicator$ = new Rx.Subject<ToolsType>();
 
   // When change customized properties for object, the getActiveObjects need to be refreshed
   // to reflect the new value. This makes sure the redo/undo on property change will separate step
@@ -160,22 +164,26 @@ export class ExpComponent implements OnInit, OnDestroy {
 
   setLineHandler($event: any) {
     this.switchToNonSelectMode();
+    this.toolIndicator$.next(ToolsType.Line);
     this._drawService.setDrawingTool(DrawingMode.Line);
   }
 
   //start free drawing
   setCurveHandler($event: any) {
     this.switchToNonSelectMode();
+    this.toolIndicator$.next(ToolsType.FreeDraw);
     this._drawService.setDrawingTool(DrawingMode.FreeDraw);
   }
 
   setRectangleHandler($event: any) {
     this.switchToNonSelectMode();
+    this.toolIndicator$.next(ToolsType.Rectangle);
     this._drawService.setDrawingTool(DrawingMode.Rectangle);
   }
 
   setCircleHandler($event: any) {
     this.switchToNonSelectMode();
+    this.toolIndicator$.next(ToolsType.Circle);
     this._drawService.setDrawingTool(DrawingMode.Circle);
   }
 
@@ -202,6 +210,7 @@ export class ExpComponent implements OnInit, OnDestroy {
   //iterating all canvas objects, make all of them selectable
   setMultiSelectHandler($event: any) {
     this.isSelectLastAction = true;
+    this.toolIndicator$.next(ToolsType.Select);
     this._drawService.makeObjectsSeletable();
   }
 

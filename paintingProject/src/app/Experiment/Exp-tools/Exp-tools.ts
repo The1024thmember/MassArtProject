@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import * as Rx from 'rxjs';
+import { ButtonStatus } from 'src/app/ComponentLibrary/MyButton/myButton.types';
 import {
   HorizontalAlignment,
   VerticalAlignment,
@@ -14,6 +15,7 @@ import {
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 import { BarColor } from 'src/app/ComponentLibrary/MyVerticalBar/myVerticalBar.component';
 import { Margin } from 'src/app/Directives/Margin/margin.directive';
+import { ToolsType } from '../../Services/DrawerService';
 
 @Component({
   selector: 'Exp-tools',
@@ -34,22 +36,50 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <my-col [col]="6">
           <my-grid>
             <my-col [col]="2">
-              <my-button (click)="selectLineHandler()">
+              <my-button
+                (click)="selectLineHandler()"
+                [status]="
+                  (toolIndicator | myAsync) === 0
+                    ? ButtonStatus.INSELECTION
+                    : ButtonStatus.ACTIVE
+                "
+              >
                 <img class="Icons" src="./assets/line.svg" />
               </my-button>
             </my-col>
             <my-col [col]="2">
-              <my-button (click)="selectCurveHandler()">
+              <my-button
+                (click)="selectCurveHandler()"
+                [status]="
+                  (toolIndicator | myAsync) === 3
+                    ? ButtonStatus.INSELECTION
+                    : ButtonStatus.ACTIVE
+                "
+              >
                 <img class="Icons" src="./assets/curve.svg" />
               </my-button>
             </my-col>
             <my-col [col]="2">
-              <my-button (click)="selectRectHandler()">
+              <my-button
+                (click)="selectRectHandler()"
+                [status]="
+                  (toolIndicator | myAsync) === 1
+                    ? ButtonStatus.INSELECTION
+                    : ButtonStatus.ACTIVE
+                "
+              >
                 <i class="bi bi-square"></i>
               </my-button>
             </my-col>
             <my-col [col]="2">
-              <my-button (click)="selectCircleHandler()">
+              <my-button
+                (click)="selectCircleHandler()"
+                [status]="
+                  (toolIndicator | myAsync) === 2
+                    ? ButtonStatus.INSELECTION
+                    : ButtonStatus.ACTIVE
+                "
+              >
                 <i class="bi bi-circle"></i>
               </my-button>
             </my-col>
@@ -68,7 +98,14 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         <my-col [col]="4">
           <my-grid>
             <my-col [col]="3">
-              <my-button (click)="selectMultiSelectHandler()">
+              <my-button
+                (click)="selectMultiSelectHandler()"
+                [status]="
+                  (toolIndicator | myAsync) === 4
+                    ? ButtonStatus.INSELECTION
+                    : ButtonStatus.ACTIVE
+                "
+              >
                 <i class="bi bi-app-indicator"></i>
               </my-button>
             </my-col>
@@ -84,7 +121,11 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
             </my-col>
             <my-col [col]="3">
               <my-button
-                [disabled]="!(haveActiveObject | myAsync)"
+                [status]="
+                  !(haveActiveObject | myAsync)
+                    ? ButtonStatus.DISABLED
+                    : ButtonStatus.ACTIVE
+                "
                 (click)="selectDeleteHandler()"
               >
                 D
@@ -102,19 +143,47 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [color]="BarColor.LIGHT"
         [myMarginLeft]="Margin.SMALL"
       ></my-horizontal-bar>
-      <my-button (click)="selectLineHandler()">
+      <my-button
+        (click)="selectLineHandler()"
+        [status]="
+          (toolIndicator | myAsync) === 0
+            ? ButtonStatus.INSELECTION
+            : ButtonStatus.ACTIVE
+        "
+      >
         <img class="Icons" src="./assets/line.svg" />
       </my-button>
 
-      <my-button (click)="selectCurveHandler()">
+      <my-button
+        (click)="selectCurveHandler()"
+        [status]="
+          (toolIndicator | myAsync) === 3
+            ? ButtonStatus.INSELECTION
+            : ButtonStatus.ACTIVE
+        "
+      >
         <img class="Icons" src="./assets/curve.svg" />
       </my-button>
 
-      <my-button (click)="selectRectHandler()">
+      <my-button
+        (click)="selectRectHandler()"
+        [status]="
+          (toolIndicator | myAsync) === 2
+            ? ButtonStatus.INSELECTION
+            : ButtonStatus.ACTIVE
+        "
+      >
         <i class="bi bi-square"></i>
       </my-button>
 
-      <my-button (click)="selectCircleHandler()">
+      <my-button
+        (click)="selectCircleHandler()"
+        [status]="
+          (toolIndicator | myAsync) === 1
+            ? ButtonStatus.INSELECTION
+            : ButtonStatus.ACTIVE
+        "
+      >
         <i class="bi bi-circle"></i>
       </my-button>
 
@@ -127,7 +196,14 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
         [color]="BarColor.LIGHT"
       ></my-horizontal-bar>
 
-      <my-button (click)="selectMultiSelectHandler()">
+      <my-button
+        (click)="selectMultiSelectHandler()"
+        [status]="
+          (toolIndicator | myAsync) === 4
+            ? ButtonStatus.INSELECTION
+            : ButtonStatus.ACTIVE
+        "
+      >
         <i class="bi bi-app-indicator"></i>
       </my-button>
       <my-button (click)="selectWeightHandler()">
@@ -139,7 +215,11 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
       </my-button>
 
       <my-button
-        [disabled]="!(haveActiveObject | myAsync)"
+        [status]="
+          !(haveActiveObject | myAsync)
+            ? ButtonStatus.DISABLED
+            : ButtonStatus.ACTIVE
+        "
         (click)="selectDeleteHandler()"
       >
         D
@@ -158,11 +238,13 @@ import { Margin } from 'src/app/Directives/Margin/margin.directive';
   styleUrls: ['./Exp-tools.scss'],
 })
 export class ExpToolsComponent implements OnInit, OnChanges {
+  BarColor = BarColor;
+  ButtonStatus = ButtonStatus;
   HeadingType = HeadingType;
   HorizontalAlignment = HorizontalAlignment;
-  VerticalAlignment = VerticalAlignment;
-  BarColor = BarColor;
   Margin = Margin;
+  VerticalAlignment = VerticalAlignment;
+
   showWeightPicker: boolean = false;
 
   currentWeight: number = 1;
@@ -171,6 +253,7 @@ export class ExpToolsComponent implements OnInit, OnChanges {
 
   @Input() ObjectWeight: Rx.Observable<number>; // The selected object width
   @Input() haveActiveObject: Rx.Observable<boolean>; // Indicate if there is active object or not.
+  @Input() toolIndicator: Rx.Observable<ToolsType>; // Indicate the current state of the selection choice.
 
   @Output() selectLine: EventEmitter<any> = new EventEmitter();
   @Output() selectCurve: EventEmitter<any> = new EventEmitter();

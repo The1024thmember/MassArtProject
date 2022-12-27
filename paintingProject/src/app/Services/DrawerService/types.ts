@@ -1,3 +1,4 @@
+// Need to check how to DrawingMode this with ObjectType
 export const enum DrawingMode {
   Line,
   Rectangle,
@@ -10,12 +11,22 @@ export const enum DrawingMode {
   Triangle,
 }
 
+// Object type
 export const enum ObjectType {
   Line = 'line',
   Rectangle = 'rect',
   Circle = 'circle',
   FreeDraw = 'FreeDraw',
   Path = 'path',
+}
+
+// front-end button selection indicator
+export const enum ToolsType {
+  Line,
+  Rectangle,
+  Circle,
+  FreeDraw,
+  Select,
 }
 
 export const enum CursorMode {
