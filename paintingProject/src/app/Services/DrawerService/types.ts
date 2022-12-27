@@ -16,17 +16,17 @@ export const enum ObjectType {
   Line = 'line',
   Rectangle = 'rect',
   Circle = 'circle',
-  FreeDraw = 'FreeDraw',
+  FreeDraw = 'freeDraw',
   Path = 'path',
 }
 
 // front-end button selection indicator
 export const enum ToolsType {
-  Line,
-  Rectangle,
-  Circle,
-  FreeDraw,
-  Select,
+  Line = 'line',
+  Rectangle = 'rect',
+  Circle = 'circle',
+  FreeDraw = 'freeDraw',
+  Select = 'select',
 }
 
 export const enum CursorMode {
