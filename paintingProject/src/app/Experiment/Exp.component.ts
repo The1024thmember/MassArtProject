@@ -20,6 +20,7 @@ import { EventObject } from '../Services/RedoUndoService/types';
         class="Container-canvasContainer"
         contenteditable="true"
         (keydown)="onCanvasKeydown($event)"
+        (click)="onCavansClick()"
       >
         <canvas
           class="Container-canvasContainer-canvas"
@@ -33,6 +34,7 @@ import { EventObject } from '../Services/RedoUndoService/types';
           <Exp-tools
             [haveActiveObject]="haveActiveObject$"
             [ObjectWeight]="selectedObjectWidth$"
+            [focusOnCanvas]="focusOnCanvas$"
             [toolIndicator]="toolIndicator$"
             (selectLine)="setLineHandler($event)"
             (selectCurve)="setCurveHandler($event)"
@@ -59,6 +61,7 @@ import { EventObject } from '../Services/RedoUndoService/types';
       <Exp-colorPlatte
         class="Container-colorPlatte"
         [ObjectColor]="selectedObjectColor$"
+        [focusOnCanvas]="focusOnCanvas$"
         (selectedColor)="setColorHandler($event)"
       ></Exp-colorPlatte>
     </my-container>
@@ -92,6 +95,9 @@ export class ExpComponent implements OnInit, OnDestroy {
 
   // Indicate the drawing mode and tools selected
   toolIndicator$ = new Rx.Subject<ToolsType>();
+
+  // Indicate if is currently focus on the canvas
+  focusOnCanvas$ = new Rx.Subject<boolean>();
 
   // When change customized properties for object, the getActiveObjects need to be refreshed
   // to reflect the new value. This makes sure the redo/undo on property change will separate step
@@ -238,5 +244,10 @@ export class ExpComponent implements OnInit, OnDestroy {
   // For deletion at the moment
   onCanvasKeydown($event: any) {
     this._drawService.handleKeyDown($event);
+  }
+
+  // Hide the color platte and weight picker
+  onCavansClick() {
+    this.focusOnCanvas$.next(true);
   }
 }

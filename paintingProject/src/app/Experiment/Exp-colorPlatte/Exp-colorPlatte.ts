@@ -102,12 +102,12 @@ import { Mycolor } from '../Exp-colorPicker/colorPicker.type';
       </ng-template>
 
       <Exp-colorPicker
-        *ngIf="isColorPickerShown"
+        *ngIf="isColorPickerShown$ | myAsync"
         [colorFromHistoryOrObject]="
           (selectedColorFromHistoryOrObject$ | myAsync) ?? currentColor
         "
         (selectedColor)="selectColorFromPlatteHandler($event)"
-        (colorPickerClosed)="isColorPickerShown = false"
+        (colorPickerClosed)="quiteColorPicker$.next(true)"
       ></Exp-colorPicker>
     </my-container>
   `,
@@ -123,7 +123,7 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
   TextSize = TextSize;
 
   isHistoryExpanded: boolean = false;
-  isColorPickerShown: boolean = false;
+  isColorPickerShown$: Rx.Observable<boolean>;
 
   // Place holder for future use
   colorsHistoryObject: Mycolor[];
@@ -135,8 +135,12 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
   selectedColorFromHistoryOrObject$ = new Rx.Observable<string>();
   currentColorObservable$ = new Rx.Subject<string>();
 
+  openColorPicker$ = new Rx.Subject<boolean>();
+  quiteColorPicker$ = new Rx.Subject<boolean>();
+
   // Need to think where to extract the string only color
   @Input() ObjectColor: Rx.Observable<string>; // The selected object color
+  @Input() focusOnCanvas: Rx.Observable<boolean>; // Indicate foucs on canvas
   @Output() selectedColor: EventEmitter<string> = new EventEmitter(); // The color selected from color Platte or ColorPicker
 
   ngOnInit() {
@@ -144,6 +148,14 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
       this.ObjectColor, // The selected object color
       this.currentColorObservable$ // The color from color picker or history
     ).pipe(Rx.distinctUntilChanged());
+
+    this.isColorPickerShown$ = Rx.merge(
+      this.openColorPicker$,
+      this.quiteColorPicker$.pipe(
+        Rx.map((quiteWeightPicker) => !quiteWeightPicker)
+      ),
+      this.focusOnCanvas.pipe(Rx.map((focusOnCanvas) => !focusOnCanvas))
+    );
   }
 
   ngOnChanges(changes: any) {}
@@ -157,7 +169,7 @@ export class ExpColorPlatteComponent implements OnInit, OnChanges {
   }
 
   colorSelectorOpenHandler() {
-    this.isColorPickerShown = true;
+    this.openColorPicker$.next(true);
   }
 
   selectColorFromPlatteHandler($event: ColorEvent) {

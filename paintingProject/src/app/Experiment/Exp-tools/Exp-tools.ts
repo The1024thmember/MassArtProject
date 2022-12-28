@@ -225,14 +225,14 @@ import { ToolsType } from '../../Services/DrawerService';
         D
       </my-button>
     </my-container>
-    <ng-container *ngIf="showWeightPicker">
+    <ng-container *ngIf="showWeightPicker$ | myAsync">
       <Exp-weightPicker
         [maxWeight]="50"
         [setWidthValueFromSelection]="
           (selectedWidthOrFromObject$ | myAsync) ?? currentWeight
         "
         (selectedWeight)="setWeightHandler($event)"
-        (isWeightPickerClosed)="showWeightPicker = false"
+        (isWeightPickerClosed)="quiteWeightPicker$.next(true)"
       ></Exp-weightPicker>
     </ng-container>
   `,
@@ -246,7 +246,10 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   Margin = Margin;
   VerticalAlignment = VerticalAlignment;
 
-  showWeightPicker: boolean = false;
+  showWeightPicker$: Rx.Observable<boolean>;
+
+  openWeightPicker$ = new Rx.Subject<boolean>();
+  quiteWeightPicker$ = new Rx.Subject<boolean>();
 
   currentWeight: number = 1;
   selectedWidthOrFromObject$ = new Rx.Observable<number>();
@@ -255,6 +258,7 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   @Input() ObjectWeight: Rx.Observable<number>; // The selected object width
   @Input() haveActiveObject: Rx.Observable<boolean>; // Indicate if there is active object or not.
   @Input() toolIndicator: Rx.Observable<ToolsType>; // Indicate the current state of the selection choice.
+  @Input() focusOnCanvas: Rx.Observable<boolean>; // Indicate that the user is focus on the canvas or not
 
   @Output() selectLine: EventEmitter<any> = new EventEmitter();
   @Output() selectCurve: EventEmitter<any> = new EventEmitter();
@@ -273,9 +277,13 @@ export class ExpToolsComponent implements OnInit, OnChanges {
 
     this.haveActiveObject.subscribe((e) => console.log('disabled:', !e));
 
-    this.toolIndicator.subscribe((toolIndicator) => {
-      console.log('toolIndicator:', toolIndicator);
-    });
+    this.showWeightPicker$ = Rx.merge(
+      this.openWeightPicker$,
+      this.quiteWeightPicker$.pipe(
+        Rx.map((quiteWeightPicker) => !quiteWeightPicker)
+      ),
+      this.focusOnCanvas.pipe(Rx.map((focusOnCanvas) => !focusOnCanvas))
+    );
   }
 
   ngOnChanges() {}
@@ -305,7 +313,7 @@ export class ExpToolsComponent implements OnInit, OnChanges {
   }
 
   selectWeightHandler() {
-    this.showWeightPicker = true;
+    this.openWeightPicker$.next(true);
   }
 
   setWeightHandler($event: any) {
