@@ -39,7 +39,7 @@ import { ToolsType } from '../../Services/DrawerService';
               <my-button
                 (click)="selectLineHandler()"
                 [status]="
-                  (toolIndicator | myAsync) === 0
+                  (toolIndicator | myAsync) === 'line'
                     ? ButtonStatus.INSELECTION
                     : ButtonStatus.ACTIVE
                 "
@@ -51,7 +51,7 @@ import { ToolsType } from '../../Services/DrawerService';
               <my-button
                 (click)="selectCurveHandler()"
                 [status]="
-                  (toolIndicator | myAsync) === 3
+                  (toolIndicator | myAsync) === 'freeDraw'
                     ? ButtonStatus.INSELECTION
                     : ButtonStatus.ACTIVE
                 "
@@ -63,7 +63,7 @@ import { ToolsType } from '../../Services/DrawerService';
               <my-button
                 (click)="selectRectHandler()"
                 [status]="
-                  (toolIndicator | myAsync) === 1
+                  (toolIndicator | myAsync) === 'rect'
                     ? ButtonStatus.INSELECTION
                     : ButtonStatus.ACTIVE
                 "
@@ -75,7 +75,7 @@ import { ToolsType } from '../../Services/DrawerService';
               <my-button
                 (click)="selectCircleHandler()"
                 [status]="
-                  (toolIndicator | myAsync) === 2
+                  (toolIndicator | myAsync) === 'circle'
                     ? ButtonStatus.INSELECTION
                     : ButtonStatus.ACTIVE
                 "
@@ -101,7 +101,7 @@ import { ToolsType } from '../../Services/DrawerService';
               <my-button
                 (click)="selectMultiSelectHandler()"
                 [status]="
-                  (toolIndicator | myAsync) === 4
+                  (toolIndicator | myAsync) === 'select'
                     ? ButtonStatus.INSELECTION
                     : ButtonStatus.ACTIVE
                 "
@@ -146,7 +146,7 @@ import { ToolsType } from '../../Services/DrawerService';
       <my-button
         (click)="selectLineHandler()"
         [status]="
-          (toolIndicator | myAsync) === 0
+          (toolIndicator | myAsync) === 'line'
             ? ButtonStatus.INSELECTION
             : ButtonStatus.ACTIVE
         "
@@ -157,7 +157,7 @@ import { ToolsType } from '../../Services/DrawerService';
       <my-button
         (click)="selectCurveHandler()"
         [status]="
-          (toolIndicator | myAsync) === 3
+          (toolIndicator | myAsync) === 'freeDraw'
             ? ButtonStatus.INSELECTION
             : ButtonStatus.ACTIVE
         "
@@ -168,7 +168,7 @@ import { ToolsType } from '../../Services/DrawerService';
       <my-button
         (click)="selectRectHandler()"
         [status]="
-          (toolIndicator | myAsync) === 2
+          (toolIndicator | myAsync) === 'rect'
             ? ButtonStatus.INSELECTION
             : ButtonStatus.ACTIVE
         "
@@ -179,7 +179,7 @@ import { ToolsType } from '../../Services/DrawerService';
       <my-button
         (click)="selectCircleHandler()"
         [status]="
-          (toolIndicator | myAsync) === 1
+          (toolIndicator | myAsync) === 'circle'
             ? ButtonStatus.INSELECTION
             : ButtonStatus.ACTIVE
         "
@@ -199,7 +199,7 @@ import { ToolsType } from '../../Services/DrawerService';
       <my-button
         (click)="selectMultiSelectHandler()"
         [status]="
-          (toolIndicator | myAsync) === 4
+          (toolIndicator | myAsync) === 'select'
             ? ButtonStatus.INSELECTION
             : ButtonStatus.ACTIVE
         "
@@ -272,6 +272,10 @@ export class ExpToolsComponent implements OnInit, OnChanges {
     ).pipe(Rx.distinctUntilChanged());
 
     this.haveActiveObject.subscribe((e) => console.log('disabled:', !e));
+
+    this.toolIndicator.subscribe((toolIndicator) => {
+      console.log('toolIndicator:', toolIndicator);
+    });
   }
 
   ngOnChanges() {}
