@@ -1,17 +1,32 @@
 @import 'settings';
 
 .Container {
+  position: relative;
+
   &-firstRowTools {
+    left: 10px;
+    top:10px;
     margin-bottom: 200px;
+    position: absolute;
+    width:100%;
+  }
+
+  &-colorPlatte {
+    left: 10px;
+    top:300px;
+    position: absolute;
+  }
+
+  &-canvasContainer {
+    height: 1100px;
+    width: 2000px;
+    border: 1px solid gray;
+
+    &-canvas {
+      position:relative;
+    }
   }
 }
 
-.MyCanvas {
-  height: 700px;
-  width: 900px;
-  margin: auto;
-  position: absolute;
-  left: 450px;
-  top: 100px;
-  border: 20px solid $orange-xxxdark;
-}
+
+

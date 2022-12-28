@@ -16,6 +16,18 @@ import { EventObject } from '../Services/RedoUndoService/types';
 @Component({
   template: `
     <my-container class="Container">
+      <my-container
+        class="Container-canvasContainer"
+        contenteditable="true"
+        (keydown)="onCanvasKeydown($event)"
+      >
+        <canvas
+          class="Container-canvasContainer-canvas"
+          width="2000"
+          height="1100"
+          id="fabricSurface"
+        ></canvas>
+      </my-container>
       <my-grid class="Container-firstRowTools">
         <my-col [col]="6">
           <Exp-tools
@@ -45,16 +57,10 @@ import { EventObject } from '../Services/RedoUndoService/types';
         </my-col>
       </my-grid>
       <Exp-colorPlatte
+        class="Container-colorPlatte"
         [ObjectColor]="selectedObjectColor$"
         (selectedColor)="setColorHandler($event)"
       ></Exp-colorPlatte>
-      <my-container
-        class="MyCanvas"
-        contenteditable="true"
-        (keydown)="onCanvasKeydown($event)"
-      >
-        <canvas width="900" height="700" id="fabricSurface"></canvas>
-      </my-container>
     </my-container>
   `,
   styleUrls: ['./Exp.scss'],
