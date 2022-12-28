@@ -22,6 +22,7 @@ import { ColorEvent } from 'ngx-color';
         [value]="setWidthValueFromSelection"
         (input)="setWeightValueContinuous(weightSetter.value)"
       />
+      <my-button (click)="isWeightPickerClosed.emit()">X</my-button>
     </my-container>
   `,
   styleUrls: ['./Exp-weightPicker.scss'],
@@ -31,6 +32,7 @@ export class ExpColorWeightComponent implements OnInit, OnChanges {
   @Input() setWidthValueFromSelection: number;
   //Set whenever the cursor moves
   @Output() selectedWeight: EventEmitter<ColorEvent> = new EventEmitter();
+  @Output() isWeightPickerClosed: EventEmitter<ColorEvent> = new EventEmitter();
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges): void {}

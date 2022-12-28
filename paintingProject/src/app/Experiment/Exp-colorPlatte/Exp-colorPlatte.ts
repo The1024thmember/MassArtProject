@@ -107,6 +107,7 @@ import { Mycolor } from '../Exp-colorPicker/colorPicker.type';
           (selectedColorFromHistoryOrObject$ | myAsync) ?? currentColor
         "
         (selectedColor)="selectColorFromPlatteHandler($event)"
+        (colorPickerClosed)="isColorPickerShown = false"
       ></Exp-colorPicker>
     </my-container>
   `,

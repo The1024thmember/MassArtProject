@@ -14,6 +14,7 @@ import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
   selector: 'Exp-colorPicker',
   template: `
     <my-container class="ColorPicker">
+      <my-button (click)="colorPickerClosed.emit()">X</my-button>
       <my-heading [headingType]="HeadingType.H3">Color Wheel</my-heading>
       <color-sketch
         [color]="colorFromHistoryOrObject"
@@ -29,6 +30,7 @@ export class ExpColorPickerComponent implements OnInit, OnChanges {
 
   @Input() colorFromHistoryOrObject: string; //The color set from history or selected object
   @Output() selectedColor: EventEmitter<ColorEvent> = new EventEmitter();
+  @Output() colorPickerClosed: EventEmitter<ColorEvent> = new EventEmitter();
 
   ngOnInit() {
     console.log(

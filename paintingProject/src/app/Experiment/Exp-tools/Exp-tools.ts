@@ -232,6 +232,7 @@ import { ToolsType } from '../../Services/DrawerService';
           (selectedWidthOrFromObject$ | myAsync) ?? currentWeight
         "
         (selectedWeight)="setWeightHandler($event)"
+        (isWeightPickerClosed)="showWeightPicker = false"
       ></Exp-weightPicker>
     </ng-container>
   `,
