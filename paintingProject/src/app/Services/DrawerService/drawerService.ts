@@ -131,8 +131,7 @@ export class DrawingService {
         // Need to refactor the code to make before object and after object avaliable,
         // now due to async function, before object is already changed, since it run changeProperty first before getting the before value
         const promises = this.canvas.getActiveObjects().map(async (obj) => {
-          if (obj.stroke && parseInt(obj.stroke) != weight) {
-            console.log('change weight');
+          if (obj.strokeWidth && obj.strokeWidth != weight) {
             const changePropertyEvent = await this.changeProperty(
               obj,
               ChangeObjectProperty.StrokeWeight,
