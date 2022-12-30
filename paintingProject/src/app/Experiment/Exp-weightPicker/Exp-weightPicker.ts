@@ -33,7 +33,9 @@ export class ExpColorWeightComponent implements OnInit, OnChanges {
   //Set whenever the cursor moves
   @Output() selectedWeight: EventEmitter<ColorEvent> = new EventEmitter();
   @Output() isWeightPickerClosed: EventEmitter<ColorEvent> = new EventEmitter();
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('weight value:', this.setWidthValueFromSelection);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {}
 

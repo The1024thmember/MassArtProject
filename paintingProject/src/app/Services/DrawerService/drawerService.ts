@@ -95,6 +95,7 @@ export class DrawingService {
         // returns a promise refer: https://zellwk.com/blog/async-await-in-loops/
         const promises = this.canvas.getActiveObjects().map(async (obj) => {
           if (obj.stroke != color) {
+            console.log('change color');
             const changePropertyEvent = await this.changeProperty(
               obj,
               ChangeObjectProperty.StrokeColor,
@@ -131,6 +132,7 @@ export class DrawingService {
         // now due to async function, before object is already changed, since it run changeProperty first before getting the before value
         const promises = this.canvas.getActiveObjects().map(async (obj) => {
           if (obj.stroke && parseInt(obj.stroke) != weight) {
+            console.log('change weight');
             const changePropertyEvent = await this.changeProperty(
               obj,
               ChangeObjectProperty.StrokeWeight,
@@ -200,6 +202,10 @@ export class DrawingService {
       }
     }
     this.canvas.renderAll();
+  }
+
+  public getCursorMode() {
+    return this.cursorMode;
   }
 
   private initializeCanvasEvents() {

@@ -7,7 +7,7 @@ import {
 import { fabric } from 'fabric';
 import * as Rx from 'rxjs';
 import { Margin } from '../Directives/Margin';
-import { DrawingMode, ToolsType } from '../Services/DrawerService';
+import { CursorMode, DrawingMode, ToolsType } from '../Services/DrawerService';
 import { DrawingService } from '../Services/DrawerService/drawerService';
 import { InteractService } from '../Services/InteractService';
 import { RedoUndoService } from '../Services/RedoUndoService/redoUndoService';
@@ -248,6 +248,8 @@ export class ExpComponent implements OnInit, OnDestroy {
 
   // Hide the color platte and weight picker
   onCavansClick() {
-    this.focusOnCanvas$.next(true);
+    if (this._drawService.getCursorMode() === CursorMode.Draw) {
+      this.focusOnCanvas$.next(true);
+    }
   }
 }

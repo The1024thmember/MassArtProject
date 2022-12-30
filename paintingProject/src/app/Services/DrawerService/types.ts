@@ -30,8 +30,8 @@ export const enum ToolsType {
 }
 
 export const enum CursorMode {
-  Draw,
-  Select,
+  Draw = 'draw',
+  Select = 'select',
 }
 
 export const enum ChangeObjectProperty {

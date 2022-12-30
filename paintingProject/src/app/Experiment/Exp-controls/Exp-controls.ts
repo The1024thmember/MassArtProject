@@ -80,10 +80,12 @@ export class ExpControlsComponent {
   Margin = Margin;
 
   undoHandler() {
+    console.log('undo');
     this.undoClicked.emit(true);
   }
 
   redoHandler() {
+    console.log('redo');
     this.redoClicked.emit(true);
   }
 }

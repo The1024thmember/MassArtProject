@@ -275,8 +275,6 @@ export class ExpToolsComponent implements OnInit, OnChanges {
       this.currentWidthObservable$
     ).pipe(Rx.distinctUntilChanged());
 
-    this.haveActiveObject.subscribe((e) => console.log('disabled:', !e));
-
     this.showWeightPicker$ = Rx.merge(
       this.openWeightPicker$,
       this.quiteWeightPicker$.pipe(

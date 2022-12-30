@@ -150,7 +150,7 @@ export class DrawBoardColorPlatteComponent implements OnInit, OnChanges {
       })
     );
 
-    console.log('exp-colorPlatte input ObjectColor:', this.ObjectColor);
+    // console.log('exp-colorPlatte input ObjectColor:', this.ObjectColor);
   }
 
   ngOnChanges(changes: any) {}

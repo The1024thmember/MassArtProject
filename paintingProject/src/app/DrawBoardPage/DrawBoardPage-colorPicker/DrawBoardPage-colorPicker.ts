@@ -31,10 +31,10 @@ export class DrawBoardColorPickerComponent implements OnInit, OnChanges {
   @Output() selectedColor: EventEmitter<ColorEvent> = new EventEmitter();
 
   ngOnInit() {
-    console.log(
-      'Exp-colorPicker colorFromHistoryOrObject:',
-      this.colorFromHistoryOrObject
-    );
+    // console.log(
+    //   'Exp-colorPicker colorFromHistoryOrObject:',
+    //   this.colorFromHistoryOrObject
+    // );
   }
 
   ngOnChanges(changes: SimpleChanges): void {}

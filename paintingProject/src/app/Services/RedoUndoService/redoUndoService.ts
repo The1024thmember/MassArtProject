@@ -278,7 +278,7 @@ export class RedoUndoService {
 
   private initializer() {
     this.subscription.add(
-      this.eventLisenter.subscribe((event) => {
+      this.eventLisenter.subscribe((event: EventObject[]) => {
         // If during redo process have new event coming in, then all the existing redo should delete
         // and the previous redo events that passed on undo stack should also be deleted.
         this.redoStack = [];
@@ -287,6 +287,8 @@ export class RedoUndoService {
         // some logic then fire backend request
         this.isUndoable$.next(!!this.undoStack.length);
         this.isRedoable$.next(!!this.redoStack.length);
+
+        console.log('new event:', event[0].command);
       })
     );
 
