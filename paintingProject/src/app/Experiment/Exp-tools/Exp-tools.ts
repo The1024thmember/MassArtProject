@@ -225,16 +225,15 @@ import { ToolsType } from '../../Services/DrawerService';
         D
       </my-button>
     </my-container>
-    <ng-container *ngIf="showWeightPicker$ | myAsync">
-      <Exp-weightPicker
-        [maxWeight]="50"
-        [setWidthValueFromSelection]="
-          (selectedWidthOrFromObject$ | myAsync) ?? currentWeight
-        "
-        (selectedWeight)="setWeightHandler($event)"
-        (isWeightPickerClosed)="quiteWeightPicker$.next(true)"
-      ></Exp-weightPicker>
-    </ng-container>
+    <Exp-weightPicker
+      [hidden]="!(showWeightPicker$ | myAsync)"
+      [maxWeight]="50"
+      [setWidthValueFromSelection]="
+        (selectedWidthOrFromObject$ | myAsync) ?? currentWeight
+      "
+      (selectedWeight)="setWeightHandler($event)"
+      (isWeightPickerClosed)="quiteWeightPicker$.next(true)"
+    ></Exp-weightPicker>
   `,
   styleUrls: ['./Exp-tools.scss'],
 })
@@ -273,7 +272,7 @@ export class ExpToolsComponent implements OnInit, OnChanges {
     this.selectedWidthOrFromObject$ = Rx.merge(
       this.ObjectWeight,
       this.currentWidthObservable$
-    ).pipe(Rx.distinctUntilChanged());
+    );
 
     this.showWeightPicker$ = Rx.merge(
       this.openWeightPicker$,

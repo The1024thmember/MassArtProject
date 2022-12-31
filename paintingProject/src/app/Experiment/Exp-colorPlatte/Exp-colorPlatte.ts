@@ -102,7 +102,7 @@ import { Mycolor } from '../Exp-colorPicker/colorPicker.type';
       </ng-template>
 
       <Exp-colorPicker
-        *ngIf="isColorPickerShown$ | myAsync"
+        [hidden]="!(isColorPickerShown$ | myAsync)"
         [colorFromHistoryOrObject]="
           (selectedColorFromHistoryOrObject$ | myAsync) ?? currentColor
         "
