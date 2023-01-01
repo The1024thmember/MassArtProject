@@ -59,6 +59,8 @@ export const enum CornerSize {
 
 export const enum KeyDownEvent {
   Delete = 'Delete',
+  Copy = 'Copy',
+  Paste = 'Paste',
 }
 
 export interface IObjectDrawer {
@@ -69,7 +71,8 @@ export interface IObjectDrawer {
     y: number, //Vertical starting point
     options: fabric.IObjectOptions,
     x2?: number, //Horizontal ending point
-    y2?: number //Vertical ending point
+    y2?: number, //Vertical ending point
+    additional?: any
   ) => Promise<fabric.Object>;
   //Resizes the object (used during the mouseOver event below)
 

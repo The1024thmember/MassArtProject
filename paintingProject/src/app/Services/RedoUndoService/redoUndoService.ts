@@ -254,6 +254,7 @@ export class RedoUndoService {
       ...additionalProperties,
       originX: canvasObject.originX,
       originY: canvasObject.originY,
+      ...this.getObjectAbsolutePosition(canvasObject),
     });
 
     //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will by buggy
@@ -325,7 +326,7 @@ export class RedoUndoService {
     this.isRedoable$.next(!!this.redoStack.length);
   }
 
-  private getObjectAbsolutePosition(canvasObject: fabric.Object): object {
+  public getObjectAbsolutePosition(canvasObject: fabric.Object): object {
     // Getting the position of the object, if its group selection, then need to do calculation
     // refer to: https://stackoverflow.com/a/29926545
     var topFromCanvas = canvasObject.top ? canvasObject.top : 0;

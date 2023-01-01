@@ -20,6 +20,10 @@ import { EventObject } from '../Services/RedoUndoService/types';
         class="Container-canvasContainer"
         contenteditable="true"
         (keydown)="onCanvasKeydown($event)"
+        (keydown.control.z)="undoClickedHandler($event)"
+        (keydown.control.y)="redoClickedHandler($event)"
+        (keydown.control.c)="copyHandler($event)"
+        (keydown.control.v)="pasteHandler($event)"
         (click)="onCavansClick()"
       >
         <canvas
@@ -232,6 +236,14 @@ export class ExpComponent implements OnInit, OnDestroy {
 
   redoClickedHandler($event: any) {
     this._redoUndoService.redo();
+  }
+
+  copyHandler($event: any) {
+    this._drawService.handleKeyDown({ key: 'Copy' });
+  }
+
+  pasteHandler($event: any) {
+    this._drawService.handleKeyDown({ key: 'Paste' });
   }
 
   switchToNonSelectMode() {

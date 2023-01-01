@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
@@ -39,6 +40,9 @@ export class DrawingService {
   private subscription = new Rx.Subscription();
   private oldColor: string = 'black';
   private oldWeight: number = 1;
+
+  private copyObjects: fabric.Object[] = [];
+  private pasteObjects$ = new Rx.Subject<boolean>();
 
   constructor(
     canvas: fabric.Canvas,
@@ -193,11 +197,35 @@ export class DrawingService {
     this.handleDelete();
   }
 
+  // Handle copy
+  public handleCopy() {
+    // check if the current mode is selection mode & there are active objects
+    this.copyObjects = this.canvas.getActiveObjects();
+    console.log('copying');
+  }
+
+  // Handle paste
+  public handlePaste() {
+    // after the paste, the draw mode should still be selection mode
+    // reuse the logic for creation,
+    this.pasteObjects$.next(true);
+    console.log('pasteing');
+  }
+
   // Handle keydown event, such as object deletion
   public handleKeyDown(e: any) {
     switch (e.key) {
       case KeyDownEvent.Delete: {
         this.handleDelete();
+        break;
+      }
+      case KeyDownEvent.Copy: {
+        this.handleCopy();
+        break;
+      }
+      case KeyDownEvent.Paste: {
+        this.handlePaste();
+        break;
       }
     }
     this.canvas.renderAll();
@@ -317,6 +345,41 @@ export class DrawingService {
         this.canvas.renderAll();
       })
     );
+
+    // handle copy paste action
+    this.subscription.add(
+      this.pasteObjects$.subscribe(async (_) => {
+        let creationsFromCopyEvent: (EventObject | undefined)[] = [];
+
+        const promises = this.copyObjects.map(async (copiedObject) => {
+          // console.log('before canvas:', this.canvas._objects);
+          const newCopiedObject = await this.clone(copiedObject);
+          // console.log('newCopiedObject:', newCopiedObject);
+          // console.log('after canvas:', this.canvas._objects);
+          //Increase the number for object created
+          this._canvasToEventObjectCorrelationService.addNewObject();
+
+          //Sending create new object event to redoUndoService
+          return this._redoUndoService.buildCreationEventObject(
+            this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId(),
+            newCopiedObject,
+            {}
+          );
+        });
+
+        // Emit the event
+        creationsFromCopyEvent = await Promise.all(promises);
+        const creationsFromCopyEventBatchValidated =
+          creationsFromCopyEvent.filter(
+            (creationFromCopyEvent) => creationFromCopyEvent
+          ) as EventObject[];
+        if (creationsFromCopyEventBatchValidated.length) {
+          this._redoUndoService.emitEvent(creationsFromCopyEventBatchValidated);
+        }
+
+        this.canvas.renderAll();
+      })
+    );
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
@@ -392,6 +455,8 @@ export class DrawingService {
 
   //Method which allows any drawer to Promise their make() function
   private async make(x: number, y: number): Promise<fabric.Object> {
+    // alernative drawer is used in copy and paste event, where I don't want to change the
+    // private field _drawer but to reuse this function
     return await this._drawer.make(x, y, this.drawerOptions);
   }
 
@@ -428,6 +493,101 @@ export class DrawingService {
         this.drawerOptions
       );
     return changePropertyEvent;
+  }
+
+  // Method which allows to clone an existing object
+  private async clone(tobeCloned: fabric.Object): Promise<fabric.Object> {
+    let _alternativeDrawer;
+    let tobeCloneProperties = {};
+    let clonedObject;
+
+    Object.assign(tobeCloneProperties, {
+      ...this.drawerOptions,
+      stroke: tobeCloned.stroke,
+      strokeWidth: tobeCloned.strokeWidth,
+    });
+
+    var topFromCanvas = tobeCloned.top ? tobeCloned.top : 0;
+    var leftFromCanvas = tobeCloned.left ? tobeCloned.left : 0;
+
+    if (tobeCloned.group) {
+      const leftFromGroup = tobeCloned.group.left ? tobeCloned.group.left : 0;
+      const widthOfGroup = tobeCloned.group.width ? tobeCloned.group.width : 0;
+      const topFromGroup = tobeCloned.group.top ? tobeCloned.group.top : 0;
+      const heightOfGroup = tobeCloned.group.height
+        ? tobeCloned.group.height
+        : 0;
+
+      topFromCanvas = topFromGroup + topFromCanvas + heightOfGroup / 2;
+      leftFromCanvas = leftFromGroup + leftFromCanvas + widthOfGroup / 2;
+    }
+
+    switch (tobeCloned.type) {
+      case ObjectType.Line: {
+        console.error('line');
+        _alternativeDrawer = this.drawers[0];
+        const typeSpecificObject = tobeCloned as ILineOptions;
+        Object.assign(tobeCloneProperties, {
+          x1: typeSpecificObject.x1,
+          y1: typeSpecificObject.y1,
+          x2: typeSpecificObject.x2,
+          y2: typeSpecificObject.y2,
+        });
+        break;
+      }
+      case ObjectType.Rectangle: {
+        console.error('rectangle');
+        _alternativeDrawer = this.drawers[1];
+        const typeSpecificObject = tobeCloned as fabric.Rect;
+        Object.assign(tobeCloneProperties, {
+          width: typeSpecificObject.width,
+          height: typeSpecificObject.height,
+        });
+        break;
+      }
+      case ObjectType.Circle: {
+        console.error('circle');
+        _alternativeDrawer = this.drawers[2];
+        const typeSpecificObject = tobeCloned as fabric.Circle;
+        Object.assign(tobeCloneProperties, {
+          radius: typeSpecificObject.radius,
+        });
+        break;
+      }
+      case ObjectType.Path: {
+        console.error('freeDraw');
+        _alternativeDrawer = this.drawers[3];
+        const typeSpecificObject = tobeCloned as fabric.Path;
+        Object.assign(tobeCloneProperties, {
+          path: typeSpecificObject.path,
+          left: typeSpecificObject.left,
+          top: typeSpecificObject.top,
+        });
+        clonedObject = await _alternativeDrawer.make(
+          leftFromCanvas + 10,
+          topFromCanvas + 10,
+          tobeCloneProperties,
+          undefined,
+          undefined,
+          typeSpecificObject.path
+        );
+        this.canvas.add(clonedObject);
+        return clonedObject;
+      }
+      default:
+        _alternativeDrawer = this.drawers[0];
+    }
+
+    console.log('tobeCloneProperties:', tobeCloneProperties);
+    clonedObject = await _alternativeDrawer.make(
+      leftFromCanvas + 10,
+      topFromCanvas + 10,
+      tobeCloneProperties
+    );
+    console.log('before:', this.canvas._objects);
+    if (clonedObject) this.canvas.add(clonedObject);
+    console.log('after:', this.canvas._objects);
+    return clonedObject;
   }
 
   // The deletion handler

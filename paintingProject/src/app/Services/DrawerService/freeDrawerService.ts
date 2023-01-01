@@ -11,12 +11,17 @@ export class FreeDrawer implements IObjectDrawer {
     y: number,
     options: fabric.IObjectOptions,
     x2?: number,
-    y2?: number
+    y2?: number,
+    nodeArray?: fabric.Point[]
   ): Promise<fabric.Object> {
     //Return a Promise that will draw a line
     const node = ['M', x, y] as unknown as fabric.Point;
     this.nodeArray = [];
     this.nodeArray.push(node);
+
+    if (nodeArray) {
+      this.nodeArray = nodeArray;
+    }
 
     //Get the drawOptions from the initial drawState
     this.drawOptions = options;
