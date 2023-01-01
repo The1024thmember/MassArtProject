@@ -156,8 +156,6 @@ export class InteractService {
     } else {
       this.currentSelectObject = null;
     }
-
-    console.log('activeObjects:', this.activeObjects);
   }
 
   private getSelectedObjectColor(): string {

@@ -499,7 +499,7 @@ export class DrawingService {
   private async clone(tobeCloned: fabric.Object): Promise<fabric.Object> {
     let _alternativeDrawer;
     let tobeCloneProperties = {};
-    let clonedObject;
+    let clonedObject = new fabric.Object();
 
     Object.assign(tobeCloneProperties, {
       ...this.drawerOptions,
@@ -524,44 +524,59 @@ export class DrawingService {
 
     switch (tobeCloned.type) {
       case ObjectType.Line: {
-        console.error('line');
         _alternativeDrawer = this.drawers[0];
         const typeSpecificObject = tobeCloned as ILineOptions;
         Object.assign(tobeCloneProperties, {
-          x1: typeSpecificObject.x1,
-          y1: typeSpecificObject.y1,
-          x2: typeSpecificObject.x2,
-          y2: typeSpecificObject.y2,
+          left: leftFromCanvas + 10,
+          top: topFromCanvas + 10,
         });
+        clonedObject = await _alternativeDrawer.make(
+          leftFromCanvas,
+          topFromCanvas,
+          tobeCloneProperties,
+          typeSpecificObject.x2,
+          typeSpecificObject.y2
+        );
+        this.canvas.add(clonedObject);
         break;
       }
       case ObjectType.Rectangle: {
-        console.error('rectangle');
         _alternativeDrawer = this.drawers[1];
         const typeSpecificObject = tobeCloned as fabric.Rect;
         Object.assign(tobeCloneProperties, {
           width: typeSpecificObject.width,
           height: typeSpecificObject.height,
         });
+        clonedObject = await _alternativeDrawer.make(
+          leftFromCanvas + 10,
+          topFromCanvas + 10,
+          tobeCloneProperties
+        );
+        this.canvas.add(clonedObject);
         break;
       }
       case ObjectType.Circle: {
-        console.error('circle');
         _alternativeDrawer = this.drawers[2];
         const typeSpecificObject = tobeCloned as fabric.Circle;
         Object.assign(tobeCloneProperties, {
           radius: typeSpecificObject.radius,
         });
+        clonedObject = await _alternativeDrawer.make(
+          leftFromCanvas + 10,
+          topFromCanvas + 10,
+          tobeCloneProperties,
+          typeSpecificObject.radius
+        );
+        this.canvas.add(clonedObject);
         break;
       }
       case ObjectType.Path: {
-        console.error('freeDraw');
         _alternativeDrawer = this.drawers[3];
         const typeSpecificObject = tobeCloned as fabric.Path;
         Object.assign(tobeCloneProperties, {
           path: typeSpecificObject.path,
-          left: typeSpecificObject.left,
-          top: typeSpecificObject.top,
+          left: leftFromCanvas + 10,
+          top: topFromCanvas + 10,
         });
         clonedObject = await _alternativeDrawer.make(
           leftFromCanvas + 10,
@@ -572,21 +587,9 @@ export class DrawingService {
           typeSpecificObject.path
         );
         this.canvas.add(clonedObject);
-        return clonedObject;
+        break;
       }
-      default:
-        _alternativeDrawer = this.drawers[0];
     }
-
-    console.log('tobeCloneProperties:', tobeCloneProperties);
-    clonedObject = await _alternativeDrawer.make(
-      leftFromCanvas + 10,
-      topFromCanvas + 10,
-      tobeCloneProperties
-    );
-    console.log('before:', this.canvas._objects);
-    if (clonedObject) this.canvas.add(clonedObject);
-    console.log('after:', this.canvas._objects);
     return clonedObject;
   }
 
