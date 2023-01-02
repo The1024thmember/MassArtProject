@@ -270,11 +270,11 @@ export class DrawingService {
         // Need to de-select everything, since that will make property change on moving, and scale with right position
         this.canvas.discardActiveObject();
 
-        undoEvents.forEach((undoEvent) => {
+        const promises = undoEvents.map(async (undoEvent) => {
           switch (undoEvent.command) {
             case CommandType.Create: {
               // No matter what the object is, just simply delete it based on canvasObjectId
-              this.undoCreationEvent(
+              await this.undoCreationEvent(
                 undoEvent,
                 () =>
                   this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
@@ -302,6 +302,7 @@ export class DrawingService {
             }
           }
         });
+        Promise.all(promises);
         this.canvas.renderAll();
       })
     );
@@ -310,7 +311,7 @@ export class DrawingService {
       this.emittedRedoEventObject$.subscribe((redoEvents) => {
         // calling changeProperty to change the property of the object
         // Or delete/create accordingly
-        redoEvents.forEach((redoEvent) => {
+        const promises = redoEvents.map(async (redoEvent) => {
           switch (redoEvent.command) {
             case CommandType.Create: {
               // No matter what the object is, just simply delete it based on canvasObjectId
@@ -322,7 +323,7 @@ export class DrawingService {
               break;
             }
             case CommandType.Delete: {
-              this.redoDeletionEvent(
+              await this.redoDeletionEvent(
                 redoEvent,
                 () =>
                   this._canvasToEventObjectCorrelationService.getCanvasObjectLocation(
@@ -342,6 +343,7 @@ export class DrawingService {
             }
           }
         });
+        Promise.all(promises);
         this.canvas.renderAll();
       })
     );
@@ -592,69 +594,83 @@ export class DrawingService {
   }
 
   // The deletion handler
-  private handleDelete() {
+  private async handleDelete() {
     if (this.cursorMode === CursorMode.Select) {
-      const deletionEventsBatch: EventObject[] = [];
-      this.canvas.getActiveObjects().forEach((activeObject) => {
-        var index = this.canvas.getObjects().indexOf(activeObject);
-        // Create a delete event object
-        const deletionEvent = this._redoUndoService.buildDeletionEventObject(
-          index + 1,
-          activeObject,
-          {
-            ...this.drawerOptions,
-            stroke: activeObject.stroke,
-            strokeWidth: activeObject.strokeWidth,
-          }
-        );
+      let deletionEventsBatch: (EventObject | undefined)[] = [];
+      const promises = this.canvas
+        .getActiveObjects()
+        .map(async (activeObject) => {
+          var index = this.canvas.getObjects().indexOf(activeObject);
 
-        deletionEventsBatch.push(deletionEvent);
+          let _alternativeDrawer;
+          // Do the actual deletion
+          switch (activeObject.type) {
+            case 'line': {
+              _alternativeDrawer = this.drawers[0];
+              this.canvas._objects[index] = await _alternativeDrawer.make(
+                0,
+                0,
+                this._canvasToEventObjectCorrelationService.ghostObjectProperty,
+                0,
+                0
+              );
+              break;
+            }
+            case 'rect': {
+              _alternativeDrawer = this.drawers[1];
+              this.canvas._objects[index] = await _alternativeDrawer.make(
+                0,
+                0,
+                this._canvasToEventObjectCorrelationService.ghostObjectProperty
+              );
+              break;
+            }
+            case 'circle': {
+              _alternativeDrawer = this.drawers[2];
+              this.canvas._objects[index] = await _alternativeDrawer.make(
+                0,
+                0,
+                this._canvasToEventObjectCorrelationService.ghostObjectProperty,
+                0
+              );
+              break;
+            }
+            case 'path': {
+              _alternativeDrawer = this.drawers[3];
+              this.canvas._objects[index] = await _alternativeDrawer.make(
+                0,
+                0,
+                this._canvasToEventObjectCorrelationService.ghostObjectProperty,
+                undefined,
+                undefined,
+                [['M', 0, 0]]
+              );
+              break;
+            }
+          }
+          // Create a delete event object
+          return this._redoUndoService.buildDeletionEventObject(
+            index + 1,
+            activeObject,
+            {
+              ...this.drawerOptions,
+              stroke: activeObject.stroke,
+              strokeWidth: activeObject.strokeWidth,
+            }
+          );
+        });
 
-        // Do the actual deletion
-        switch (activeObject.type) {
-          case 'line': {
-            this.canvas._objects[index] = new fabric.Line(
-              [0, 0, 0, 0],
-              this._canvasToEventObjectCorrelationService.ghostObjectProperty
-            );
-            break;
-          }
-          case 'rect': {
-            this.canvas._objects[index] = new fabric.Rect({
-              left: 0,
-              top: 0,
-              ...this._canvasToEventObjectCorrelationService
-                .ghostObjectProperty,
-            });
-            break;
-          }
-          case 'circle': {
-            this.canvas._objects[index] = new fabric.Circle({
-              left: 0,
-              top: 0,
-              radius: 0,
-              ...this._canvasToEventObjectCorrelationService
-                .ghostObjectProperty,
-            });
-            break;
-          }
-          case 'path': {
-            this.canvas._objects[index] = new fabric.Path(
-              [['M', 0, 0] as unknown as fabric.Point],
-              this._canvasToEventObjectCorrelationService.ghostObjectProperty
-            );
-            break;
-          }
-        }
-      });
+      // Emit the events
+      deletionEventsBatch = await Promise.all(promises);
+      const deletionEventsBatchValidate = deletionEventsBatch.filter(
+        (deletionEvent) => deletionEvent
+      ) as EventObject[];
+      if (deletionEventsBatchValidate.length) {
+        this._redoUndoService.emitEvent(deletionEventsBatchValidate);
+      }
 
       // Need to de-select everything, since after delection we don't want to see the selection box
       this.canvas.discardActiveObject().renderAll();
-
-      // Emit the events
-      if (deletionEventsBatch.length) {
-        this._redoUndoService.emitEvent(deletionEventsBatch);
-      }
     }
   }
 
@@ -669,7 +685,7 @@ export class DrawingService {
   }
 
   // undo a create event
-  private undoCreationEvent(
+  private async undoCreationEvent(
     undoEvent: EventObject,
     canvasObjectLocator: Function,
     additionalProperty: any
@@ -678,36 +694,37 @@ export class DrawingService {
     // still not the best way for handling redo & undo, since the logic here is
     // still re-assgin to new object, which doesn't give flexibility for real
     // deletion.
+    let _alternativeDrawer;
     switch (undoEvent.canvasObjectType) {
       case 'line': {
-        this.canvas._objects[canvasObjectLocation] = new fabric.Line(
-          [0, 0, 0, 0],
-          additionalProperty
-        );
+        _alternativeDrawer = this.drawers[0];
+        this.canvas._objects[canvasObjectLocation] =
+          await _alternativeDrawer.make(0, 0, additionalProperty, 0, 0);
         break;
       }
       case 'rect': {
-        this.canvas._objects[canvasObjectLocation] = new fabric.Rect({
-          left: 0,
-          top: 0,
-          ...additionalProperty,
-        });
+        _alternativeDrawer = this.drawers[1];
+        this.canvas._objects[canvasObjectLocation] =
+          await _alternativeDrawer.make(0, 0, additionalProperty);
         break;
       }
       case 'circle': {
-        this.canvas._objects[canvasObjectLocation] = new fabric.Circle({
-          left: 0,
-          top: 0,
-          radius: 0,
-          ...additionalProperty,
-        });
+        _alternativeDrawer = this.drawers[2];
+        this.canvas._objects[canvasObjectLocation] =
+          await _alternativeDrawer.make(0, 0, additionalProperty, 0);
         break;
       }
       case 'path': {
-        this.canvas._objects[canvasObjectLocation] = new fabric.Path(
-          [['M', 0, 0] as unknown as fabric.Point],
-          additionalProperty
-        );
+        _alternativeDrawer = this.drawers[3];
+        this.canvas._objects[canvasObjectLocation] =
+          await _alternativeDrawer.make(
+            0,
+            0,
+            additionalProperty,
+            undefined,
+            undefined,
+            [['M', 0, 0]]
+          );
         break;
       }
     }
@@ -873,45 +890,65 @@ export class DrawingService {
   }
 
   // redo a deletion event
-  private redoDeletionEvent(
+  private async redoDeletionEvent(
     redoEvent: EventObject,
     canvasObjectLocator: Function,
     additionalProperty: any
   ) {
     const canvasObjectLocation = canvasObjectLocator();
+    let _alternativeDrawer;
     // still not the best way for handling redo & undo, since the logic here is
     // still re-assgin to new object, which doesn't give flexibility for real
     // deletion.
     switch (redoEvent.canvasObjectType) {
       case 'line': {
-        this.canvas._objects[canvasObjectLocation] = new fabric.Line(
-          [0, 0, 0, 0],
-          additionalProperty
-        );
+        _alternativeDrawer = this.drawers[0];
+        // this.canvas._objects[canvasObjectLocation] = new fabric.Line(
+        //   [0, 0, 0, 0],
+        //   additionalProperty
+        // );
+        this.canvas._objects[canvasObjectLocation] =
+          await _alternativeDrawer.make(0, 0, additionalProperty, 0, 0);
         break;
       }
       case 'rect': {
-        this.canvas._objects[canvasObjectLocation] = new fabric.Rect({
-          left: 0,
-          top: 0,
-          ...additionalProperty,
-        });
+        _alternativeDrawer = this.drawers[1];
+        // this.canvas._objects[canvasObjectLocation] = new fabric.Rect({
+        //   left: 0,
+        //   top: 0,
+        //   ...additionalProperty,
+        // });
+        this.canvas._objects[canvasObjectLocation] =
+          await _alternativeDrawer.make(0, 0, additionalProperty);
         break;
       }
       case 'circle': {
-        this.canvas._objects[canvasObjectLocation] = new fabric.Circle({
-          left: 0,
-          top: 0,
-          radius: 0,
-          ...additionalProperty,
-        });
+        _alternativeDrawer = this.drawers[2];
+        // this.canvas._objects[canvasObjectLocation] = new fabric.Circle({
+        //   left: 0,
+        //   top: 0,
+        //   radius: 0,
+        //   ...additionalProperty,
+        // });
+        this.canvas._objects[canvasObjectLocation] =
+          await _alternativeDrawer.make(0, 0, additionalProperty, 0);
         break;
       }
       case 'path': {
-        this.canvas._objects[canvasObjectLocation] = new fabric.Path(
-          [['M', 0, 0] as unknown as fabric.Point],
-          additionalProperty
-        );
+        _alternativeDrawer = this.drawers[3];
+        // this.canvas._objects[canvasObjectLocation] = new fabric.Path(
+        //   [['M', 0, 0] as unknown as fabric.Point],
+        //   additionalProperty
+        // );
+        this.canvas._objects[canvasObjectLocation] =
+          await _alternativeDrawer.make(
+            0,
+            0,
+            additionalProperty,
+            undefined,
+            undefined,
+            [['M', 0, 0]]
+          );
         break;
       }
     }
