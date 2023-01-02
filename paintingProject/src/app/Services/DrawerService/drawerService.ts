@@ -80,7 +80,7 @@ export class DrawingService {
       cornerColor: BorderColor.xxlight,
       transparentCorners: false,
       cornerSize: CornerSize.desktop,
-      fill: undefined,
+      fill: '',
       hoverCursor: 'default',
     };
 
@@ -352,10 +352,7 @@ export class DrawingService {
         let creationsFromCopyEvent: (EventObject | undefined)[] = [];
 
         const promises = this.copyObjects.map(async (copiedObject) => {
-          // console.log('before canvas:', this.canvas._objects);
           const newCopiedObject = await this.clone(copiedObject);
-          // console.log('newCopiedObject:', newCopiedObject);
-          // console.log('after canvas:', this.canvas._objects);
           //Increase the number for object created
           this._canvasToEventObjectCorrelationService.addNewObject();
 
@@ -363,7 +360,7 @@ export class DrawingService {
           return this._redoUndoService.buildCreationEventObject(
             this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId(),
             newCopiedObject,
-            {}
+            { ...newCopiedObject }
           );
         });
 
@@ -590,6 +587,7 @@ export class DrawingService {
         break;
       }
     }
+    console.log('clonedObject:', clonedObject);
     return clonedObject;
   }
 
