@@ -263,7 +263,7 @@ export class DrawingService {
 
     // handle redo/undo action
     this.subscription.add(
-      this.emittedUndoEventObject$.subscribe((undoEvents) => {
+      this.emittedUndoEventObject$.subscribe(async (undoEvents) => {
         // Based on command calling changeProperty to change the property of the object
         // Or delete/create accordingly
 
@@ -302,13 +302,13 @@ export class DrawingService {
             }
           }
         });
-        Promise.all(promises);
+        await Promise.all(promises);
         this.canvas.renderAll();
       })
     );
 
     this.subscription.add(
-      this.emittedRedoEventObject$.subscribe((redoEvents) => {
+      this.emittedRedoEventObject$.subscribe(async (redoEvents) => {
         // calling changeProperty to change the property of the object
         // Or delete/create accordingly
         const promises = redoEvents.map(async (redoEvent) => {
@@ -343,7 +343,7 @@ export class DrawingService {
             }
           }
         });
-        Promise.all(promises);
+        await Promise.all(promises);
         this.canvas.renderAll();
       })
     );
