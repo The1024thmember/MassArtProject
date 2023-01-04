@@ -1,6 +1,7 @@
 import { fabric } from 'fabric';
 import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
+import { PositionType, getObjectAbsolutePosition } from 'src/app/Helpers';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 import { CommandType, EventObject } from '../RedoUndoService/types';
@@ -506,32 +507,19 @@ export class DrawingService {
       strokeWidth: tobeCloned.strokeWidth,
     });
 
-    var topFromCanvas = tobeCloned.top ? tobeCloned.top : 0;
-    var leftFromCanvas = tobeCloned.left ? tobeCloned.left : 0;
-
-    if (tobeCloned.group) {
-      const leftFromGroup = tobeCloned.group.left ? tobeCloned.group.left : 0;
-      const widthOfGroup = tobeCloned.group.width ? tobeCloned.group.width : 0;
-      const topFromGroup = tobeCloned.group.top ? tobeCloned.group.top : 0;
-      const heightOfGroup = tobeCloned.group.height
-        ? tobeCloned.group.height
-        : 0;
-
-      topFromCanvas = topFromGroup + topFromCanvas + heightOfGroup / 2;
-      leftFromCanvas = leftFromGroup + leftFromCanvas + widthOfGroup / 2;
-    }
+    let position: PositionType = getObjectAbsolutePosition(tobeCloned);
 
     switch (tobeCloned.type) {
       case ObjectType.Line: {
         _alternativeDrawer = this.drawers[0];
         const typeSpecificObject = tobeCloned as ILineOptions;
         Object.assign(tobeCloneProperties, {
-          left: leftFromCanvas + 10,
-          top: topFromCanvas + 10,
+          left: position.left + 10,
+          top: position.top + 10,
         });
         clonedObject = await _alternativeDrawer.make(
-          leftFromCanvas,
-          topFromCanvas,
+          position.left,
+          position.top,
           tobeCloneProperties,
           typeSpecificObject.x2,
           typeSpecificObject.y2
@@ -547,8 +535,8 @@ export class DrawingService {
           height: typeSpecificObject.height,
         });
         clonedObject = await _alternativeDrawer.make(
-          leftFromCanvas + 10,
-          topFromCanvas + 10,
+          position.left + 10,
+          position.top + 10,
           tobeCloneProperties
         );
         this.canvas.add(clonedObject);
@@ -561,8 +549,8 @@ export class DrawingService {
           radius: typeSpecificObject.radius,
         });
         clonedObject = await _alternativeDrawer.make(
-          leftFromCanvas + 10,
-          topFromCanvas + 10,
+          position.left + 10,
+          position.top + 10,
           tobeCloneProperties,
           typeSpecificObject.radius
         );
@@ -574,12 +562,12 @@ export class DrawingService {
         const typeSpecificObject = tobeCloned as fabric.Path;
         Object.assign(tobeCloneProperties, {
           path: typeSpecificObject.path,
-          left: leftFromCanvas + 10,
-          top: topFromCanvas + 10,
+          left: position.left + 10,
+          top: position.top + 10,
         });
         clonedObject = await _alternativeDrawer.make(
-          leftFromCanvas + 10,
-          topFromCanvas + 10,
+          position.left + 10,
+          position.top + 10,
           tobeCloneProperties,
           undefined,
           undefined,
@@ -903,43 +891,24 @@ export class DrawingService {
     switch (redoEvent.canvasObjectType) {
       case 'line': {
         _alternativeDrawer = this.drawers[0];
-        // this.canvas._objects[canvasObjectLocation] = new fabric.Line(
-        //   [0, 0, 0, 0],
-        //   additionalProperty
-        // );
         this.canvas._objects[canvasObjectLocation] =
           await _alternativeDrawer.make(0, 0, additionalProperty, 0, 0);
         break;
       }
       case 'rect': {
         _alternativeDrawer = this.drawers[1];
-        // this.canvas._objects[canvasObjectLocation] = new fabric.Rect({
-        //   left: 0,
-        //   top: 0,
-        //   ...additionalProperty,
-        // });
         this.canvas._objects[canvasObjectLocation] =
           await _alternativeDrawer.make(0, 0, additionalProperty);
         break;
       }
       case 'circle': {
         _alternativeDrawer = this.drawers[2];
-        // this.canvas._objects[canvasObjectLocation] = new fabric.Circle({
-        //   left: 0,
-        //   top: 0,
-        //   radius: 0,
-        //   ...additionalProperty,
-        // });
         this.canvas._objects[canvasObjectLocation] =
           await _alternativeDrawer.make(0, 0, additionalProperty, 0);
         break;
       }
       case 'path': {
         _alternativeDrawer = this.drawers[3];
-        // this.canvas._objects[canvasObjectLocation] = new fabric.Path(
-        //   [['M', 0, 0] as unknown as fabric.Point],
-        //   additionalProperty
-        // );
         this.canvas._objects[canvasObjectLocation] =
           await _alternativeDrawer.make(
             0,

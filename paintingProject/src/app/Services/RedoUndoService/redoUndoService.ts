@@ -5,6 +5,7 @@ import {
   IRectOptions,
 } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
+import { getObjectAbsolutePosition } from 'src/app/Helpers';
 import { ObjectType } from '../DrawerService';
 import { CommandType, EventObject } from './types';
 /*
@@ -107,7 +108,7 @@ export class RedoUndoService {
       scaleY: canvasObjectBefore.scaleY,
       stroke: canvasObjectBefore.stroke,
       strokeWidth: canvasObjectBefore.strokeWidth,
-      ...this.getObjectAbsolutePosition(canvasObjectBefore),
+      ...getObjectAbsolutePosition(canvasObjectBefore),
     });
 
     const afterAngle = canvasObjectAfter.angle
@@ -121,7 +122,7 @@ export class RedoUndoService {
       ...canvasObjectAfter.getObjectScaling(),
       stroke: canvasObjectAfter.stroke,
       strokeWidth: canvasObjectAfter.strokeWidth,
-      ...this.getObjectAbsolutePosition(canvasObjectAfter),
+      ...getObjectAbsolutePosition(canvasObjectAfter),
     });
 
     //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will be buggy
@@ -192,7 +193,7 @@ export class RedoUndoService {
       scaleY: canvasObjectBefore.scaleY,
       originX: canvasObjectBefore.originX,
       originY: canvasObjectBefore.originY,
-      ...this.getObjectAbsolutePosition(canvasObjectBefore),
+      ...getObjectAbsolutePosition(canvasObjectBefore),
     });
     eventObject._canvas = canvasObjectBefore.canvas;
     return eventObject;
@@ -254,7 +255,7 @@ export class RedoUndoService {
       ...additionalProperties,
       originX: canvasObject.originX,
       originY: canvasObject.originY,
-      ...this.getObjectAbsolutePosition(canvasObject),
+      ...getObjectAbsolutePosition(canvasObject),
     });
 
     //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will by buggy
@@ -324,29 +325,5 @@ export class RedoUndoService {
     }
     this.isUndoable$.next(!!this.undoStack.length);
     this.isRedoable$.next(!!this.redoStack.length);
-  }
-
-  public getObjectAbsolutePosition(canvasObject: fabric.Object): object {
-    // Getting the position of the object, if its group selection, then need to do calculation
-    // refer to: https://stackoverflow.com/a/29926545
-    var topFromCanvas = canvasObject.top ? canvasObject.top : 0;
-    var leftFromCanvas = canvasObject.left ? canvasObject.left : 0;
-
-    if (canvasObject.group) {
-      const leftFromGroup = canvasObject.group.left
-        ? canvasObject.group.left
-        : 0;
-      const widthOfGroup = canvasObject.group.width
-        ? canvasObject.group.width
-        : 0;
-      const topFromGroup = canvasObject.group.top ? canvasObject.group.top : 0;
-      const heightOfGroup = canvasObject.group.height
-        ? canvasObject.group.height
-        : 0;
-
-      topFromCanvas = topFromGroup + topFromCanvas + heightOfGroup / 2;
-      leftFromCanvas = leftFromGroup + leftFromCanvas + widthOfGroup / 2;
-    }
-    return { top: topFromCanvas, left: leftFromCanvas };
   }
 }
