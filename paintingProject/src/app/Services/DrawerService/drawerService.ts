@@ -505,6 +505,8 @@ export class DrawingService {
       ...this.drawerOptions,
       stroke: tobeCloned.stroke,
       strokeWidth: tobeCloned.strokeWidth,
+      originX: tobeCloned.originX,
+      originY: tobeCloned.originY,
     });
 
     let position: PositionType = getObjectAbsolutePosition(tobeCloned);
@@ -518,8 +520,8 @@ export class DrawingService {
           top: position.top + 10,
         });
         clonedObject = await _alternativeDrawer.make(
-          position.left,
-          position.top,
+          typeSpecificObject.x1 ? typeSpecificObject.x1 : position.left + 10,
+          typeSpecificObject.y1 ? typeSpecificObject.y1 : position.top + 10,
           tobeCloneProperties,
           typeSpecificObject.x2,
           typeSpecificObject.y2
