@@ -105,6 +105,9 @@ export class InteractService {
       Object.keys(this.activeObjectsOriginal).forEach((index) => {
         const indexAsNumber = parseInt(index);
         const updatedObj = this.canvas._objects[indexAsNumber];
+        if (updatedObj.group) {
+          updatedObj.group.centeredRotation = true;
+        }
         const changePropertyEvent =
           this._redoUndoService.buildPropertyChangeEventObject(
             indexAsNumber + 1,
@@ -145,7 +148,7 @@ export class InteractService {
       // the activeObjectsOriginal is not accurate, especially after change the color or weight
       this.activeObjectsOriginal[index] = JSON.parse(JSON.stringify(obj));
       Object.assign(this.activeObjectsOriginal[index], {
-        group: { ...obj.group },
+        group: { ...obj.group, centeredRotation: true },
         canvas: obj.canvas,
         ...obj.getObjectScaling(),
       });

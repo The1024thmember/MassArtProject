@@ -4,6 +4,7 @@ import {
   IPathOptions,
   IRectOptions,
 } from 'fabric/fabric-impl';
+
 import * as Rx from 'rxjs';
 import { getObjectAbsolutePosition } from 'src/app/Helpers';
 import { ObjectType } from '../DrawerService';
@@ -111,6 +112,14 @@ export class RedoUndoService {
       ...getObjectAbsolutePosition(canvasObjectBefore),
     });
 
+    // const positionBefore = util.transformPoint(
+    //   // you can choose point of object (left/center/right, top/center/bottom)
+    //   canvasObjectBefore.getPointByOrigin('left', 'top'),
+    //   canvasObjectBefore.calcTransformMatrix()
+    // );
+
+    // console.log('positionBefore:', positionBefore);
+
     const afterAngle = canvasObjectAfter.angle
       ? canvasObjectAfter.angle
       : canvasObjectAfter.group?.angle;
@@ -124,6 +133,14 @@ export class RedoUndoService {
       strokeWidth: canvasObjectAfter.strokeWidth,
       ...getObjectAbsolutePosition(canvasObjectAfter),
     });
+
+    // const positionAfter = util.transformPoint(
+    //   // you can choose point of object (left/center/right, top/center/bottom)
+    //   canvasObjectAfter.getPointByOrigin('left', 'top'),
+    //   canvasObjectAfter.calcTransformMatrix()
+    // );
+
+    // console.log('positionAfter:', positionAfter);
 
     //Need to record .canvas property as well, otherwise undo redo creation then switch to selection will be buggy
     eventObject.canvasObjectId = canvasObjectId;

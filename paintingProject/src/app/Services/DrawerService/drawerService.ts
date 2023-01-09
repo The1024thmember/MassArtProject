@@ -83,6 +83,7 @@ export class DrawingService {
       cornerSize: CornerSize.desktop,
       fill: '',
       hoverCursor: 'default',
+      centeredRotation: true,
     };
 
     this.isDown = false; //To start, user is NOT dragging the mouse
