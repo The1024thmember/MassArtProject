@@ -2,8 +2,6 @@
 figma link: https://www.figma.com/file/JK4el75XZFm8BKcGZotYTt/landingPage?node-id=1%3A2
 click up link: https://app.clickup.com/42088340/v/b/184dwm-80
 Miro link: https://miro.com/app/board/uXjVPT1bNk0=/
-# MassArtProject
-
 
 To do:
 

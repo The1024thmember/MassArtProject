@@ -17,14 +17,20 @@ export class CircleDrawer implements IObjectDrawer {
     this.origY = y;
     return new Promise<fabric.Object>((resolve) => {
       //Inside the Promise, draw the actual line from (x,y) to (x2,y2)
-      resolve(
-        new fabric.Circle({
-          left: x,
-          top: y,
-          ...options,
-          radius: radius ? radius : 0,
-        })
-      );
+      const object = new fabric.Circle({
+        left: x,
+        top: y,
+        ...options,
+        radius: radius ? radius : 0,
+      });
+      object.setControlsVisibility({
+        ml: false,
+        mt: false,
+        bl: false,
+        tl: false,
+        tr: false,
+      });
+      resolve(object);
     });
   }
 

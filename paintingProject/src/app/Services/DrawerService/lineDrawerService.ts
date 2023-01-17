@@ -13,11 +13,17 @@ export class LineDrawer implements IObjectDrawer {
     //Return a Promise that will draw a line
     return new Promise<fabric.Object>((resolve) => {
       //Inside the Promise, draw the actual line from (x,y) to (x2,y2)
-      resolve(
-        new fabric.Line([x, y, x2 ? x2 : x, y2 ? y2 : y], {
-          ...options,
-        })
-      );
+      const object = new fabric.Line([x, y, x2 ? x2 : x, y2 ? y2 : y], {
+        ...options,
+      });
+      object.setControlsVisibility({
+        ml: false,
+        mt: false,
+        bl: false,
+        tl: false,
+        tr: false,
+      });
+      resolve(object);
     });
   }
 

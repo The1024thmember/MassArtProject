@@ -17,15 +17,21 @@ export class RectDrawer implements IObjectDrawer {
     //Return a Promise that will draw a line
     return new Promise<fabric.Object>((resolve) => {
       //Inside the Promise, draw the actual line from (x,y) to (x2,y2)
-      resolve(
-        new fabric.Rect({
-          left: x,
-          top: y,
-          width: width ? width : 0,
-          height: height ? height : 0,
-          ...options,
-        })
-      );
+      const object = new fabric.Rect({
+        left: x,
+        top: y,
+        width: width ? width : 0,
+        height: height ? height : 0,
+        ...options,
+      });
+      object.setControlsVisibility({
+        ml: false,
+        mt: false,
+        bl: false,
+        tl: false,
+        tr: false,
+      });
+      resolve(object);
     });
   }
 

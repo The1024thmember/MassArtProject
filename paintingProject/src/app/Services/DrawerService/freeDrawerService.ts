@@ -37,6 +37,14 @@ export class FreeDrawer implements IObjectDrawer {
       ...this.drawOptions,
     });
 
+    this.currentObject.setControlsVisibility({
+      ml: false,
+      mt: false,
+      bl: false,
+      tl: false,
+      tr: false,
+    });
+
     return new Promise<fabric.Object>((resolve) => {
       resolve(this.currentObject);
     });
