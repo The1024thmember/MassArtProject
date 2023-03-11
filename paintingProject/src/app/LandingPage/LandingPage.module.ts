@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DirectivesModule } from '../Directives';
@@ -15,5 +16,6 @@ import { LandingPageRoutingModule } from './landingPage.routing.module';
   ],
   declarations: [LandingPageComponent, LandingPageObjectiveComponent],
   exports: [],
+  providers: [HttpClientModule],
 })
 export class LandingPageModule {}
