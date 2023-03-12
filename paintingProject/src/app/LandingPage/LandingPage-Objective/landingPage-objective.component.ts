@@ -19,10 +19,7 @@ import { SocketService } from './websocketService';
     </my-grid>
     <my-grid>
       <my-col [colDesktopSmall]="5" [colTablet]="12">
-        <my-button
-          (click)="sendMessage('This is the message sent from front-end')"
-          >Click Me To Send Message</my-button
-        >
+        <my-button (click)="sendMessage()">Click Me To Send Message</my-button>
       </my-col>
       <my-col [colDesktopSmall]="5" [colTablet]="12">
         <my-button (click)="sendNews('This is the news sent from front-end')"
@@ -57,8 +54,8 @@ export class LandingPageObjectiveComponent implements OnInit {
     console.log('emit news');
   }
 
-  sendMessage(message: string) {
-    this.socketio.send(message);
+  sendMessage() {
+    this.socketio.send(Math.random().toString());
     console.log('send Message');
   }
 }
