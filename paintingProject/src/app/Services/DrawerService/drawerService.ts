@@ -1,7 +1,9 @@
 import { fabric } from 'fabric';
 import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
+import { Socket } from 'socket.io-client';
 import { PositionType, getObjectAbsolutePosition } from 'src/app/Helpers';
+import { DrawEventSocketService } from '../BackendServices/drawEventPullingService';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 import { CommandType, EventObject } from '../RedoUndoService/types';
@@ -19,7 +21,6 @@ import {
   KeyDownEvent,
   ObjectType,
 } from './types';
-
 /*
   The function for this service is to: excute write (include modification) operation on object
   Create new objects or modify existing objects
@@ -31,6 +32,8 @@ export class DrawingService {
 
   _redoUndoService: RedoUndoService;
   _canvasToEventObjectCorrelationService: CanvasToEventObjectCorrelationService;
+  _drawEventSocketService: DrawEventSocketService;
+  _socketio: Socket;
 
   public _drawer: IObjectDrawer; //Current drawer
   private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
@@ -49,13 +52,18 @@ export class DrawingService {
     canvas: fabric.Canvas,
     _redoUndoService: RedoUndoService,
     emittedUndoEventObject$: Rx.Subject<EventObject[]>,
-    emittedRedoEventObject$: Rx.Subject<EventObject[]>
+    emittedRedoEventObject$: Rx.Subject<EventObject[]>,
+    _drawEventSocketService: DrawEventSocketService,
+    _socketio: Socket
   ) {
     //Create the Fabric canvas
     this.canvas = canvas;
     this._redoUndoService = _redoUndoService;
     this._canvasToEventObjectCorrelationService =
       new CanvasToEventObjectCorrelationService();
+
+    this._drawEventSocketService = _drawEventSocketService;
+    this._socketio = _socketio;
 
     this.emittedUndoEventObject$ = emittedUndoEventObject$;
     this.emittedRedoEventObject$ = emittedRedoEventObject$;
@@ -118,7 +126,7 @@ export class DrawingService {
             (changePropertyEvent) => changePropertyEvent
           ) as EventObject[];
         if (changePropertyEventsBatchValidated.length) {
-          this._redoUndoService.emitEvent(changePropertyEventsBatchValidated);
+          this.emitEvent(changePropertyEventsBatchValidated);
         }
       }
       this.canvas.renderAll();
@@ -154,7 +162,7 @@ export class DrawingService {
             (changePropertyEvent) => changePropertyEvent
           ) as EventObject[];
         if (changePropertyEventsBatchValidated.length) {
-          this._redoUndoService.emitEvent(changePropertyEventsBatchValidated);
+          this.emitEvent(changePropertyEventsBatchValidated);
         }
       }
       this.canvas.renderAll();
@@ -374,12 +382,30 @@ export class DrawingService {
             (creationFromCopyEvent) => creationFromCopyEvent
           ) as EventObject[];
         if (creationsFromCopyEventBatchValidated.length) {
-          this._redoUndoService.emitEvent(creationsFromCopyEventBatchValidated);
+          this.emitEvent(creationsFromCopyEventBatchValidated);
         }
 
         this.canvas.renderAll();
       })
     );
+
+    // processing the draw event received from socket
+    this._socketio.on('message', (msg) => {
+      console.log('received others draw event:', msg);
+      /* need to show the object on the front-end, but need to make sure
+        1. the object does not have physical place on user created object
+        2. the object can not be selected or make any modification
+        but regarding (-1-), what about user's interaction with existing object, say:
+        cover the whole object or try to fill the space if the current user's pating formed
+        with one
+      */
+    });
+  }
+
+  private emitEvent(event: EventObject[]) {
+    this._redoUndoService.emitEvent(event);
+    // sending event to backend
+    this._socketio.emit('message', event);
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
@@ -450,7 +476,7 @@ export class DrawingService {
     );
 
     // Emit the event
-    this._redoUndoService.emitEvent([creationEvent]);
+    this.emitEvent([creationEvent]);
   }
 
   //Method which allows any drawer to Promise their make() function
@@ -656,7 +682,7 @@ export class DrawingService {
         (deletionEvent) => deletionEvent
       ) as EventObject[];
       if (deletionEventsBatchValidate.length) {
-        this._redoUndoService.emitEvent(deletionEventsBatchValidate);
+        this.emitEvent(deletionEventsBatchValidate);
       }
 
       // Need to de-select everything, since after delection we don't want to see the selection box

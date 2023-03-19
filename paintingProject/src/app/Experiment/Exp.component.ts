@@ -6,7 +6,9 @@ import {
 } from '@angular/core';
 import { fabric } from 'fabric';
 import * as Rx from 'rxjs';
+import { Socket, io } from 'socket.io-client';
 import { Margin } from '../Directives/Margin';
+import { DrawEventSocketService } from '../Services/BackendServices/drawEventPullingService';
 import { CursorMode, DrawingMode, ToolsType } from '../Services/DrawerService';
 import { DrawingService } from '../Services/DrawerService/drawerService';
 import { InteractService } from '../Services/InteractService';
@@ -117,9 +119,22 @@ export class ExpComponent implements OnInit, OnDestroy {
   private _interactService: InteractService;
   private _redoUndoService: RedoUndoService;
 
-  constructor() {}
+  private socketio: Socket;
+  constructor(private socket: DrawEventSocketService) {}
 
   ngOnInit() {
+    // Getting the websocket connected
+    this.socketio = io('http://127.0.0.1:5000');
+    this.socket.iniServerSocket();
+
+    this.socketio.on('connect', () => {
+      console.log('DrawEvent Connected');
+    });
+
+    this.socketio.on('disconnect', () => {
+      console.log('DrawEvent Disconnected');
+    });
+
     this._canvas = new fabric.Canvas('fabricSurface', {
       backgroundColor: '#ebebef',
       selection: false,
@@ -144,7 +159,9 @@ export class ExpComponent implements OnInit, OnDestroy {
       this._canvas,
       this._redoUndoService,
       this.emittedUndoEventObject$,
-      this.emittedRedoEventObject$
+      this.emittedRedoEventObject$,
+      this.socket,
+      this.socketio
     );
 
     //Getting the selected object color
@@ -265,5 +282,15 @@ export class ExpComponent implements OnInit, OnDestroy {
     if (this._drawService.getCursorMode() === CursorMode.Draw) {
       this.focusOnCanvas$.next(true);
     }
+  }
+
+  sendNews(message: string) {
+    this.socketio.emit('news', message);
+    console.log('emit news');
+  }
+
+  sendMessage() {
+    this.socketio.send(Math.random().toString());
+    console.log('send Message');
   }
 }

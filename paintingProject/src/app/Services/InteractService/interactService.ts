@@ -39,7 +39,7 @@ export class InteractService {
       forceInteractiveServiceGetActiveObjects$;
     this._redoUndoService = _redoUndoService;
 
-    //Create event listener on canvas
+    // Create event listener on canvas
     this.initializeCanvasEvents();
   }
 
@@ -134,7 +134,8 @@ export class InteractService {
       if (changePropertyEventsBatch.length) {
         this._redoUndoService.emitEvent(changePropertyEventsBatch);
       }
-      // this where to send these event to backend
+
+      // this where to prepare these event for sending to backend
     });
   }
 

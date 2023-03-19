@@ -6,7 +6,9 @@ import {
 } from '@angular/core';
 import { fabric } from 'fabric';
 import * as Rx from 'rxjs';
+import { Socket, io } from 'socket.io-client';
 import { Margin } from '../Directives/Margin';
+import { DrawEventSocketService } from '../Services/BackendServices/drawEventPullingService';
 import { DrawingMode, DrawingService } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
 import { RedoUndoService } from '../Services/RedoUndoService/redoUndoService';
@@ -85,9 +87,14 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
   private _interactService: InteractService;
   private _redoUndoService: RedoUndoService;
 
-  constructor() {}
+  private socketio: Socket;
+  constructor(private socket: DrawEventSocketService) {}
 
   ngOnInit() {
+    // Getting the websocket connected
+    this.socketio = io('http://127.0.0.1:5000');
+    this.socket.iniServerSocket();
+
     this._canvas = new fabric.Canvas('fabricSurface', {
       backgroundColor: '#ebebef',
       selection: false,
@@ -110,7 +117,9 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       this._canvas,
       this._redoUndoService,
       this.emittedUndoEventObject$,
-      this.emittedRedoEventObject$
+      this.emittedRedoEventObject$,
+      this.socket,
+      this.socketio
     );
 
     //Gettting the selected object color

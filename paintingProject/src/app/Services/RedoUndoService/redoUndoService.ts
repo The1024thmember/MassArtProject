@@ -4,7 +4,6 @@ import {
   IPathOptions,
   IRectOptions,
 } from 'fabric/fabric-impl';
-
 import * as Rx from 'rxjs';
 import { getObjectAbsolutePosition } from 'src/app/Helpers';
 import { ObjectType } from '../DrawerService';
@@ -307,7 +306,7 @@ export class RedoUndoService {
         this.isUndoable$.next(!!this.undoStack.length);
         this.isRedoable$.next(!!this.redoStack.length);
 
-        console.log('new event:', event[0].command);
+        console.log('created new draw event:', event[0].command);
       })
     );
 
