@@ -124,7 +124,7 @@ export class ExpComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Getting the websocket connected
-    this.socketio = io('http://127.0.0.1:5000');
+    this.socketio = io('http://127.0.0.1:5000/exp');
     this.socket.iniServerSocket();
 
     this.socketio.on('connect', () => {

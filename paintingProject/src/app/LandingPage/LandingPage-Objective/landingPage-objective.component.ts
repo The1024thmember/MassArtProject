@@ -37,7 +37,7 @@ export class LandingPageObjectiveComponent implements OnInit {
   constructor(private socket: SocketService) {}
 
   ngOnInit(): void {
-    this.socketio = io('http://127.0.0.1:5000');
+    this.socketio = io('http://127.0.0.1:5000/landing');
     this.socket.iniServerSocket();
 
     this.socketio.on('connect', () => {

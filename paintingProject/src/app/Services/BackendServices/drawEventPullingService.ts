@@ -11,7 +11,7 @@ export class DrawEventSocketService {
   constructor(private http: HttpClient) {}
 
   public iniServerSocket() {
-    this.http.get('http://127.0.0.1:5000/api').subscribe((data) => {
+    this.http.get('http://127.0.0.1:5000').subscribe((data) => {
       console.log(data);
     });
   }
