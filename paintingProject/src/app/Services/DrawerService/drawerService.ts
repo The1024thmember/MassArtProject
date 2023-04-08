@@ -1,9 +1,8 @@
 import { fabric } from 'fabric';
 import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
-import { Socket } from 'socket.io-client';
 import { PositionType, getObjectAbsolutePosition } from 'src/app/Helpers';
-import { DrawEventSocketService } from '../BackendServices/drawEventPullingService';
+import { DrawBoardSocketService } from '../BackendServices/DrawBoardSignalRService';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 import { CommandType, EventObject } from '../RedoUndoService/types';
@@ -32,8 +31,7 @@ export class DrawingService {
 
   _redoUndoService: RedoUndoService;
   _canvasToEventObjectCorrelationService: CanvasToEventObjectCorrelationService;
-  _drawEventSocketService: DrawEventSocketService;
-  _socketio: Socket;
+  _drawBoardSocketService: DrawBoardSocketService;
 
   public _drawer: IObjectDrawer; //Current drawer
   private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
@@ -53,8 +51,7 @@ export class DrawingService {
     _redoUndoService: RedoUndoService,
     emittedUndoEventObject$: Rx.Subject<EventObject[]>,
     emittedRedoEventObject$: Rx.Subject<EventObject[]>,
-    _drawEventSocketService: DrawEventSocketService,
-    _socketio: Socket
+    _drawBoardSocketService: DrawBoardSocketService
   ) {
     //Create the Fabric canvas
     this.canvas = canvas;
@@ -62,8 +59,7 @@ export class DrawingService {
     this._canvasToEventObjectCorrelationService =
       new CanvasToEventObjectCorrelationService();
 
-    this._drawEventSocketService = _drawEventSocketService;
-    this._socketio = _socketio;
+    this._drawBoardSocketService = _drawBoardSocketService;
 
     this.emittedUndoEventObject$ = emittedUndoEventObject$;
     this.emittedRedoEventObject$ = emittedRedoEventObject$;
@@ -390,22 +386,22 @@ export class DrawingService {
     );
 
     // processing the draw event received from socket
-    this._socketio.on('message', (msg) => {
-      console.log('received others draw event:', msg);
-      /* need to show the object on the front-end, but need to make sure
+    //this._socketio.on('message', (msg) => {
+    //console.log('received others draw event:', msg);
+    /* need to show the object on the front-end, but need to make sure
         1. the object does not have physical place on user created object
         2. the object can not be selected or make any modification
         but regarding (-1-), what about user's interaction with existing object, say:
         cover the whole object or try to fill the space if the current user's pating formed
         with one
       */
-    });
+    //});
   }
 
   private emitEvent(event: EventObject[]) {
     this._redoUndoService.emitEvent(event);
     // sending event to backend
-    this._socketio.emit('message', event);
+    this._drawBoardSocketService.sendEvent(event);
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
