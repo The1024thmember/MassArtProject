@@ -77,11 +77,6 @@ import { EventObject } from '../Services/RedoUndoService/types';
 export class ExpComponent implements OnInit, OnDestroy {
   Margin = Margin;
 
-  selectedElement: any;
-
-  start: number[] = [0, 0];
-  end: number[] = [900, 900];
-
   // Value from interact service, the current selected object's color & weight
   selectedObjectColor$ = new Rx.Subject<string>();
   selectedObjectWidth$ = new Rx.Subject<number>();
@@ -118,7 +113,7 @@ export class ExpComponent implements OnInit, OnDestroy {
   private _interactService: InteractService;
   private _redoUndoService: RedoUndoService;
 
-  constructor(private drawBoardSocketService: DrawBoardSocketService) {}
+  constructor(private _drawBoardSocketService: DrawBoardSocketService) {}
 
   ngOnInit() {
     this._canvas = new fabric.Canvas('fabricSurface', {
@@ -146,7 +141,7 @@ export class ExpComponent implements OnInit, OnDestroy {
       this._redoUndoService,
       this.emittedUndoEventObject$,
       this.emittedRedoEventObject$,
-      this.drawBoardSocketService
+      this._drawBoardSocketService
     );
 
     //Getting the selected object color

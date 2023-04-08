@@ -26,6 +26,13 @@ export class DrawBoardSocketService {
     this.socketio.on('message', (msg) => {
       // need to passing the necessary function for dealing with others draw events,
       // may pass a call back function
+      /* need to show the object on the front-end, but need to make sure
+        1. the object does not have physical place on user created object
+        2. the object can not be selected or make any modification
+        but regarding (-1-), what about user's interaction with existing object, say:
+        cover the whole object or try to fill the space if the current user's pating formed
+        with one
+      */
       console.log('received others draw event:', msg);
     });
   }

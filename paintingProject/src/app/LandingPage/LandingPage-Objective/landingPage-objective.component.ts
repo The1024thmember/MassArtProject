@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Socket, io } from 'socket.io-client';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 import { Margin } from 'src/app/Directives/Margin/margin.directive';
-import { SocketService } from './websocketService';
+import { RegisterSocketService } from 'src/app/Services/BackendServices/RegisterSignalRService';
 
 @Component({
   selector: 'landingPage-Objectives',
@@ -19,12 +18,10 @@ import { SocketService } from './websocketService';
     </my-grid>
     <my-grid>
       <my-col [colDesktopSmall]="5" [colTablet]="12">
-        <my-button (click)="sendMessage()">Click Me To Send Message</my-button>
+        <my-button>Click Me To Send Message (decrepted)</my-button>
       </my-col>
       <my-col [colDesktopSmall]="5" [colTablet]="12">
-        <my-button (click)="sendNews('This is the news sent from front-end')"
-          >Click Me To Send News</my-button
-        >
+        <my-button>Click Me To Send News (decrepted)</my-button>
       </my-col>
     </my-grid>
   </my-container>`,
@@ -33,29 +30,7 @@ export class LandingPageObjectiveComponent implements OnInit {
   HeadingType = HeadingType;
   Margin = Margin;
 
-  private socketio: Socket;
-  constructor(private socket: SocketService) {}
+  constructor(private _registerSocketService: RegisterSocketService) {}
 
-  ngOnInit(): void {
-    this.socketio = io('http://127.0.0.1:5000/landing');
-    this.socket.iniServerSocket();
-
-    this.socketio.on('connect', () => {
-      console.log('Frontend Connected');
-    });
-
-    this.socketio.on('disconnect', () => {
-      console.log('Disconnected');
-    });
-  }
-
-  sendNews(message: string) {
-    this.socketio.emit('news', message);
-    console.log('emit news');
-  }
-
-  sendMessage() {
-    this.socketio.send(Math.random().toString());
-    console.log('send Message');
-  }
+  ngOnInit(): void {}
 }

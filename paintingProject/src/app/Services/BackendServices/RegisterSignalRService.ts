@@ -1,6 +1,9 @@
+import { Injectable } from '@angular/core';
 import { Socket, io } from 'socket.io-client';
-import { EventObject } from '../RedoUndoService/types';
 // Connects to http://127.0.0.1:5000/register websocket
+@Injectable({
+  providedIn: 'root',
+})
 export class RegisterSocketService {
   private socketio: Socket;
 
@@ -24,7 +27,7 @@ export class RegisterSocketService {
     });
   }
 
-  public sendEvent(event: EventObject[]) {
+  public sendEvent(event: string) {
     this.socketio.emit('message', event);
   }
 }
