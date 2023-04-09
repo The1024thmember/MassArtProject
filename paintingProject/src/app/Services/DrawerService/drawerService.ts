@@ -4,7 +4,11 @@ import * as Rx from 'rxjs';
 import { PositionType, getObjectAbsolutePosition } from 'src/app/Helpers';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
-import { CommandType, EventObject } from '../RedoUndoService/types';
+import {
+  CommandType,
+  EventObject,
+  PropertiesSnapShot,
+} from '../RedoUndoService/types';
 import { CircleDrawer } from './circleDrawerService';
 import { FreeDrawer } from './freeDrawerService';
 import { LineDrawer } from './lineDrawerService';
@@ -13,6 +17,7 @@ import {
   BorderColor,
   ChangeObjectProperty,
   CornerSize,
+  CreateFromDataType,
   CursorMode,
   DrawingMode,
   IObjectDrawer,
@@ -529,6 +534,137 @@ export class DrawingService {
         this.drawerOptions
       );
     return changePropertyEvent;
+  }
+
+  // Allow to create canvas object from other source of data, clone of existing fabric.Objects or from
+  // other users created EventObjects
+  private async createCanvasObjectFromData(
+    createFromSource: EventObject | fabric.Object,
+    createFromDataType: CreateFromDataType
+  ) {
+    let newObjectProperties = {};
+    let createdObject = new fabric.Object();
+    let _alternativeDrawer;
+    let typeOfObject;
+    let createFrom: PropertiesSnapShot | fabric.Object;
+
+    let position: PositionType;
+
+    if (createFromDataType === CreateFromDataType.CLONE) {
+      typeOfObject = (createFromSource as fabric.Object).type;
+      createFrom = createFromSource as fabric.Object;
+      let positionWithoutOffset: PositionType = getObjectAbsolutePosition(
+        createFrom as fabric.Object
+      );
+      position = {
+        left: positionWithoutOffset.left + 10,
+        top: positionWithoutOffset.top + 10,
+      };
+    } else {
+      typeOfObject = (createFromSource as EventObject).canvasObjectType;
+      createFrom = (createFromSource as EventObject)
+        .snapShotAfter as PropertiesSnapShot;
+      position = {
+        left: createFrom.left ?? 0,
+        top: createFrom.top ?? 0,
+      };
+    }
+
+    Object.assign(newObjectProperties, {
+      ...this.drawerOptions,
+      stroke: createFrom.stroke,
+      strokeWidth: createFrom.strokeWidth,
+      originX: createFrom.originX,
+      originY: createFrom.originY,
+    });
+
+    switch (typeOfObject) {
+      case ObjectType.Line: {
+        _alternativeDrawer = this.drawers[0];
+        const typeSpecificObject =
+          createFromDataType === CreateFromDataType.CLONE
+            ? (createFrom as ILineOptions)
+            : (createFrom as PropertiesSnapShot);
+        Object.assign(newObjectProperties, {
+          left: position.left + 10,
+          top: position.top + 10,
+        });
+        createdObject = await _alternativeDrawer.make(
+          typeSpecificObject.x1 ? typeSpecificObject.x1 : position.left + 10,
+          typeSpecificObject.y1 ? typeSpecificObject.y1 : position.top + 10,
+          newObjectProperties,
+          typeSpecificObject.x2,
+          typeSpecificObject.y2
+        );
+        break;
+      }
+      case ObjectType.Rectangle: {
+        _alternativeDrawer = this.drawers[1];
+        const typeSpecificObject =
+          createFromDataType === CreateFromDataType.CLONE
+            ? (createFrom as fabric.Rect)
+            : (createFrom as PropertiesSnapShot);
+        Object.assign(newObjectProperties, {
+          width: typeSpecificObject.width,
+          height: typeSpecificObject.height,
+        });
+        createdObject = await _alternativeDrawer.make(
+          position.left + 10,
+          position.top + 10,
+          newObjectProperties
+        );
+        break;
+      }
+      case ObjectType.Circle: {
+        _alternativeDrawer = this.drawers[2];
+        const typeSpecificObject =
+          createFromDataType === CreateFromDataType.CLONE
+            ? (createFrom as fabric.Circle)
+            : (createFrom as PropertiesSnapShot);
+        Object.assign(newObjectProperties, {
+          radius: typeSpecificObject.radius,
+        });
+        createdObject = await _alternativeDrawer.make(
+          position.left + 10,
+          position.top + 10,
+          newObjectProperties,
+          typeSpecificObject.radius
+        );
+        break;
+      }
+      case ObjectType.Path: {
+        _alternativeDrawer = this.drawers[3];
+        const typeSpecificObject =
+          createFromDataType === CreateFromDataType.CLONE
+            ? (createFrom as fabric.Path)
+            : (createFrom as PropertiesSnapShot);
+        Object.assign(newObjectProperties, {
+          path: typeSpecificObject.path,
+          left: position.left + 10,
+          top: position.top + 10,
+        });
+        createdObject = await _alternativeDrawer.make(
+          position.left + 10,
+          position.top + 10,
+          newObjectProperties,
+          undefined,
+          undefined,
+          typeSpecificObject.path
+        );
+        break;
+      }
+    }
+    if (createdObject) {
+      if (createFromDataType === CreateFromDataType.CLONE) {
+        this.canvas.add(createdObject);
+      } else {
+        this.canvas.insertAt(
+          createdObject,
+          (createFromSource as EventObject).canvasObjectId,
+          false
+        );
+      }
+    }
   }
 
   // Method which allows to clone an existing object

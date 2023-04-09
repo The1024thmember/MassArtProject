@@ -63,6 +63,11 @@ export const enum KeyDownEvent {
   Paste = 'Paste',
 }
 
+export const enum CreateFromDataType {
+  CLONE = 'Clone',
+  RECEIVEDEVENT = 'ReceivedEvent',
+}
+
 export interface IObjectDrawer {
   drawingMode: DrawingMode;
   //Makes the current object

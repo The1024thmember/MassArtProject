@@ -11,7 +11,24 @@ export class EventObject {
   public canvasObjectId: number; // canvas object id attached with this event
   public canvasObjectType: ObjectType;
   public command: CommandType;
-  public snapShotBefore: object;
-  public snapShotAfter: object;
+  public snapShotBefore: PropertiesSnapShot;
+  public snapShotAfter: PropertiesSnapShot;
   public _canvas: fabric.Canvas | undefined;
+}
+
+export class PropertiesSnapShot {
+  left?: number;
+  top?: number;
+  stroke?: string;
+  strokeWidth?: number;
+  originX?: string;
+  originY?: string;
+  width?: number;
+  height?: number;
+  radius?: number;
+  path?: Array<Array<number>>;
+  x1?: number;
+  y1?: number;
+  x2?: number;
+  y2?: number;
 }
