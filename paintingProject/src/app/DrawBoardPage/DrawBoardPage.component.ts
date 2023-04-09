@@ -107,7 +107,8 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       this.emittedUndoEventObject$,
       this.emittedRedoEventObject$,
       this.isRedoable$,
-      this.isUndoable$
+      this.isUndoable$,
+      this._drawBoardSocketService
     );
 
     // Set the drawing service for drawing object and change object property
@@ -116,7 +117,7 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       this._redoUndoService,
       this.emittedUndoEventObject$,
       this.emittedRedoEventObject$,
-      this._drawBoardSocketService
+      this._drawBoardSocketService.drawEventsObservable$
     );
 
     //Gettting the selected object color

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as Rx from 'rxjs';
 import { Socket, io } from 'socket.io-client';
 import { EventObject } from '../RedoUndoService/types';
 // Connects to http://127.0.0.1:5000/exp websocket
@@ -7,7 +8,8 @@ import { EventObject } from '../RedoUndoService/types';
 })
 export class DrawBoardSocketService {
   private socketio: Socket;
-
+  private drawEvents$ = new Rx.Subject<EventObject[]>();
+  public drawEventsObservable$ = this.drawEvents$.asObservable();
   constructor() {
     this.initialize();
   }
@@ -33,11 +35,36 @@ export class DrawBoardSocketService {
         cover the whole object or try to fill the space if the current user's pating formed
         with one
       */
-      console.log('received others draw event:', msg);
+      console.log('draw event:', msg[0].command);
+      console.log(msg);
+      this.drawEvents$.next(msg);
+      /*
+        use insertAt canvas default function for insert other's event object at pos x, the returned
+        message will contain information of which position to insert and who is the creator (since we
+        want to enable like function in the future, or attach comments on attached object)
+      */
     });
   }
 
   public sendEvent(event: EventObject[]) {
     this.socketio.emit('message', event);
   }
+
+  // private eventTransformer(event):EventObject {
+  //   switch (event.command) {
+  //     case CommandType.Create: {
+
+  //       break;
+  //     }
+  //     case CommandType.Delete: {
+
+  //       break;
+  //     }
+  //     case CommandType.ChangeProperty: {
+
+  //       break;
+  //     }
+  //   }
+  //   return
+  // }
 }

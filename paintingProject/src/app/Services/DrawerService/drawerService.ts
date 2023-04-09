@@ -2,7 +2,6 @@ import { fabric } from 'fabric';
 import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
 import { PositionType, getObjectAbsolutePosition } from 'src/app/Helpers';
-import { DrawBoardSocketService } from '../BackendServices/DrawBoardSignalRService';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
 import { CommandType, EventObject } from '../RedoUndoService/types';
@@ -29,9 +28,11 @@ export class DrawingService {
   emittedUndoEventObject$: Rx.Subject<EventObject[]>;
   emittedRedoEventObject$: Rx.Subject<EventObject[]>;
 
+  // others draw events
+  receivedEventObject$: Rx.Observable<EventObject[]>;
+
   _redoUndoService: RedoUndoService;
   _canvasToEventObjectCorrelationService: CanvasToEventObjectCorrelationService;
-  _drawBoardSocketService: DrawBoardSocketService;
 
   public _drawer: IObjectDrawer; //Current drawer
   private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
@@ -51,7 +52,7 @@ export class DrawingService {
     _redoUndoService: RedoUndoService,
     emittedUndoEventObject$: Rx.Subject<EventObject[]>,
     emittedRedoEventObject$: Rx.Subject<EventObject[]>,
-    _drawBoardSocketService: DrawBoardSocketService
+    receivedEventObject$: Rx.Observable<EventObject[]>
   ) {
     //Create the Fabric canvas
     this.canvas = canvas;
@@ -59,10 +60,10 @@ export class DrawingService {
     this._canvasToEventObjectCorrelationService =
       new CanvasToEventObjectCorrelationService();
 
-    this._drawBoardSocketService = _drawBoardSocketService;
-
     this.emittedUndoEventObject$ = emittedUndoEventObject$;
     this.emittedRedoEventObject$ = emittedRedoEventObject$;
+
+    this.receivedEventObject$ = receivedEventObject$;
 
     //Create a collection of all possible "drawer" classes
     this.drawers = [
@@ -266,7 +267,7 @@ export class DrawingService {
       }
     });
 
-    // handle redo/undo action
+    // handle undo action
     this.subscription.add(
       this.emittedUndoEventObject$.subscribe(async (undoEvents) => {
         // Based on command calling changeProperty to change the property of the object
@@ -312,6 +313,7 @@ export class DrawingService {
       })
     );
 
+    // handle redo action
     this.subscription.add(
       this.emittedRedoEventObject$.subscribe(async (redoEvents) => {
         // calling changeProperty to change the property of the object
@@ -385,6 +387,9 @@ export class DrawingService {
       })
     );
 
+    // handle render others created object
+    this.subscription.add();
+
     // processing the draw event received from socket
     //this._socketio.on('message', (msg) => {
     //console.log('received others draw event:', msg);
@@ -393,8 +398,6 @@ export class DrawingService {
 
   private emitEvent(event: EventObject[]) {
     this._redoUndoService.emitEvent(event);
-    // sending event to backend
-    this._drawBoardSocketService.sendEvent(event);
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {

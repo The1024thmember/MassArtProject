@@ -107,8 +107,8 @@ export class ExpComponent implements OnInit, OnDestroy {
 
   subscription$ = new Rx.Subscription();
 
-  private _canvas: fabric.Canvas;
   private isSelectLastAction: boolean = false;
+  private _canvas: fabric.Canvas;
   private _drawService: DrawingService;
   private _interactService: InteractService;
   private _redoUndoService: RedoUndoService;
@@ -132,7 +132,8 @@ export class ExpComponent implements OnInit, OnDestroy {
       this.emittedUndoEventObject$,
       this.emittedRedoEventObject$,
       this.isRedoable$,
-      this.isUndoable$
+      this.isUndoable$,
+      this._drawBoardSocketService
     );
 
     // Set the drawing service for drawing object and change object property
@@ -141,7 +142,7 @@ export class ExpComponent implements OnInit, OnDestroy {
       this._redoUndoService,
       this.emittedUndoEventObject$,
       this.emittedRedoEventObject$,
-      this._drawBoardSocketService
+      this._drawBoardSocketService.drawEventsObservable$
     );
 
     //Getting the selected object color
