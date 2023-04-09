@@ -395,7 +395,7 @@ export class DrawingService {
         const promises = eventObjects.map((eventObject) => {
           switch (eventObject.command) {
             case CommandType.Create: {
-              const dummyObject = new fabric.Line([50, 50, 200, 50], {
+              const dummyObject = new fabric.Line([200, 200, 600, 500], {
                 stroke: 'red',
                 strokeWidth: 2,
               });
@@ -408,6 +408,7 @@ export class DrawingService {
             }
           }
         });
+        this.canvas.renderAll();
       })
     );
   }
