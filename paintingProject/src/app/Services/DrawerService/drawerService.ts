@@ -388,14 +388,31 @@ export class DrawingService {
     );
 
     // handle render others created object
-    this.subscription.add();
-
-    // processing the draw event received from socket
-    //this._socketio.on('message', (msg) => {
-    //console.log('received others draw event:', msg);
-    //});
+    this.subscription.add(
+      this.receivedEventObject$.subscribe((eventObjects) => {
+        console.log('draw event:', eventObjects[0].command);
+        console.log(eventObjects);
+        const promises = eventObjects.map((eventObject) => {
+          switch (eventObject.command) {
+            case CommandType.Create: {
+              const dummyObject = new fabric.Line([50, 50, 200, 50], {
+                stroke: 'red',
+                strokeWidth: 2,
+              });
+              this.canvas.insertAt(
+                dummyObject,
+                eventObject.canvasObjectId,
+                false
+              );
+              break;
+            }
+          }
+        });
+      })
+    );
   }
 
+  // emit current event to redo undo service
   private emitEvent(event: EventObject[]) {
     this._redoUndoService.emitEvent(event);
   }

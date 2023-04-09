@@ -35,8 +35,7 @@ export class DrawBoardSocketService {
         cover the whole object or try to fill the space if the current user's pating formed
         with one
       */
-      console.log('draw event:', msg[0].command);
-      console.log(msg);
+
       this.drawEvents$.next(msg);
       /*
         use insertAt canvas default function for insert other's event object at pos x, the returned
@@ -49,22 +48,4 @@ export class DrawBoardSocketService {
   public sendEvent(event: EventObject[]) {
     this.socketio.emit('message', event);
   }
-
-  // private eventTransformer(event):EventObject {
-  //   switch (event.command) {
-  //     case CommandType.Create: {
-
-  //       break;
-  //     }
-  //     case CommandType.Delete: {
-
-  //       break;
-  //     }
-  //     case CommandType.ChangeProperty: {
-
-  //       break;
-  //     }
-  //   }
-  //   return
-  // }
 }
