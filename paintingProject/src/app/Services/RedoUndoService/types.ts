@@ -1,3 +1,4 @@
+import { Point } from 'fabric/fabric-impl';
 import { ObjectType } from '../DrawerService';
 
 export const enum CommandType {
@@ -26,7 +27,7 @@ export class PropertiesSnapShot {
   width?: number;
   height?: number;
   radius?: number;
-  path?: Array<Array<number>>;
+  path?: Point[];
   x1?: number;
   y1?: number;
   x2?: number;
