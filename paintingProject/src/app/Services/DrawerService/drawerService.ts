@@ -395,20 +395,14 @@ export class DrawingService {
     // handle render others created object
     this.subscription.add(
       this.receivedEventObject$.subscribe((eventObjects) => {
+        // for debugging purpose
         console.log('draw event:', eventObjects[0].command);
         console.log(eventObjects);
-        const promises = eventObjects.map(async (eventObject) => {
+        this.sequencePrinter();
+
+        eventObjects.map(async (eventObject) => {
           switch (eventObject.command) {
             case CommandType.Create: {
-              // const dummyObject = new fabric.Line([200, 200, 600, 500], {
-              //   stroke: 'red',
-              //   strokeWidth: 2,
-              // });
-              // this.canvas.insertAt(
-              //   dummyObject,
-              //   eventObject.canvasObjectId,
-              //   false
-              // );
               await this.createCanvasObjectFromData(
                 eventObject,
                 CreateFromDataType.RECEIVEDEVENT
@@ -1146,5 +1140,13 @@ export class DrawingService {
       this.canvas._objects[canvasObjectLocation].selectable = true;
       this.canvas._objects[canvasObjectLocation].hoverCursor = 'move';
     }
+  }
+
+  private sequencePrinter() {
+    console.log('--sequence--');
+    const allObjects = this.canvas.getObjects();
+    allObjects.forEach((object, index) => {
+      console.log(index, object.type);
+    });
   }
 }
