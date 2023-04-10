@@ -602,7 +602,6 @@ export class DrawingService {
         break;
       }
       case ObjectType.Rectangle: {
-        console.log(1);
         _alternativeDrawer = this.drawers[1];
         const typeSpecificObject =
           createFromDataType === CreateFromDataType.CLONE
