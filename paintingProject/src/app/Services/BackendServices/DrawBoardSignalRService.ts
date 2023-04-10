@@ -46,6 +46,7 @@ export class DrawBoardSocketService {
   }
 
   public sendEvent(event: EventObject[]) {
+    console.log('--sending message');
     this.socketio.emit('message', event);
   }
 }

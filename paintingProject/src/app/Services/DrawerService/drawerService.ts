@@ -366,7 +366,11 @@ export class DrawingService {
         let creationsFromCopyEvent: (EventObject | undefined)[] = [];
 
         const promises = this.copyObjects.map(async (copiedObject) => {
-          const newCopiedObject = await this.clone(copiedObject);
+          // const newCopiedObject = await this.clone(copiedObject);
+          const newCopiedObject = await this.createCanvasObjectFromData(
+            copiedObject,
+            CreateFromDataType.CLONE
+          );
           //Increase the number for object created
           this._canvasToEventObjectCorrelationService.addNewObject();
 
@@ -385,6 +389,7 @@ export class DrawingService {
             (creationFromCopyEvent) => creationFromCopyEvent
           ) as EventObject[];
         if (creationsFromCopyEventBatchValidated.length) {
+          // Fix me: https://app.clickup.com/t/860qg36m6, it gives error
           this.emitEvent(creationsFromCopyEventBatchValidated);
         }
 
@@ -539,7 +544,7 @@ export class DrawingService {
   private async createCanvasObjectFromData(
     createFromSource: EventObject | fabric.Object,
     createFromDataType: CreateFromDataType
-  ) {
+  ): Promise<fabric.Object> {
     let newObjectProperties = {};
     let createdObject = new fabric.Object();
     let _alternativeDrawer;
@@ -584,12 +589,12 @@ export class DrawingService {
             ? (createFrom as ILineOptions)
             : (createFrom as PropertiesSnapShot);
         Object.assign(newObjectProperties, {
-          left: position.left + 10,
-          top: position.top + 10,
+          left: position.left,
+          top: position.top,
         });
         createdObject = await _alternativeDrawer.make(
-          typeSpecificObject.x1 ? typeSpecificObject.x1 : position.left + 10,
-          typeSpecificObject.y1 ? typeSpecificObject.y1 : position.top + 10,
+          typeSpecificObject.x1 ? typeSpecificObject.x1 : position.left,
+          typeSpecificObject.y1 ? typeSpecificObject.y1 : position.top,
           newObjectProperties,
           typeSpecificObject.x2,
           typeSpecificObject.y2
@@ -597,6 +602,7 @@ export class DrawingService {
         break;
       }
       case ObjectType.Rectangle: {
+        console.log(1);
         _alternativeDrawer = this.drawers[1];
         const typeSpecificObject =
           createFromDataType === CreateFromDataType.CLONE
@@ -607,8 +613,8 @@ export class DrawingService {
           height: typeSpecificObject.height,
         });
         createdObject = await _alternativeDrawer.make(
-          position.left + 10,
-          position.top + 10,
+          position.left,
+          position.top,
           newObjectProperties
         );
         break;
@@ -623,8 +629,8 @@ export class DrawingService {
           radius: typeSpecificObject.radius,
         });
         createdObject = await _alternativeDrawer.make(
-          position.left + 10,
-          position.top + 10,
+          position.left,
+          position.top,
           newObjectProperties,
           typeSpecificObject.radius
         );
@@ -638,12 +644,12 @@ export class DrawingService {
             : (createFrom as PropertiesSnapShot);
         Object.assign(newObjectProperties, {
           path: typeSpecificObject.path,
-          left: position.left + 10,
-          top: position.top + 10,
+          left: position.left,
+          top: position.top,
         });
         createdObject = await _alternativeDrawer.make(
-          position.left + 10,
-          position.top + 10,
+          position.left,
+          position.top,
           newObjectProperties,
           undefined,
           undefined,
@@ -663,6 +669,7 @@ export class DrawingService {
         );
       }
     }
+    return createdObject;
   }
 
   // Method which allows to clone an existing object

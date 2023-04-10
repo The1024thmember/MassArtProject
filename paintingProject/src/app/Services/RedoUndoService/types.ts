@@ -14,7 +14,7 @@ export class EventObject {
   public command: CommandType;
   public snapShotBefore: PropertiesSnapShot;
   public snapShotAfter: PropertiesSnapShot;
-  public _canvas: fabric.Canvas | undefined;
+  public _canvas?: fabric.Canvas;
 }
 
 export class PropertiesSnapShot {
