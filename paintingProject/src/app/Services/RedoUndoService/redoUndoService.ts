@@ -8,7 +8,7 @@ import * as Rx from 'rxjs';
 import { getObjectAbsolutePosition } from 'src/app/Helpers';
 import { DrawBoardSocketService } from '../BackendServices/DrawBoardSignalRService';
 import { ObjectType } from '../DrawerService';
-import { CommandType, EventObject } from './types';
+import { CommandType, EventObject, PropertiesSnapShot } from './types';
 /*
   Keeps redo and undo stack
   input: event stream
@@ -223,7 +223,7 @@ export class RedoUndoService {
   public buildCreationEventObject(
     canvasObjectId: number,
     canvasObject: fabric.Object,
-    additionalProperties: object
+    additionalProperties: PropertiesSnapShot
   ): EventObject {
     const eventObject: EventObject = new EventObject();
     switch (canvasObject.type) {
@@ -283,7 +283,6 @@ export class RedoUndoService {
     eventObject.canvasObjectId = canvasObjectId;
     eventObject._canvas = canvasObject.canvas;
     eventObject.command = CommandType.Create;
-
     return eventObject;
   }
 

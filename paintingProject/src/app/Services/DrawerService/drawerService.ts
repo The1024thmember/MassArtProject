@@ -363,43 +363,49 @@ export class DrawingService {
     // handle copy paste action
     this.subscription.add(
       this.pasteObjects$.subscribe(async (_) => {
-        let creationsFromCopyEvent: (EventObject | undefined)[] = [];
-
         const promises = this.copyObjects.map(async (copiedObject) => {
-          // const newCopiedObject = await this.clone(copiedObject);
+          //const newCopiedObject = await this.clone(copiedObject);
           const newCopiedObject = await this.createCanvasObjectFromData(
             copiedObject,
             CreateFromDataType.CLONE
           );
           //Increase the number for object created
           this._canvasToEventObjectCorrelationService.addNewObject();
-
           //Sending create new object event to redoUndoService
+          let properties: PropertiesSnapShot = {
+            left: newCopiedObject.left ?? undefined,
+            top: newCopiedObject.top ?? undefined,
+            stroke: newCopiedObject.stroke ?? undefined,
+            strokeWidth: newCopiedObject.strokeWidth ?? undefined,
+            originX: newCopiedObject.originX ?? undefined,
+            originY: newCopiedObject.originY ?? undefined,
+            width: newCopiedObject.width ?? undefined,
+            height: newCopiedObject.height ?? undefined,
+          };
           return this._redoUndoService.buildCreationEventObject(
             this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId(),
             newCopiedObject,
-            { ...newCopiedObject }
+            properties
           );
         });
 
         // Emit the event
-        creationsFromCopyEvent = await Promise.all(promises);
+        let creationsFromCopyEvent: (EventObject | undefined)[] =
+          await Promise.all(promises);
         const creationsFromCopyEventBatchValidated =
           creationsFromCopyEvent.filter(
             (creationFromCopyEvent) => creationFromCopyEvent
           ) as EventObject[];
         if (creationsFromCopyEventBatchValidated.length) {
-          // Fix me: https://app.clickup.com/t/860qg36m6, it gives error
           this.emitEvent(creationsFromCopyEventBatchValidated);
         }
-
         this.canvas.renderAll();
       })
     );
 
     // handle render others created object
     this.subscription.add(
-      this.receivedEventObject$.subscribe((eventObjects) => {
+      this.receivedEventObject$.subscribe((eventObjects: EventObject[]) => {
         // for debugging purpose
         console.log('draw event:', eventObjects[0].command);
         console.log(eventObjects);
