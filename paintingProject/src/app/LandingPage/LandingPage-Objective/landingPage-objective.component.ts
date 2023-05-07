@@ -16,14 +16,7 @@ import { RegisterSocketService } from 'src/app/Services/BackendServices/Register
         <my-heading [headingType]="HeadingType.H1">2</my-heading>
       </my-col>
     </my-grid>
-    <my-grid>
-      <my-col [colDesktopSmall]="5" [colTablet]="12">
-        <my-button>Click Me To Send Message (decrepted)</my-button>
-      </my-col>
-      <my-col [colDesktopSmall]="5" [colTablet]="12">
-        <my-button>Click Me To Send News (decrepted)</my-button>
-      </my-col>
-    </my-grid>
+    <app-google-login></app-google-login>
   </my-container>`,
 })
 export class LandingPageObjectiveComponent implements OnInit {

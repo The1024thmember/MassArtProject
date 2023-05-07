@@ -39,12 +39,12 @@ export class DrawingService {
   _redoUndoService: RedoUndoService;
   _canvasToEventObjectCorrelationService: CanvasToEventObjectCorrelationService;
 
-  public _drawer: IObjectDrawer; //Current drawer
-  private cursorMode: CursorMode = CursorMode.Draw; //the cursorMode is select by user interaction, we can add by default is draw line
-  private drawerOptions: fabric.IObjectOptions; //Current drawer options
-  private readonly drawers: IObjectDrawer[]; //All possible drawers
-  private object: fabric.Object; //The object currently being drawn
-  private isDown: boolean; //Is user dragging the mouse?
+  public _drawer: IObjectDrawer; // Current drawer
+  private cursorMode: CursorMode = CursorMode.Draw; // the cursorMode is select by user interaction, we can add by default is draw line
+  private drawerOptions: fabric.IObjectOptions; // Current drawer options
+  private readonly drawers: IObjectDrawer[]; // All possible drawers
+  private object: fabric.Object; // The object currently being drawn
+  private isDown: boolean; // Is user dragging the mouse?
   private subscription = new Rx.Subscription();
   private oldColor: string = 'black';
   private oldWeight: number = 1;
@@ -59,7 +59,7 @@ export class DrawingService {
     emittedRedoEventObject$: Rx.Subject<EventObject[]>,
     receivedEventObject$: Rx.Observable<EventObject[]>
   ) {
-    //Create the Fabric canvas
+    // Create the Fabric canvas
     this.canvas = canvas;
     this._redoUndoService = _redoUndoService;
     this._canvasToEventObjectCorrelationService =
@@ -70,7 +70,7 @@ export class DrawingService {
 
     this.receivedEventObject$ = receivedEventObject$;
 
-    //Create a collection of all possible "drawer" classes
+    // Create a collection of all possible "drawer" classes
     this.drawers = [
       new LineDrawer(),
       new RectDrawer(),
@@ -78,12 +78,12 @@ export class DrawingService {
       new FreeDrawer(),
     ];
 
-    //Set the default options for the "drawer" class, including
-    //stroke color, width, and style
+    // Set the default options for the "drawer" class, including
+    // stroke color, width, and style
     this.drawerOptions = {
       stroke: 'black',
       strokeWidth: 1,
-      selectable: false, //creating by default is non selectable
+      selectable: false, // creating by default is non selectable
       strokeUniform: true,
       hasControls: false, // the control for change the width, height rotation
       hasBorders: false, // has selection border
@@ -95,19 +95,19 @@ export class DrawingService {
       hoverCursor: 'default',
     };
 
-    this.isDown = false; //To start, user is NOT dragging the mouse
+    this.isDown = false; // To start, user is NOT dragging the mouse
     this.initializeCanvasEvents();
     this.setDrawingTool(DrawingMode.Line);
   }
 
   // ---- need to add validations for the input value ---//
-  //Change the color for the current selection
+  // Change the color for the current selection
   public async setDrawingColor(color: string) {
     if (this.oldColor != color) {
       this.drawerOptions.stroke = color;
       if (this.cursorMode == CursorMode.Select) {
         let changePropertyEventsBatch: (EventObject | undefined)[] = [];
-        // returns a promise refer: https://zellwk.com/blog/async-await-in-loops/
+        // returns a promise refer: https:// zellwk.com/blog/async-await-in-loops/
         const promises = this.canvas.getActiveObjects().map(async (obj) => {
           if (obj.stroke != color) {
             console.log('change color');
@@ -177,8 +177,8 @@ export class DrawingService {
     this._drawer = this.drawers[tool];
   }
 
-  //is this optimal? since everytime I need to loop every single object one user has created
-  //and whenever the user select other tools I need to make the object none selectable
+  // is this optimal? since everytime I need to loop every single object one user has created
+  // and whenever the user select other tools I need to make the object none selectable
   public makeObjectsSeletable() {
     this.canvas.getObjects().forEach((element) => {
       element.selectable = true;
@@ -190,8 +190,8 @@ export class DrawingService {
     this.canvas.renderAll();
   }
 
-  //is this optimal? since everytime I need to loop every single object one user has created
-  //and whenever the user select other tools I need to make the object none selectable
+  // is this optimal? since everytime I need to loop every single object one user has created
+  // and whenever the user select other tools I need to make the object none selectable
   public makeObjectsNoneSeletable() {
     this.canvas.discardActiveObject();
     this.canvas.getObjects().forEach((element) => {
@@ -266,7 +266,7 @@ export class DrawingService {
 
     this.canvas.on('mouse:up', (o) => {
       this.isDown = false;
-      //Only select the created object
+      // Only select the created object
       if (this.cursorMode === CursorMode.Draw && this._drawer) {
         this.mouseUp();
       }
@@ -364,14 +364,14 @@ export class DrawingService {
     this.subscription.add(
       this.pasteObjects$.subscribe(async (_) => {
         const promises = this.copyObjects.map(async (copiedObject) => {
-          //const newCopiedObject = await this.clone(copiedObject);
+          // const newCopiedObject = await this.clone(copiedObject);
           const newCopiedObject = await this.createCanvasObjectFromData(
             copiedObject,
             CreateFromDataType.CLONE
           );
-          //Increase the number for object created
+          // Increase the number for object created
           this._canvasToEventObjectCorrelationService.addNewObject();
-          //Sending create new object event to redoUndoService
+          // Sending create new object event to redoUndoService
           let properties: PropertiesSnapShot = {
             left: newCopiedObject.left ?? undefined,
             top: newCopiedObject.top ?? undefined,
@@ -420,6 +420,20 @@ export class DrawingService {
               );
               break;
             }
+            case CommandType.ChangeProperty: {
+              // try to reuse redoChangePropertyEvent, but before implementing the change feature
+              // set up the database, so that user upon reconnect fetches all existing objects
+              /*
+              console.log(
+                ' eventObject.canvasObjectId:',
+                eventObject.canvasObjectId - 1
+              );
+              this.redoChangePropertyEvent(
+                eventObject,
+                () => eventObject.canvasObjectId - 1
+              );
+              */
+            }
           }
         });
         this.canvas.renderAll();
@@ -433,21 +447,21 @@ export class DrawingService {
   }
 
   private async mouseDown(x: number, y: number): Promise<any> {
-    this.isDown = true; //The mouse is being clicked
+    this.isDown = true; // The mouse is being clicked
 
-    //Create an object at the point (x,y)
+    // Create an object at the point (x,y)
     this.object = await this.make(x, y);
 
-    //Add the object to the canvas
+    // Add the object to the canvas
     this.canvas.add(this.object);
 
-    //Renders all objects to the canvas
+    // Renders all objects to the canvas
     this.canvas.renderAll();
   }
 
   private async mouseMove(x: number, y: number): Promise<any> {
     this.object = await this.resize(x, y);
-    //Renders all objects to the canvas
+    // Renders all objects to the canvas
     this.canvas.renderAll();
   }
 
@@ -477,7 +491,7 @@ export class DrawingService {
       }
       case ObjectType.Path: {
         if (!this.object) {
-          //need to check path length
+          // need to check path length
           this.canvas.remove(this.object);
           return;
         }
@@ -485,14 +499,14 @@ export class DrawingService {
       }
     }
 
-    //Making element default as none selective
+    // Making element default as none selective
     this.canvas.setActiveObject(this.object);
     this.canvas.discardActiveObject().renderAll();
 
-    //Increase the number for object created
+    // Increase the number for object created
     this._canvasToEventObjectCorrelationService.addNewObject();
 
-    //Sending create new object event to redoUndoService
+    // Sending create new object event to redoUndoService
     const creationEvent = this._redoUndoService.buildCreationEventObject(
       this._canvasToEventObjectCorrelationService.getEventObjectCorrelationId(),
       this.object,
@@ -503,19 +517,19 @@ export class DrawingService {
     this.emitEvent([creationEvent]);
   }
 
-  //Method which allows any drawer to Promise their make() function
+  // Method which allows any drawer to Promise their make() function
   private async make(x: number, y: number): Promise<fabric.Object> {
     // alernative drawer is used in copy and paste event, where I don't want to change the
     // private field _drawer but to reuse this function
     return await this._drawer.make(x, y, this.drawerOptions);
   }
 
-  //Method which allows any drawer to Promise their resize() function
+  // Method which allows any drawer to Promise their resize() function
   private async resize(x: number, y: number): Promise<fabric.Object> {
     return await this._drawer.resize(this.object, x, y, {}, this.canvas);
   }
 
-  //Method which allows any drawer to Promise their resize() function
+  // Method which allows any drawer to Promise their resize() function
   private async changeProperty(
     canvasObject: fabric.Object,
     option: ChangeObjectProperty,
