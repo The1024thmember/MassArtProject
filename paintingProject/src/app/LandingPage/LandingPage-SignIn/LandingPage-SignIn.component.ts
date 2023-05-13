@@ -1,8 +1,8 @@
 import { SocialUser } from '@abacritt/angularx-social-login';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { SocialAuthService } from 'angularx-social-login';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
-
 @Component({
   selector: 'app-google-login',
   template: `<div class="" id="google-button"></div>`,
@@ -11,7 +11,10 @@ export class GoogleLoginComponent implements OnInit {
   HeadingType = HeadingType;
   user?: SocialUser;
   google: any;
-  constructor(private socialAuthService: SocialAuthService) {}
+  constructor(
+    private socialAuthService: SocialAuthService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     // @ts-ignore
@@ -35,5 +38,20 @@ export class GoogleLoginComponent implements OnInit {
   async handleCredentialResponse(response: any) {
     // Here will be your response from Google.
     console.log(response);
+    this.verifyToken(response.credential);
+  }
+
+  verifyToken(token: string) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+    const payload = { token: token };
+    this.http
+      .post('http://127.0.0.1:5000/verify_token', payload, httpOptions)
+      .subscribe((response) => {
+        console.log(response);
+      });
   }
 }
