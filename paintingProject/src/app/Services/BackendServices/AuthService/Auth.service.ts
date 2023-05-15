@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Inject } from '@angular/core';
 import { CookieService } from 'ngx-cookie';
 import {
@@ -119,6 +123,7 @@ export class Auth implements AuthServiceInterface {
     );
   }
 
+  // call by login service or directly in the component
   setSession(userId: string, token: string): void {
     if (!this.isInitialized) {
       this.init();
@@ -131,5 +136,24 @@ export class Auth implements AuthServiceInterface {
       this.init();
     }
     this._authStateSubject$.next(undefined);
+  }
+
+  getAuthorizationHeader(): Observable<HttpHeaders> {
+    if (!this.isInitialized) {
+      this.init();
+    }
+    return this.authState$.pipe(
+      map((auth) => {
+        let headers = new HttpHeaders();
+        if (!auth) {
+          return headers;
+        }
+        headers = headers.set(
+          this.authConfig.authHeaderName,
+          `${auth.userId};${auth.token}`
+        );
+        return headers;
+      })
+    );
   }
 }

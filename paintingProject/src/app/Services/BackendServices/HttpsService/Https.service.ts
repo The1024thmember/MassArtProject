@@ -17,6 +17,8 @@ import {
   switchMap,
   take,
 } from 'rxjs';
+import { AuthServiceInterface } from '../AuthService/Auth.interface';
+import { HTTP_AUTH_PROVIDERS } from './Https.config';
 import {
   ErrorResponseData,
   HTTPAdapter,

@@ -1,3 +1,4 @@
+import { HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface RawAuthResponseData<T> {
@@ -18,4 +19,5 @@ export interface AuthServiceInterface {
   logout(): Observable<undefined>;
   setSession(userId: string, token: string): void;
   deleteSession(): void;
+  getAuthorizationHeader(): Observable<HttpHeaders>;
 }
