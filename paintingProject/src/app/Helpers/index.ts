@@ -1,4 +1,6 @@
 export {
   PositionType,
   getObjectAbsolutePosition,
-} from './positionCalculationhelper';
+} from './positionCalculationHelper';
+
+export * from './utilsHelper';

@@ -4678,6 +4678,13 @@ ngx-color@^8.0.3:
     material-colors "^1.2.6"
     tslib "^2.3.0"
 
+ngx-cookie@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.npmjs.org/ngx-cookie/-/ngx-cookie-6.0.1.tgz"
+  integrity sha512-TfQPROUaWBOOtPrI6bWqYQelkc7PKwZich5a3bNNgxlH6+v9VgH4D3GoNzTc1Cs2s8dfIw4nGuOHkLiH+FZqiw==
+  dependencies:
+    tslib "^2.0.0"
+
 ngx-socket-io@^4.4.0:
   version "4.4.0"
   resolved "https://registry.npmjs.org/ngx-socket-io/-/ngx-socket-io-4.4.0.tgz"
