@@ -3,7 +3,7 @@ import {
   HttpErrorResponse,
   HttpHeaders,
 } from '@angular/common/http';
-import { Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie';
 import {
   BehaviorSubject,
@@ -20,7 +20,9 @@ import {
 import { isDefined } from 'src/app/Helpers';
 import { AUTH_CONFIG, AuthConfig } from './Auth.config';
 import { AuthServiceInterface, AuthState } from './Auth.interface';
-
+@Injectable({
+  providedIn: 'root',
+})
 export class Auth implements AuthServiceInterface {
   private isInitialized: boolean;
   private beforeLogoutActions: (() => Promise<void>)[] = [];
@@ -42,7 +44,13 @@ export class Auth implements AuthServiceInterface {
   constructor(
     private cookies: CookieService,
     private http: HttpClient,
-    @Inject(AUTH_CONFIG) private authConfig: AuthConfig
+    @Inject(AUTH_CONFIG)
+    private authConfig: AuthConfig = {
+      authHeaderName: 'massArt-auth',
+      baseUrl: 'http://localhost:4200/',
+      authHashCookie: 'MASSART_HASH', // JWT token
+      userIdCookie: 'MASSART_USER_ID', // UserId
+    }
   ) {}
 
   private init() {
