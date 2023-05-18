@@ -45,12 +45,7 @@ export class Auth implements AuthServiceInterface {
     private cookies: CookieService,
     private http: HttpClient,
     @Inject(AUTH_CONFIG)
-    private authConfig: AuthConfig = {
-      authHeaderName: 'massArt-auth',
-      baseUrl: 'http://localhost:4200/',
-      authHashCookie: 'MASSART_HASH', // JWT token
-      userIdCookie: 'MASSART_USER_ID', // UserId
-    }
+    private authConfig: AuthConfig
   ) {}
 
   private init() {

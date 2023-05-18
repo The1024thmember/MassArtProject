@@ -5,6 +5,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DirectivesModule } from '../Directives';
 import { LandingPageObjectiveComponent } from './LandingPage-Objective/landingPage-objective.component';
@@ -16,6 +17,7 @@ import { LandingPageRoutingModule } from './landingPage.routing.module';
   imports: [
     SocialLoginModule,
     CommonModule,
+    MatDialogModule,
     LandingPageRoutingModule,
     ComponentLibraryModule,
     DirectivesModule,
