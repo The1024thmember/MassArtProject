@@ -22,6 +22,8 @@
     "@angular/platform-browser-dynamic": "^15.2.9",
     "@angular/router": "^15.2.9",
     "@material/dialog": "^14.0.0",
+    "@ngrx/effects": "^15.2.0",
+    "@ngrx/store": "^15.2.0",
     "@types/gapi": "^0.0.44",
     "@types/gapi.auth2": "^0.0.57",
     "@types/google-one-tap": "^1.2.2",
