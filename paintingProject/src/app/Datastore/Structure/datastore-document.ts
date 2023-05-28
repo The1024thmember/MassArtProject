@@ -1,10 +1,17 @@
 // Provide entry point for set(), push(), update() and delete() action, use valueChanges() for the data
 // of the document
 
-import { Observable, map, of, switchMap } from 'rxjs';
+import {
+  Observable,
+  combineLatest,
+  firstValueFrom,
+  map,
+  of,
+  switchMap,
+  take,
+} from 'rxjs';
 import { StoreBackendInterface } from './backend.interface';
 import { DatastoreCollectionType, Reference } from './store.model';
-
 export class DatastoreDocument<C extends DatastoreCollectionType> {
   private id$: Observable<string>;
 
@@ -51,9 +58,7 @@ export class DatastoreDocument<C extends DatastoreCollectionType> {
 
   update(
     // Make calling this function fail if you haven't defined `C['Backend']['Update']`
-    delta: C['Backend']['Update'] extends never
-      ? never
-      : RecursivePartial<C['DocumentType']>
+    delta: C['Backend']['Update'] extends never ? never : C['DocumentType']
   ): Promise<BackendUpdateResponse<MaybeDatastoreUpdateCollectionType<C>>> {
     return firstValueFrom(
       combineLatest([this.ref$, this.id$]).pipe(

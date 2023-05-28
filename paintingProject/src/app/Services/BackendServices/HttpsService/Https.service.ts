@@ -21,7 +21,7 @@ import { AuthServiceInterface } from '../AuthService/Auth.interface';
 import { HTTP_AUTH_PROVIDERS } from './Https.config';
 import {
   ErrorResponseData,
-  HTTPAdapter,
+  HttpAdapter,
   ResponseData,
 } from './Https.interface';
 
@@ -44,7 +44,7 @@ export interface RequestOptions {
 @Injectable({
   providedIn: 'root',
 })
-export class MyHttp implements HTTPAdapter {
+export class MyHttp implements HttpAdapter {
   BASE_URL = '';
   constructor(
     private errorHandler: ErrorHandler,

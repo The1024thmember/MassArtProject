@@ -1,10 +1,17 @@
+import { Observable } from 'rxjs';
+import {
+  DatastoreCollectionType,
+  DatastoreDeleteCollectionType,
+  DatastorePushCollectionType,
+  DatastoreSetCollectionType,
+  DatastoreUpdateCollectionType,
+  Reference,
+} from './store.model';
+
 export interface StoreBackendInterface {
   defaultOrder<C extends DatastoreCollectionType>(
     collection: C['Name']
   ): Ordering<C>;
-
-  batchSize<C extends DatastoreCollectionType>(ref: Reference<C>): number;
-
   // This isn't needed for a fake one.
   // fetch<C extends DatastoreCollectionType>(
   //   ref: Reference<C>,
@@ -25,7 +32,7 @@ export interface StoreBackendInterface {
   update<C extends DatastoreCollectionType & DatastoreUpdateCollectionType>(
     ref: Reference<C>,
     id: number | string,
-    delta: RecursivePartial<C['DocumentType']>
+    delta: C['DocumentType']
   ): Observable<BackendUpdateResponse<C>>;
 
   delete<C extends DatastoreCollectionType & DatastoreDeleteCollectionType>(

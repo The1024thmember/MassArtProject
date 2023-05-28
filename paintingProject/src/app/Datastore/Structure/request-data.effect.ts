@@ -16,7 +16,10 @@ interface RequestAndResponse<C extends DatastoreCollectionType, E> {
 @Injectable()
 export class RequestDataEffect {
   readonly requestData$: Observable<TypedAction>;
-  constructor(private storeBackend: StoreBackend, private actions$: Actions<TypedAction>) {
+  constructor(
+    private storeBackend: StoreBackend,
+    private actions$: Actions<TypedAction>
+    ) {
     const response$: Observable<readonly RequestAndResponse<DatastoreCollectionType, any>[]> = this.actions$.pipe(
       filter(isRequestDataAction),
       map((action) => action.payload),

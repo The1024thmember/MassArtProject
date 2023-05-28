@@ -62,3 +62,25 @@ export interface Path<C> {
   readonly authUid: string; // '0' if logged out
   readonly ids?: readonly string[];
 }
+
+// Entire store is a JSON serialisable object, indexed by collection name
+export interface StoreState {
+  readonly [
+    collectionName: string
+  ]: CollectionStateSlice<DatastoreCollectionType>;
+}
+
+// A slice of the feature state corresponding to a particular user
+export interface UserCollectionStateSlice<C extends DatastoreCollectionType> {
+  readonly documents: Documents<C['DocumentType']>;
+  //readonly queries: QueryResults<C>;
+}
+
+// Each collection (feature in NgRx terminology) has its own state, indexed by user ID
+export interface CollectionStateSlice<C extends DatastoreCollectionType> {
+  readonly [userId: string]: UserCollectionStateSlice<C> | undefined;
+}
+
+export interface Documents<T> {
+  readonly [id: string]: T;
+}

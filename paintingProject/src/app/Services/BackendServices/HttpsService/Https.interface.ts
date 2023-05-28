@@ -26,7 +26,7 @@ export interface BackendErrorResponse<E> {
   readonly requestId?: string;
 }
 
-export interface HTTPAdapter {
+export interface HttpAdapter {
   get<T, E>(
     endpoint: string,
     options?: unknown

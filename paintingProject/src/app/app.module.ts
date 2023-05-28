@@ -20,6 +20,12 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     HttpClientModule,
     SocialLoginModule,
+    // DatastoreModule.initialize({
+    //   webSocketUrl: environment.datastoreConfig.webSocketUrl,
+    //   enableStoreFreeze: environment.datastoreConfig.enableStoreFreeze,
+    //   httpAdapter: FreelancerHttp,
+    //   requestData: {},
+    // }),
   ],
   providers: [
     {
