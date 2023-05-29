@@ -8,6 +8,9 @@ import {
 } from 'angularx-social-login';
 import { CookieModule } from 'ngx-cookie';
 import { CookieService } from 'ngx-cookie-service';
+import { environment } from 'src/environments/environment';
+import { DatastoreModule } from './Datastore/Structure/datastore.module';
+import { MyHttp } from './Services/BackendServices';
 import { AUTH_CONFIG } from './Services/BackendServices/AuthService/Auth.config';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,12 +23,12 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     HttpClientModule,
     SocialLoginModule,
-    // DatastoreModule.initialize({
-    //   webSocketUrl: environment.datastoreConfig.webSocketUrl,
-    //   enableStoreFreeze: environment.datastoreConfig.enableStoreFreeze,
-    //   httpAdapter: FreelancerHttp,
-    //   requestData: {},
-    // }),
+    DatastoreModule.initialize({
+      webSocketUrl: environment.datastoreConfig.webSocketUrl,
+      enableStoreFreeze: environment.datastoreConfig.enableStoreFreeze,
+      httpAdapter: MyHttp,
+      requestData: {},
+    }),
   ],
   providers: [
     {

@@ -8,6 +8,7 @@ import { isDefined } from 'src/app/Helpers';
 import { ResponseData } from 'src/app/Services/BackendServices/HttpsService/Https.interface';
 import { MyHttp } from 'src/app/Services/BackendServices/HttpsService/Https.service';
 import { StoreBackendInterface } from './backend.interface';
+import { DatastoreMissingModuleError } from './missing-module-error';
 import {
   DatastoreCollectionType,
   DatastoreDeleteCollectionType,
@@ -35,10 +36,7 @@ type FetchRequestFactory<
 > = (
   authUid: string,
   /** The document IDs passed to a `datastore.document` call */
-  ids: readonly string[] | undefined,
-  /** The query passed to a `datastore.collection` call or `document` call by secondary ID */
-  // query: RawQuery<C['DocumentType']> | undefined,
-  order: Ordering<C> | undefined
+  ids: readonly string[] | undefined
   // resourceGroup: C['ResourceGroup'] | undefined
 ) => BackendFetchRequest<C>;
 
@@ -108,12 +106,9 @@ export interface Backend<C extends DatastoreCollectionType> {
 export class StoreBackend implements StoreBackendInterface {
   private backendConfigs: BackendConfigs = {};
   constructor(private myHttp: MyHttp) {}
-  defaultOrder<C extends DatastoreCollectionType>(collection: C['Name']) {
-    throw new Error('Method not implemented.');
-  }
   push<C extends DatastoreCollectionType & DatastorePushCollectionType>(
     ref: Reference<C>,
-    document: PushDocumentType<C>,
+    document: DocumentType,
     extra?: { readonly [index: string]: string | number } | undefined
   ): Observable<BackendPushResponse<C>> {
     throw new Error('Method not implemented.');
@@ -121,7 +116,7 @@ export class StoreBackend implements StoreBackendInterface {
   set<C extends DatastoreCollectionType & DatastoreSetCollectionType>(
     ref: Reference<C>,
     id: string | number,
-    document: SetDocumentType<C>
+    document: DocumentType
   ): Observable<BackendSetResponse<C>> {
     throw new Error('Method not implemented.');
   }

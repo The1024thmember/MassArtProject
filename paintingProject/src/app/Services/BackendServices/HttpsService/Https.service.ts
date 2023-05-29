@@ -17,6 +17,7 @@ import {
   switchMap,
   take,
 } from 'rxjs';
+import { DatastoreCollectionType } from 'src/app/Datastore/Structure/store.model';
 import { AuthServiceInterface } from '../AuthService/Auth.interface';
 import { HTTP_AUTH_PROVIDERS } from './Https.config';
 import {
@@ -40,6 +41,13 @@ export interface RequestOptions {
   withCredentials?: boolean;
   headers?: HttpHeaders;
 }
+
+export type ApiFetchResponse<
+  C extends DatastoreCollectionType & DatastoreFetchCollectionType
+> = ResponseData<
+  C['Backend']['Fetch']['ReturnType'],
+  C['Backend']['Fetch']['ErrorType']
+>;
 
 @Injectable({
   providedIn: 'root',

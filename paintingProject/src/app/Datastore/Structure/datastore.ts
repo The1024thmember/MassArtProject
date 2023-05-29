@@ -21,19 +21,14 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs';
-import { arrayIsShallowEqual, isDefined, toObservable } from 'src/app/Helpers';
+import { isDefined, toObservable } from 'src/app/Helpers';
 import { Auth } from 'src/app/Services/BackendServices';
 import { TypedAction } from './actions';
 import { StoreBackend } from './backend';
 import { DatastoreDocument } from './datastore-document';
 import { LOGGED_OUT_KEY } from './datastore.interface';
 import { DatastoreMissingModuleError } from './missing-module-error';
-import {
-  DatastoreCollectionType,
-  Reference,
-  StoreState,
-  UserCollectionStateSlice,
-} from './store.model';
+import { DatastoreCollectionType, Reference, StoreState } from './store.model';
 @Injectable()
 export class Datastore implements OnDestroy {
   private isInitiallyStable$: Observable<boolean>;
@@ -180,27 +175,10 @@ export class Datastore implements OnDestroy {
           // Grab the collection items from the store
           select(collection, authUid),
           filter(isDefined),
-          map((storeSlice) =>
-            selectDocumentsForReference<C>(
-              // This needs double cast because the store is a map of string to generic collection
-              // and there's no type guarantee StoreState[collectionName] actually has a collection C
-              storeSlice as unknown as UserCollectionStateSlice<C>,
-              ref,
-              this.storeBackend.defaultOrder(collection)
-            )
-          ),
-          filter(isDefined),
-          distinctUntilChanged((queryResult1, queryResult2) =>
-            arrayIsShallowEqual(
-              queryResult1.documentsWithMetadata,
-              queryResult2.documentsWithMetadata
-            )
-          ),
-          map(({ documentsWithMetadata, timeFetched, timeUpdated }) => ({
-            documentsWithMetadata,
+          distinctUntilChanged(),
+          map((storeSlice) => ({
+            storeSlice,
             request,
-            timeFetched,
-            timeUpdated,
           }))
         );
       }),
@@ -213,7 +191,7 @@ export class Datastore implements OnDestroy {
       combineLatest([sourceStream$]).pipe(
         map(([source]) => source),
         distinctUntilChanged()
-      )
+      ) as unknown as Observable<C['DocumentType']>
     );
   }
   private generateClientRequestId(): string {

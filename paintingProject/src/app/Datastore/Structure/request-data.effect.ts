@@ -3,14 +3,21 @@
 // API_FETCH_ERROR action for updating datastore data accordingly.
 import { Injectable } from '@angular/core';
 import { Actions, createEffect } from '@ngrx/effects';
-import { Observable, filter, map } from 'rxjs';
-import { RequestDataPayload, TypedAction, isRequestDataAction } from './actions';
+import { Observable, filter, map, switchMap } from 'rxjs';
+import { ResponseData } from 'src/app/Services/BackendServices';
+import type { ApiFetchResponse } from '../../Services/BackendServices';
+import type {
+  CollectionActions,
+  RequestDataPayload,
+  TypedAction,
+} from './actions';
+import { isRequestDataAction } from './actions';
 import { StoreBackend } from './backend';
 import { DatastoreCollectionType } from './store.model';
 
 interface RequestAndResponse<C extends DatastoreCollectionType, E> {
   readonly request: RequestDataPayload<C>;
-  readonly res: ResponseData<any, E>;
+  readonly response: ResponseData<any, E>;
 }
 
 @Injectable()
@@ -19,17 +26,19 @@ export class RequestDataEffect {
   constructor(
     private storeBackend: StoreBackend,
     private actions$: Actions<TypedAction>
-    ) {
-    const response$: Observable<readonly RequestAndResponse<DatastoreCollectionType, any>[]> = this.actions$.pipe(
+  ) {
+    const response$: Observable<
+      readonly RequestAndResponse<DatastoreCollectionType, any>[]
+    > = this.actions$.pipe(
       filter(isRequestDataAction),
       map((action) => action.payload),
-      map((request) =>
+      switchMap((request) =>
         this.storeBackend.fetch(request.ref).pipe(
           map((response) => {
             return {
               response,
               request,
-            };
+            } as unknown as RequestAndResponse<DatastoreCollectionType, any>[];
           })
         )
       )
@@ -37,21 +46,19 @@ export class RequestDataEffect {
 
     this.requestData$ = createEffect(() => {
       response$.pipe(
-        map(requests =>
+        map((requests) =>
           requests.map(({ response, request }) => {
             this.dispatchResponseAction(response, request);
-          });
-        ),
+          })
+        )
       );
     });
-
   }
 
-  private dispatchResponseAction(response: ApiFetchResponse<any>, request: RequestDataPayload<any>): CollectionActions<any>  {
-    const order =
-      request.ref.order ||
-      this.storeBackend.defaultOrder(request.ref.path.collection);
-
+  private dispatchResponseAction(
+    response: ApiFetchResponse<any>,
+    request: RequestDataPayload<any>
+  ): CollectionActions<any> {
     switch (response.status) {
       case 'success': {
         const action: TypedAction = {
@@ -60,8 +67,6 @@ export class RequestDataEffect {
             type: request.ref.path.collection,
             result: response.result,
             ref: request.ref,
-            order,
-            clientRequestIds: request.clientRequestIds,
           },
         };
         return action;
@@ -72,8 +77,6 @@ export class RequestDataEffect {
           payload: {
             type: request.ref.path.collection,
             ref: request.ref,
-            order,
-            clientRequestIds: request.clientRequestIds,
           },
         };
         return action;
@@ -81,6 +84,3 @@ export class RequestDataEffect {
     }
   }
 }
-
-
-

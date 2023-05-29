@@ -8,6 +8,92 @@ import {
   Reference,
 } from './store.model';
 
+/****************************************
+ *  Fetch                               *
+ ****************************************/
+interface FetchSuccessPayload<
+  C extends DatastoreCollectionType & DatastoreFetchCollectionType
+> extends RequestDataPayload<C> {
+  readonly result: C['Backend']['Fetch']['ReturnType'];
+}
+
+/****************************************
+ *  Push                                *
+ ****************************************/
+export interface PushRequestPayload<
+  C extends DatastoreCollectionType & DatastorePushCollectionType
+> extends RequestDataPayload<C> {
+  readonly document: DocumentType;
+  readonly rawRequest: C['Backend']['Push']['PayloadType'];
+  readonly asFormData?: boolean;
+}
+
+export interface PushSuccessPayload<
+  C extends DatastoreCollectionType & DatastorePushCollectionType
+> extends RequestDataPayload<C> {
+  readonly document: DocumentType;
+  readonly rawRequest: C['Backend']['Push']['PayloadType'];
+  readonly result: C['Backend']['Push']['ReturnType'];
+}
+/****************************************
+ *  Set                                 *
+ ****************************************/
+
+export interface SetRequestPayload<
+  C extends DatastoreCollectionType & DatastoreSetCollectionType
+> extends RequestDataPayload<C> {
+  readonly document: DocumentType;
+  readonly rawRequest: C['Backend']['Set']['PayloadType']; //  FIXME: T267853 - Do I need method?
+  readonly asFormData?: boolean;
+}
+
+interface SetSuccessPayload<
+  C extends DatastoreCollectionType & DatastoreSetCollectionType
+> extends RequestDataPayload<C> {
+  readonly document: DocumentType;
+  readonly rawRequest: C['Backend']['Set']['PayloadType']; //  FIXME: T267853 - Do I need method?
+  readonly result: C['Backend']['Set']['ReturnType'];
+}
+
+/****************************************
+ *  Update                                 *
+ ****************************************/
+
+export interface UpdateRequestPayload<
+  C extends DatastoreCollectionType & DatastoreUpdateCollectionType
+> extends RequestDataPayload<C> {
+  readonly delta: C['DocumentType'];
+  readonly rawRequest: C['Backend']['Update']['PayloadType']; //  FIXME: T267853 - Do I need method?
+  readonly asFormData?: boolean;
+}
+
+export interface UpdateSuccessPayload<
+  C extends DatastoreCollectionType & DatastoreUpdateCollectionType
+> extends RequestDataPayload<C> {
+  readonly delta: C['DocumentType'];
+  readonly rawRequest: C['Backend']['Update']['PayloadType']; //  FIXME: T267853 - Do I need method?
+  readonly result: C['Backend']['Update']['ReturnType'];
+}
+/****************************************
+ *  Delete                              *
+ ****************************************/
+
+export interface DeleteRequestPayload<
+  C extends DatastoreCollectionType & DatastoreDeleteCollectionType
+> extends RequestDataPayload<C> {
+  readonly originalDocument: C['DocumentType'];
+  readonly rawRequest: C['Backend']['Delete']['PayloadType']; //  FIXME: T267853 - Do I need method?
+  readonly asFormData?: boolean;
+}
+
+interface DeleteSuccessPayload<
+  C extends DatastoreCollectionType & DatastoreDeleteCollectionType
+> extends RequestDataPayload<C> {
+  readonly originalDocument: C['DocumentType'];
+  readonly rawRequest: C['Backend']['Delete']['PayloadType']; //  FIXME: T267853 - Do I need method?
+  readonly result: C['Backend']['Delete']['ReturnType'];
+}
+
 export interface FetchSuccessAction<
   C extends DatastoreCollectionType & DatastoreFetchCollectionType
 > {
@@ -19,7 +105,7 @@ export interface FetchErrorAction<
   C extends DatastoreCollectionType & DatastoreFetchCollectionType
 > {
   readonly type: 'API_FETCH_ERROR';
-  readonly payload: FetchErrorPayload<C>;
+  readonly payload: RequestDataPayload<C>;
 }
 
 export interface PushAction<
@@ -40,7 +126,7 @@ export interface PushErrorAction<
   C extends DatastoreCollectionType & DatastorePushCollectionType
 > {
   readonly type: 'API_PUSH_ERROR';
-  readonly payload: PushErrorPayload<C>;
+  readonly payload: RequestDataPayload<C>;
 }
 
 export interface SetAction<
@@ -61,7 +147,7 @@ export interface SetErrorAction<
   C extends DatastoreCollectionType & DatastoreSetCollectionType
 > {
   readonly type: 'API_SET_ERROR';
-  readonly payload: SetErrorPayload<C>;
+  readonly payload: RequestDataPayload<C>;
 }
 
 export interface UpdateAction<
@@ -82,7 +168,7 @@ export interface UpdateErrorAction<
   C extends DatastoreCollectionType & DatastoreUpdateCollectionType
 > {
   readonly type: 'API_UPDATE_ERROR';
-  readonly payload: UpdateErrorPayload<C>;
+  readonly payload: RequestDataPayload<C>;
 }
 
 export interface DeleteAction<
@@ -103,7 +189,7 @@ export interface DeleteErrorAction<
   C extends DatastoreCollectionType & DatastoreDeleteCollectionType
 > {
   readonly type: 'API_DELETE_ERROR';
-  readonly payload: DeleteErrorPayload<C>;
+  readonly payload: RequestDataPayload<C>;
 }
 
 export interface RequestDataAction<C extends DatastoreCollectionType> {
