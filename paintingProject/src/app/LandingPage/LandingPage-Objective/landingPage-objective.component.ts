@@ -20,6 +20,9 @@ import { RegisterSocketService } from 'src/app/Services/BackendServices/Register
     </my-grid>
     <!-- <app-google-login></app-google-login> -->
     <my-button (click)="OpenSignInModal()">Participate</my-button>
+    <hr />
+    <hr />
+    <datastore-example></datastore-example>
   </my-container>`,
 })
 export class LandingPageObjectiveComponent implements OnInit {

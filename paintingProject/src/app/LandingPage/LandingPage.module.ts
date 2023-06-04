@@ -10,6 +10,7 @@ import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DirectivesModule } from '../Directives';
 import { LandingPageObjectiveComponent } from './LandingPage-Objective/landingPage-objective.component';
 import { GoogleLoginComponent } from './LandingPage-SignIn/LandingPage-SignIn.component';
+import { DatastoreExampleComponent } from './datastore-example/datastore-example';
 import { LandingPageComponent } from './landingPage.component';
 import { LandingPageRoutingModule } from './landingPage.routing.module';
 
@@ -27,6 +28,7 @@ import { LandingPageRoutingModule } from './landingPage.routing.module';
     LandingPageComponent,
     LandingPageObjectiveComponent,
     GoogleLoginComponent,
+    DatastoreExampleComponent,
   ],
   exports: [],
   providers: [HttpClientModule],

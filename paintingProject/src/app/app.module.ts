@@ -8,9 +8,9 @@ import {
 } from 'angularx-social-login';
 import { CookieModule } from 'ngx-cookie';
 import { CookieService } from 'ngx-cookie-service';
-import { environment } from 'src/environments/environment';
-import { DatastoreModule } from './Datastore/Structure/datastore.module';
-import { MyHttp } from './Services/BackendServices';
+import { ExampleModule } from './Datastore/Resource/example.module';
+import { DatastoreModule } from './Datastore/datastore.module';
+import { RequestDataModule } from './Datastore/request.module';
 import { AUTH_CONFIG } from './Services/BackendServices/AuthService/Auth.config';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,12 +23,9 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     HttpClientModule,
     SocialLoginModule,
-    DatastoreModule.initialize({
-      webSocketUrl: environment.datastoreConfig.webSocketUrl,
-      enableStoreFreeze: environment.datastoreConfig.enableStoreFreeze,
-      httpAdapter: MyHttp,
-      requestData: {},
-    }),
+    DatastoreModule,
+    RequestDataModule, // need to check it its possible to add this inside datastore module
+    ExampleModule, // need to check if its possible to add this api module to a separate folder
   ],
   providers: [
     {
