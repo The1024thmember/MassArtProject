@@ -8,7 +8,6 @@ import {
 } from 'angularx-social-login';
 import { CookieModule } from 'ngx-cookie';
 import { CookieService } from 'ngx-cookie-service';
-import { ExampleModule } from './Datastore/Resource/example.module';
 import { DatastoreModule } from './Datastore/datastore.module';
 import { RequestDataModule } from './Datastore/request.module';
 import { AUTH_CONFIG } from './Services/BackendServices/AuthService/Auth.config';
@@ -25,7 +24,6 @@ import { AppComponent } from './app.component';
     SocialLoginModule,
     DatastoreModule,
     RequestDataModule, // need to check it its possible to add this inside datastore module
-    ExampleModule, // need to check if its possible to add this api module to a separate folder
   ],
   providers: [
     {

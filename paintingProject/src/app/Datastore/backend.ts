@@ -7,7 +7,7 @@ import {
   NgModule,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, map, of, switchMap, withLatestFrom } from 'rxjs';
+import { Observable, delay, map, of, switchMap, withLatestFrom } from 'rxjs';
 
 @Injectable()
 export class StoreBackend implements BackEndInterface {
@@ -16,7 +16,10 @@ export class StoreBackend implements BackEndInterface {
   constructor(
     private store$: Store<any>,
     private http: HttpClient //@Inject(DATASTORE_CONFIG) private datastoreConfig: DatastoreConfig,
-  ) {}
+  ) {
+    // need to remove this
+    localStorage.setItem('id', '0');
+  }
 
   addFeature(collectionName: string, requestFactory: any): void {
     this.backendConfigs[collectionName] = requestFactory;
@@ -31,7 +34,7 @@ export class StoreBackend implements BackEndInterface {
     return of(this.backendConfigs[collection]).pipe(
       map((config) => {
         if (!config) {
-          throw new Error();
+          throw new Error('Fetch error');
         }
         return config.fetch;
       }),
@@ -53,7 +56,7 @@ export class StoreBackend implements BackEndInterface {
     return of(this.backendConfigs[collection]).pipe(
       map((config) => {
         if (!config) {
-          throw new Error();
+          throw new Error('Update error');
         }
         return config.update;
       }),
@@ -107,16 +110,133 @@ export class StoreBackend implements BackEndInterface {
     );
   }
 
-  delete(ref: any): Observable<any> {
-    const { path } = ref;
-    const type = path.collectionName;
-    return of(this.backendConfigs[type]).pipe();
+  delete(ref: any, id: number | string): Observable<any> {
+    const { authUid, path, collection } = ref;
+    return of(this.backendConfigs[collection]).pipe(
+      map((config) => {
+        if (!config) {
+          throw new Error('Delete error');
+        }
+        return config.delete;
+      }),
+      map((set) => set),
+      withLatestFrom(this.store$),
+      map(([del, storeState]) => {
+        const originalDocument = pluckDocumentFromRawStore(
+          storeState,
+          collection,
+          authUid,
+          id
+        );
+        if (originalDocument === undefined) {
+          throw new Error('Delete error: missing original document');
+        }
+        const request = del(authUid, id, originalDocument);
+        return {
+          request,
+          payload: {
+            collection,
+            ref,
+            rawRequest: request.payload,
+            originalDocument,
+          },
+        };
+      }),
+      // We want the Datastore actions to be asynchronous, as updating an
+      // object on rendering is a legitimate use case (e.g. mark as read), and
+      // the actions results being synchronous would trigger
+      // "ExpressionChangedAfterItHasBeenChecked" errors
+      delay(0),
+      switchMap(({ request, payload }) => {
+        // return this.http
+        //   .delete(request)
+        //   .pipe(map((result) => ({ payload, result })));
+
+        // Mocking the update response here
+        return of({}).pipe(
+          //the {} is the result after deletion
+          map((result) => ({
+            payload,
+            result: {
+              result,
+              status: 'success',
+            },
+          }))
+        );
+      }),
+      map(({ payload, result }) =>
+        this.sendActions(
+          { type: 'DELETE', payload },
+          id,
+          payload.ref.query,
+          result
+        )
+      )
+    );
   }
 
-  push(ref: any): Observable<any> {
-    const { path } = ref;
-    const type = path.collectionName;
-    return of(this.backendConfigs[type]).pipe();
+  push(
+    ref: any,
+    document: any,
+    extra?: { readonly [index: string]: string | number }
+  ): Observable<any> {
+    const { authUid, path, collection } = ref;
+    return of(this.backendConfigs[collection]).pipe(
+      map((config) => {
+        if (!config) {
+          throw new Error('Push error');
+        }
+        return config.push;
+      }),
+      map((push) => {
+        const request = push(authUid, document, extra);
+        return {
+          request,
+          payload: {
+            ref,
+            collection,
+            document,
+            rawRequest: request.payload,
+          },
+        };
+      }),
+      // We want the Datastore actions to be asynchronous, as updating an
+      // object on rendering is a legitimate use case (e.g. mark as read), and
+      // the actions results being synchronous would trigger
+      // "ExpressionChangedAfterItHasBeenChecked" errors
+      delay(0),
+      switchMap(({ request, payload }) => {
+        const actualRequest = `${this.baseUrl}/${request.endpoint}`;
+        const body = {
+          payload,
+        };
+        // return this.http
+        //   .post(actualRequest, body)
+        //   .pipe(map((result) => ({ payload, result })));
+
+        // Mock backend returned result:
+        const fakeId = parseInt(localStorage.getItem('id') ?? '0') + 1;
+        localStorage.setItem('id', fakeId.toString());
+        return of({ id: fakeId }).pipe(
+          map((result) => ({
+            payload,
+            result: {
+              id: result.id,
+              status: 'success',
+              result: 'Test Post Value',
+            },
+          }))
+        );
+      }),
+      map(({ payload, result }) =>
+        this.sendActions(
+          { type: 'PUSH', payload },
+          result.id,
+          payload.ref.query,
+          result
+        )
+      )
+    );
   }
 
   private sendActions(
@@ -133,7 +253,7 @@ export class StoreBackend implements BackEndInterface {
                 type: 'API_PUSH_SUCCESS',
                 payload: {
                   collection: baseAction.payload.collection,
-                  id: id,
+                  id: id, //hard coded, need to change based on request response
                   result: data.result,
                 },
               } as any)
@@ -226,9 +346,13 @@ export class BackendFeatureModule {
 }
 
 export interface BackEndInterface {
-  push(ref: any): Observable<any>;
+  push(
+    ref: any,
+    document: any,
+    extra?: { readonly [index: string]: string | number }
+  ): Observable<any>;
   update(ref: any, id: number | string, delta: any): Observable<any>;
-  delete(ref: any): Observable<any>;
+  delete(ref: any, id: number | string): Observable<any>;
 }
 
 @NgModule({})
@@ -260,4 +384,16 @@ export class BackendModule {
       ],
     };
   }
+}
+
+export function pluckDocumentFromRawStore(
+  store: any,
+  collection: any,
+  authUid: any,
+  id: string | number
+): any {
+  //const slice = store[collection][authUid]; //currently not implmented auth id yet
+  const slice = store[collection];
+  console.log('slice:', slice);
+  return slice && slice[id] ? slice[id] : undefined;
 }

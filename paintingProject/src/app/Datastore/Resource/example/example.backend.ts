@@ -13,8 +13,16 @@ export function ExampleBackend() {
       payload: {},
     }),
 
-    delete: undefined,
+    delete: (authUid: number, id: number | string, originalDocument: any) => ({
+      endpoint: 'entries',
+      method: 'DELETE',
+      isGaf: true,
+      payload: { id },
+    }),
 
-    push: undefined,
+    push: (authUid: number, document: any, extra: any) => ({
+      endpoint: 'entries',
+      payload: {},
+    }),
   };
 }

@@ -1,8 +1,12 @@
 import { ApplicationRef, Injectable, OnDestroy } from '@angular/core';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { Store, select } from '@ngrx/store';
 import {
   Observable,
   Subscription,
+  combineLatest,
+  filter,
+  firstValueFrom,
   map,
   of,
   shareReplay,
@@ -11,9 +15,9 @@ import {
   takeWhile,
   tap,
 } from 'rxjs';
+import { WebSocketService } from './Websocket/webscoket';
 import { StoreBackend } from './backend';
 import { DatastoreDocument } from './datastore-document';
-
 @Injectable()
 export class Datastore implements OnDestroy {
   private isInitiallyStable$: Observable<boolean>;
@@ -21,7 +25,8 @@ export class Datastore implements OnDestroy {
   constructor(
     private store$: Store<any>, //private action$: Actions<any>,
     private storeBackend: StoreBackend,
-    private appRef: ApplicationRef
+    private appRef: ApplicationRef,
+    private webSocket: WebSocketService
   ) {
     this.isInitiallyStable$ = this.appRef.isStable.pipe(
       takeWhile((val) => !val, true),
@@ -83,6 +88,55 @@ export class Datastore implements OnDestroy {
       })
     );
 
-    return new DatastoreDocument(collectionRef$, source$, this.storeBackend); // the this.store$ need to be removed
+    return new DatastoreDocument(
+      collectionRef$,
+      source$,
+      this.storeBackend,
+      this.webSocket
+    );
+  }
+
+  /**
+   * Creates a single document via REST api
+   */
+  createDocument(
+    method: 'RESTAPI' | 'WS' = 'RESTAPI',
+    collectionName: string,
+    document: any,
+    extra?: { readonly [index: string]: string | number }
+  ): Promise<any> {
+    return firstValueFrom(
+      combineLatest([of(collectionName)]).pipe(
+        map(([collectionName]) => {
+          const ref = {
+            collection: collectionName,
+            authUid: 1,
+          };
+          return ref;
+        }),
+        take(1),
+        switchMap((ref) => {
+          if (method === 'RESTAPI') {
+            return this.storeBackend.push(ref, document, extra);
+          } else {
+            // need to handle when the websockeet disconnects,
+            // and waiting for the servers' response, what if the server response slow or it disconnects, how to handle that?
+            // can potentially have a pending message queue, and here it returns the pending queue status, if the websocket returns
+            // the response towards that message (with id), then we return success
+            return this.webSocket.send({ ref, document, extra }).pipe(
+              // since BE can send lots of response message, need to make sure the response message is answering this particualr request
+              // but the front-end should determine the request id, with authId &
+              filter((RequestReponse) => {
+                return RequestReponse.requestId === extra?.['requestId'];
+              }),
+              // for create document, we only care about the id of the document to
+              // ensure the client has the same order of object as server (specific to mass art drawing object)
+              map((RequestReponse) => RequestReponse)
+            );
+          }
+        }),
+        untilDestroyed(this)
+      )
+    );
   }
 }

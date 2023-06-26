@@ -22,7 +22,7 @@
     "@angular/platform-browser-dynamic": "^15.2.9",
     "@angular/router": "^15.2.9",
     "@material/dialog": "^14.0.0",
-    "@ngneat/until-destroy": "^10.0.0-beta.0",
+    "@ngneat/until-destroy": "^9.2.3",
     "@ngrx/effects": "^15.2.0",
     "@ngrx/store": "^15.2.0",
     "@types/gapi": "^0.0.44",
@@ -41,7 +41,6 @@
     "ngx-socket-io": "^4.4.0",
     "rxjs": "~7.5.0",
     "socket.io-client": "^4.6.2",
-	"tslib": "^2.0.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -58,6 +57,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "tslib": "^2.3.0",
     "typescript": "~4.9.5"
   }
 }

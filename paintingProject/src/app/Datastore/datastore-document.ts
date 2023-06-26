@@ -1,40 +1,30 @@
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable, filter, map, switchMap } from 'rxjs';
+import { WebSocketService } from './Websocket/webscoket';
 import { BackEndInterface } from './backend';
 
 export class DatastoreDocument {
   constructor(
     private ref$: Observable<any>,
     private valueChanges$: Observable<any>,
-    private StoreBackend: BackEndInterface
+    private StoreBackend: BackEndInterface,
+    private webSocket: WebSocketService
   ) {}
 
   valueChanges(): Observable<any> {
     return this.valueChanges$;
   }
 
-  update(delta: any): Observable<any> {
-    // const request = update(path.authUid, delta, originalDocument); // here the update function is defined in  *.backend.ts
+  update(
+    method: 'RESTAPI' | 'WS' = 'RESTAPI',
+    delta: any,
+    extra?: any
+  ): Observable<any> {
     const request = {
       endpoint: '',
     };
     const body = '';
 
     return this.ref$.pipe(
-      // switchMap(({ collectionName, documentId }) => {
-      //   return this.http.post(request.endpoint, body, documentId).pipe(
-      //     map((response) => {
-      //       const res = {
-      //         response,
-      //         request: {
-      //           collection: collectionName,
-      //           id: documentId,
-      //         },
-      //       };
-      //       return res;
-      //     })
-      //   );
-      // }),
-
       switchMap(({ collectionName, documentId }) => {
         const ref = {
           authUid: 1,
@@ -42,57 +32,48 @@ export class DatastoreDocument {
           collection: collectionName,
           query: '',
         };
-        return this.StoreBackend.update(ref, documentId, delta).pipe(
-          map((response) => {
-            const res = {
-              response,
-              request: {
-                collection: collectionName,
-                id: documentId,
-              },
-            };
-            return res;
-          })
-        );
+        console.log('method:', method);
+        if (method === 'RESTAPI') {
+          return this.StoreBackend.update(ref, documentId, delta).pipe(
+            map((response) => {
+              const res = {
+                response,
+                request: {
+                  collection: collectionName,
+                  id: documentId,
+                },
+              };
+              return res;
+            })
+          );
+        } else {
+          // Integrate WS event here
+          return this.webSocket.send({ ref, document: delta, extra }).pipe(
+            // since BE can send lots of response message, need to make sure the response message is answering this particualr request
+            filter((RequestReponse) => {
+              return RequestReponse.requestId === extra?.['requestId'];
+            }),
+            // for update document, we care about the id of the document and the document itself as well
+            map((RequestReponse) => RequestReponse)
+          );
+        }
       })
-      // map(({ response, request }) => {
-      //   const action = {
-      //     type: 'API_UPDATE_SUCCESS',
-      //     payload: {
-      //       result: response,
-      //       id: request.id,
-      //       collection: request.collection,
-      //     },
-      //   };
-      //   return this.store$.dispatch(action);
-      // })
     );
   }
 
   delete(): Observable<any> {
-    // const request = delete(path.authUid, delta, originalDocument); // here the delete function is defined in  *.backend.ts
     const request = {
       endpoint: '',
     };
 
     return this.ref$.pipe(
-      // switchMap(({ collectionName, documentId }) => {
-      //   return this.http.delete(request.endpoint, documentId).pipe(
-      //     map((response) => {
-      //       const res = {
-      //         response,
-      //         request: {
-      //           collection: collectionName,
-      //           id: documentId,
-      //         },
-      //       };
-      //       return res;
-      //     })
-      //   );
-      // }),
-
       switchMap(({ collectionName, documentId }) => {
-        return this.StoreBackend.delete({ collectionName, documentId }).pipe(
+        const ref = {
+          authUid: 1,
+          params: documentId,
+          collection: collectionName,
+        };
+        return this.StoreBackend.delete(ref, documentId).pipe(
           map((response) => {
             const res = {
               response,
@@ -105,17 +86,6 @@ export class DatastoreDocument {
           })
         );
       })
-      // map(({ response, request }) => {
-      //   const action = {
-      //     type: 'API_DELETE_SUCCESS',
-      //     payload: {
-      //       result: response,
-      //       id: request.id,
-      //       collection: request.collection,
-      //     },
-      //   };
-      //   return this.store$.dispatch(action);
-      // })
     );
   }
 }

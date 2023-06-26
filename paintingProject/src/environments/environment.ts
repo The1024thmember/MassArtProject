@@ -5,7 +5,7 @@ import type { EnvironmentConfig } from './environment.types';
 export const environment: EnvironmentConfig = {
   production: false,
   datastoreConfig: {
-    webSocketUrl: 'https://notifications.syd1.fln-dev.net',
+    webSocketUrl: '',
     enableStoreFreeze: true,
   },
 };

@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ComponentLibraryModule } from '../ComponentLibrary';
+import { ExampleModule } from '../Datastore/Resource';
 import { DirectivesModule } from '../Directives';
 import { LandingPageObjectiveComponent } from './LandingPage-Objective/landingPage-objective.component';
 import { GoogleLoginComponent } from './LandingPage-SignIn/LandingPage-SignIn.component';
@@ -23,6 +24,7 @@ import { LandingPageRoutingModule } from './landingPage.routing.module';
     ComponentLibraryModule,
     DirectivesModule,
     GoogleSigninButtonModule,
+    ExampleModule,
   ],
   declarations: [
     LandingPageComponent,
