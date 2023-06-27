@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, map, of } from 'rxjs';
 import { Datastore } from 'src/app/Datastore/datastore';
-
+@UntilDestroy()
 @Component({
   selector: 'datastore-example',
   template: ` <h2>Resources fetched:</h2>
@@ -24,7 +25,7 @@ import { Datastore } from 'src/app/Datastore/datastore';
     <button (click)="postDataWS()">Click to post via WS</button>
     <p></p>`,
 })
-export class DatastoreExampleComponent implements OnInit {
+export class DatastoreExampleComponent implements OnInit, OnDestroy {
   title = 'datastore-blog';
   documentId: number = 1;
   exampleResourceFetch$: Observable<any> = of('undefined');
@@ -41,13 +42,11 @@ export class DatastoreExampleComponent implements OnInit {
     this.exampleResourceFetchResult$ = this.exampleResourceFetch$.pipe(
       map((result) => result?.result)
     );
-    this.exampleResourceFetchResult$.subscribe((fetchedResult) =>
-      console.error('fetched result:', fetchedResult)
-    );
   }
   updateData() {
     this.exampleResource$
       .update('RESTAPI', 'updated value')
+      .pipe(untilDestroyed(this))
       .subscribe((exampleDocument: any) => {
         console.log('exampleDocument updateed:', exampleDocument);
       });
@@ -57,6 +56,7 @@ export class DatastoreExampleComponent implements OnInit {
       .update('WS', 'WS updated value', {
         requestId: new Date().toLocaleTimeString(),
       })
+      .pipe(untilDestroyed(this))
       .subscribe((exampleDocument: any) => {
         console.log('exampleDocument updateed:', exampleDocument);
       });
@@ -83,5 +83,9 @@ export class DatastoreExampleComponent implements OnInit {
       .then((response) => {
         console.error('ws response for new doc:', response);
       });
+  }
+
+  ngOnDestroy(): void {
+    this.exampleResource$.unsubscribe();
   }
 }

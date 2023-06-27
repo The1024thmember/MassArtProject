@@ -1,4 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import {
   BehaviorSubject,
@@ -14,7 +15,7 @@ enum ConnectionStatus {
   CLOSED,
   OPEN,
 }
-
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })

@@ -1,5 +1,5 @@
 import { ApplicationRef, Injectable, OnDestroy } from '@angular/core';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store, select } from '@ngrx/store';
 import {
   Observable,
@@ -18,6 +18,7 @@ import {
 import { WebSocketService } from './Websocket/webscoket';
 import { StoreBackend } from './backend';
 import { DatastoreDocument } from './datastore-document';
+@UntilDestroy()
 @Injectable()
 export class Datastore implements OnDestroy {
   private isInitiallyStable$: Observable<boolean>;
