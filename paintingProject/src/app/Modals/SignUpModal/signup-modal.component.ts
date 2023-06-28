@@ -47,7 +47,7 @@ export class SignupModalComponent implements OnInit {
     };
     const payload = { token: token };
     this.http
-      .post('http://127.0.0.1:5000/verify_token', payload, httpOptions)
+      .post('http://127.0.0.1:5001/u/verify_token', payload, httpOptions)
       .subscribe((response) => {
         console.log('response:', response);
         this.auth.setSession('123', token);
