@@ -15,7 +15,12 @@ export class DrawBoardSocketService {
   }
 
   private initialize() {
-    this.socketio = io('http://127.0.0.1:5000/exp');
+    const jwtToken = sessionStorage.getItem('jwtToken');
+    this.socketio = io('http://127.0.0.1:5000/exp', {
+      extraHeaders: {
+        Authorization: `${jwtToken}`,
+      },
+    });
 
     this.socketio.on('connect', () => {
       console.log('DrawEvent Connected');

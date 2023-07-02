@@ -51,5 +51,11 @@ export class GoogleLoginComponent implements OnInit {
         console.log('response:', response);
         this.auth.setSession('123', token);
       });
+    this.http
+      .post('http://127.0.0.1:5001/u/test', payload, httpOptions)
+      .subscribe((response) => {
+        console.log('response:', response);
+        this.auth.setSession('123', token);
+      });
   }
 }

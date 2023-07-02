@@ -40,17 +40,33 @@ export class SignupModalComponent implements OnInit {
   }
 
   verifyToken(token: string) {
-    const httpOptions = {
+    let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
     };
     const payload = { token: token };
     this.http
-      .post('http://127.0.0.1:5001/u/verify_token', payload, httpOptions)
-      .subscribe((response) => {
+      .post('http://127.0.0.1:5001/u/sign_in', payload, httpOptions)
+      .subscribe((response: any) => {
         console.log('response:', response);
-        this.auth.setSession('123', token);
+        const jwtToken = response.jwt;
+        console.log('jwtToken from response:', jwtToken);
+        this.auth.setSession('123', jwtToken);
+        sessionStorage.setItem('jwtToken', jwtToken);
+
+        const getJwtToken = sessionStorage.getItem('jwtToken');
+        console.log('jwtToken:', jwtToken);
+        const headers = new HttpHeaders().set(
+          'Authorization',
+          `${getJwtToken}`
+        );
+        this.http
+          .post('http://127.0.0.1:5001/u/test', payload, { headers })
+          .subscribe((response: any) => {
+            console.log('response:', response);
+            const jwtToken = response.jwt;
+          });
       });
   }
 
