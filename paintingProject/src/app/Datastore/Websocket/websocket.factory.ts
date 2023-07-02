@@ -36,7 +36,12 @@ export class ObservableWebSocket extends Observable<Observable<any>> {
    */
   _subscribe(observer: Subscriber<Observable<any>>): () => void {
     if (typeof this.webSocketUrlOrSocket === 'string') {
-      this.socket = io(this.webSocketUrlOrSocket);
+      const jwtToken = sessionStorage.getItem('jwtToken');
+      this.socket = io(this.webSocketUrlOrSocket, {
+        extraHeaders: {
+          Authorization: `${jwtToken}`,
+        },
+      });
     } else {
       this.socket = this.webSocketUrlOrSocket;
     }

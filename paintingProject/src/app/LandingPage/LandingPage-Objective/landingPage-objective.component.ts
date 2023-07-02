@@ -3,7 +3,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { HeadingType } from 'src/app/ComponentLibrary/MyHeading';
 import { Margin } from 'src/app/Directives/Margin/margin.directive';
 import { SignupModalComponent } from 'src/app/Modals/SignUpModal/signup-modal.component';
-import { RegisterSocketService } from 'src/app/Services/BackendServices/RegisterSignalRService';
 
 @Component({
   selector: 'landingPage-Objectives',
@@ -29,10 +28,7 @@ export class LandingPageObjectiveComponent implements OnInit {
   HeadingType = HeadingType;
   Margin = Margin;
 
-  constructor(
-    private _registerSocketService: RegisterSocketService,
-    public matDialog: MatDialog
-  ) {}
+  constructor(public matDialog: MatDialog) {}
 
   ngOnInit(): void {}
 
