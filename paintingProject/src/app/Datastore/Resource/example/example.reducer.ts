@@ -67,4 +67,5 @@ export function ExampleReducer(state = { inital: true }, action: any) {
     default:
       return state;
   }
+  return;
 }

@@ -30,4 +30,5 @@ export function DrawEventsReducer(state = { inital: true }, action: any) {
     default:
       return state;
   }
+  return;
 }

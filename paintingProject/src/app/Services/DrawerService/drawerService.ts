@@ -111,7 +111,7 @@ export class DrawingService {
 
   // ---- need to add validations for the input value ---//
   // Change the color for the current selection
-  public async setDrawingColor(color: string) {
+  public async setDrawingColor(color: string): Promise<void> {
     if (this.oldColor != color) {
       this.drawerOptions.stroke = color;
       if (this.cursorMode == CursorMode.Select) {
@@ -147,7 +147,7 @@ export class DrawingService {
 
   // ---- need to add validations for the input value ---//
   // Change the width for the current selection
-  public async setDrawingWeight(weight: number) {
+  public async setDrawingWeight(weight: number): Promise<void> {
     if (this.oldWeight != weight) {
       this.drawerOptions.strokeWidth = Math.floor(weight);
       if (this.cursorMode == CursorMode.Select) {
