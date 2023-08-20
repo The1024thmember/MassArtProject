@@ -1,6 +1,6 @@
 import type { EnvironmentConfig } from './environment.types';
 export const environment: EnvironmentConfig = {
-  production: false,
+  production: true,
   datastoreConfig: {
     webSocketUrl: 'http://127.0.0.1:5000',
     RESTAPIUrl: 'http://127.0.0.1:5001',
