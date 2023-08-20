@@ -8,8 +8,6 @@
     },
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "strict": true,
     "strictPropertyInitialization": false,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
