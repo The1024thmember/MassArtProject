@@ -22,6 +22,7 @@ export class StoreBackend implements BackEndInterface {
   }
 
   addFeature(collectionName: string, requestFactory: any): void {
+    console.error('added to datastore collectionName:', collectionName);
     this.backendConfigs[collectionName] = requestFactory;
   }
 
@@ -339,6 +340,7 @@ export class BackendFeatureModule {
     @Inject(BACKEND_COLLECTIONS) backendCollections: BackendCollectionsProvider,
     @Inject(BACKEND_CONFIGS) backendConfigs: BackendConfigsProvider
   ) {
+    console.error('backendCollections:', backendCollections);
     backendCollections.map((collectionName, index) => {
       storeBackend.addFeature(collectionName, backendConfigs[index]);
     });

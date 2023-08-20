@@ -5,6 +5,7 @@ import {
   IRectOptions,
 } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
+import { Datastore } from 'src/app/Datastore/datastore';
 import { getObjectAbsolutePosition } from 'src/app/Helpers';
 import { DrawBoardSocketService } from '../BackendServices/DrawBoardSignalRService';
 import { ObjectType } from '../DrawerService';
@@ -34,7 +35,8 @@ export class RedoUndoService {
     emittedRedoEventObject: Rx.Subject<EventObject[]>,
     isRedoable$: Rx.Subject<boolean>,
     isUndoable$: Rx.Subject<boolean>,
-    _drawBoardSocketService: DrawBoardSocketService
+    _drawBoardSocketService: DrawBoardSocketService,
+    private datastore: Datastore
   ) {
     this.emittedUndoEventObject$ = emittedUndoEventObject;
     this.emittedRedoEventObject$ = emittedRedoEventObject;
@@ -289,7 +291,16 @@ export class RedoUndoService {
   public emitEvent(event: EventObject[]) {
     this.eventLisenter.next(event);
     // send all the event to backend
-    this._drawBoardSocketService.sendEvent(event);
+    // this._drawBoardSocketService.sendEvent(event);
+
+    // send WS draw events use websocket
+    this.datastore
+      .createDocument('WS', 'drawEvents', event, {
+        requestId: new Date().toLocaleTimeString(),
+      })
+      .then((response) => {
+        console.error('ws response for new doc:', response);
+      });
   }
 
   public undo() {

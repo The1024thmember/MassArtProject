@@ -4,8 +4,10 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { fabric } from 'fabric';
 import * as Rx from 'rxjs';
+import { Datastore } from 'src/app/Datastore/datastore';
 import { Margin } from '../Directives/Margin';
 import { DrawBoardSocketService } from '../Services/BackendServices/DrawBoardSignalRService';
 import { CursorMode, DrawingMode, ToolsType } from '../Services/DrawerService';
@@ -13,7 +15,6 @@ import { DrawingService } from '../Services/DrawerService/drawerService';
 import { InteractService } from '../Services/InteractService';
 import { RedoUndoService } from '../Services/RedoUndoService/redoUndoService';
 import { EventObject } from '../Services/RedoUndoService/types';
-
 @Component({
   template: `
     <my-container class="Container">
@@ -113,7 +114,11 @@ export class ExpComponent implements OnInit, OnDestroy {
   private _interactService: InteractService;
   private _redoUndoService: RedoUndoService;
 
-  constructor(private _drawBoardSocketService: DrawBoardSocketService) {}
+  constructor(
+    private _drawBoardSocketService: DrawBoardSocketService,
+    private dataStore: Datastore,
+    private store: Store<any>
+  ) {}
 
   ngOnInit() {
     this._canvas = new fabric.Canvas('fabricSurface', {
@@ -133,7 +138,8 @@ export class ExpComponent implements OnInit, OnDestroy {
       this.emittedRedoEventObject$,
       this.isRedoable$,
       this.isUndoable$,
-      this._drawBoardSocketService
+      this._drawBoardSocketService,
+      this.dataStore
     );
 
     // Set the drawing service for drawing object and change object property
@@ -142,7 +148,8 @@ export class ExpComponent implements OnInit, OnDestroy {
       this._redoUndoService,
       this.emittedUndoEventObject$,
       this.emittedRedoEventObject$,
-      this._drawBoardSocketService.drawEventsObservable$
+      this._drawBoardSocketService.drawEventsObservable$,
+      this.store
     );
 
     //Getting the selected object color

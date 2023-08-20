@@ -34,6 +34,7 @@ export class WebSocketService implements OnDestroy {
   );
 
   answeredMessageSubject$ = new Subject<any>();
+  id = 0;
 
   constructor(
     // @Inject(DATASTORE_CONFIG) private datastoreConfig: DatastoreConfig,
@@ -42,7 +43,12 @@ export class WebSocketService implements OnDestroy {
   ) {
     this.serverResponseSubscription = this.serverResponse$.subscribe({
       next: ({ serverResponse, userId }) => {
-        const data = JSON.stringify(serverResponse.data);
+        console.log('serverResponse:', serverResponse);
+        const data = JSON.stringify({
+          document: serverResponse.result.result,
+          collection: serverResponse.collection,
+          id: serverResponse.id,
+        });
         const serverResponseData = {
           type: serverResponse.type,
           ...JSON.parse(data),
@@ -58,12 +64,13 @@ export class WebSocketService implements OnDestroy {
         this.connectionStatusSubject$.next(ConnectionStatus.CLOSED);
       },
     });
+    this.id += 1;
   }
 
   get websocket$(): ObservableWebSocket {
     if (!this._websocket$) {
       this._websocket$ = new ObservableWebSocket(
-        'http://127.0.0.1:5000/' // temporary, when datastoreConfig is implemented need to use datastoreConfig
+        'http://127.0.0.1:5000/exp' // temporary, when datastoreConfig is implemented need to use datastoreConfig
         //this.datastoreConfig.webSocketUrl
       );
     }
@@ -117,9 +124,12 @@ export class WebSocketService implements OnDestroy {
     console.log('event:', event);
     const action: any = {
       type: 'WS_MESSAGE',
-      no_persist: body.no_persist,
+      //no_persist: body.no_persist,
       payload: {
         ...body,
+        result: event.document[0],
+        collection: event.collection,
+        id: event.id,
         toUserId, // all WebSocket messages are tied to the current user
       },
     };
@@ -155,11 +165,12 @@ export class WebSocketService implements OnDestroy {
     console.log('message:', message);
     const messageToSend = {
       collection: message.ref.collection,
-      id: 1, //doc id
+      id: this.id, //doc id
       result: { result: message.document, requestId: message.extra.requestId },
     };
     console.log('messageToSend:', messageToSend);
     this.messagesQueueSubject$.next(messageToSend);
+    this.id += 1;
     return this.answeredMessageSubject$;
   }
 }

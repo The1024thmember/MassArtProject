@@ -35,7 +35,10 @@ export class DatastoreExampleComponent implements OnInit, OnDestroy {
   ngOnInit() {}
 
   fetchData() {
-    this.exampleResource$ = this.datastore.document('example', this.documentId);
+    this.exampleResource$ = this.datastore.document(
+      'drawEvent',
+      this.documentId
+    );
     this.exampleResourceFetch$ = this.exampleResource$.valueChanges();
     this.documentId += 1;
 

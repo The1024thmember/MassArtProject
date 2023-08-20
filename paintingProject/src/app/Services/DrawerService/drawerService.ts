@@ -1,3 +1,5 @@
+import { Injectable } from '@angular/core';
+import { Store, select } from '@ngrx/store';
 import { fabric } from 'fabric';
 import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
@@ -28,6 +30,9 @@ import {
   The function for this service is to: excute write (include modification) operation on object
   Create new objects or modify existing objects
 */
+@Injectable({
+  providedIn: 'root',
+})
 export class DrawingService {
   canvas: fabric.Canvas;
   emittedUndoEventObject$: Rx.Subject<EventObject[]>;
@@ -51,13 +56,16 @@ export class DrawingService {
 
   private copyObjects: fabric.Object[] = [];
   private pasteObjects$ = new Rx.Subject<boolean>();
+  datastore: any;
+  store$: Store<any>;
 
   constructor(
     canvas: fabric.Canvas,
     _redoUndoService: RedoUndoService,
     emittedUndoEventObject$: Rx.Subject<EventObject[]>,
     emittedRedoEventObject$: Rx.Subject<EventObject[]>,
-    receivedEventObject$: Rx.Observable<EventObject[]>
+    receivedEventObject$: Rx.Observable<EventObject[]>,
+    store$: Store<any>
   ) {
     // Create the Fabric canvas
     this.canvas = canvas;
@@ -69,6 +77,7 @@ export class DrawingService {
     this.emittedRedoEventObject$ = emittedRedoEventObject$;
 
     this.receivedEventObject$ = receivedEventObject$;
+    this.store$ = store$;
 
     // Create a collection of all possible "drawer" classes
     this.drawers = [
@@ -405,25 +414,31 @@ export class DrawingService {
 
     // handle render others created object
     this.subscription.add(
-      this.receivedEventObject$.subscribe((eventObjects: EventObject[]) => {
-        // for debugging purpose
-        console.log('draw event:', eventObjects[0].command);
-        console.log(eventObjects);
-        this.sequencePrinter();
+      this.store$
+        .pipe(
+          select((state) => state.drawEvents),
+          Rx.map((value) => [value[1]])
+        )
+        .subscribe((eventObjects: EventObject[]) => {
+          //this.receivedEventObject$.subscribe((eventObjects: EventObject[]) => {
+          // for debugging purpose
+          console.log('draw event:', eventObjects[0].command);
+          console.log(eventObjects);
+          this.sequencePrinter();
 
-        eventObjects.map(async (eventObject) => {
-          switch (eventObject.command) {
-            case CommandType.Create: {
-              await this.createCanvasObjectFromData(
-                eventObject,
-                CreateFromDataType.RECEIVEDEVENT
-              );
-              break;
-            }
-            case CommandType.ChangeProperty: {
-              // try to reuse redoChangePropertyEvent, but before implementing the change feature
-              // set up the database, so that user upon reconnect fetches all existing objects
-              /*
+          eventObjects.map(async (eventObject) => {
+            switch (eventObject.command) {
+              case CommandType.Create: {
+                await this.createCanvasObjectFromData(
+                  eventObject,
+                  CreateFromDataType.RECEIVEDEVENT
+                );
+                break;
+              }
+              case CommandType.ChangeProperty: {
+                // try to reuse redoChangePropertyEvent, but before implementing the change feature
+                // set up the database, so that user upon reconnect fetches all existing objects
+                /*
               console.log(
                 ' eventObject.canvasObjectId:',
                 eventObject.canvasObjectId - 1
@@ -433,11 +448,11 @@ export class DrawingService {
                 () => eventObject.canvasObjectId - 1
               );
               */
+              }
             }
-          }
-        });
-        this.canvas.renderAll();
-      })
+          });
+          this.canvas.renderAll();
+        })
     );
   }
 
