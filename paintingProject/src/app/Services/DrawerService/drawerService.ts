@@ -3,6 +3,7 @@ import { Store, select } from '@ngrx/store';
 import { fabric } from 'fabric';
 import { ILineOptions } from 'fabric/fabric-impl';
 import * as Rx from 'rxjs';
+import { map, pairwise } from 'rxjs';
 import { PositionType, getObjectAbsolutePosition } from 'src/app/Helpers';
 import { CanvasToEventObjectCorrelationService } from '../CanvasToEventObjectCorrelationService/canvasToEventObjectCorrelationService';
 import { RedoUndoService } from '../RedoUndoService/redoUndoService';
@@ -416,13 +417,24 @@ export class DrawingService {
     this.subscription.add(
       this.store$
         .pipe(
+          // it returns the whole state, not optimise, need to change this, otherwise will take forever to compare the documents
           select((state) => state.drawEvents),
-          Rx.map((value) => [value[1]])
+          // Pair the current and previous values
+          pairwise(),
+          map(([prevValue, currValue]) => {
+            const canvasObjectIds = Object.keys(currValue);
+
+            // Filter new added canvasObjectTypes
+            const newCanvasObjectTypes = canvasObjectIds
+              .filter((id) => !prevValue[id]) // Check if it doesn't exist in previous value
+              .map((id) => currValue[id]);
+
+            return newCanvasObjectTypes;
+          })
         )
         .subscribe((eventObjects: EventObject[]) => {
           //this.receivedEventObject$.subscribe((eventObjects: EventObject[]) => {
           // for debugging purpose
-          console.log('draw event:', eventObjects[0].command);
           console.log(eventObjects);
           this.sequencePrinter();
 
@@ -695,7 +707,13 @@ export class DrawingService {
     if (createdObject) {
       if (createFromDataType === CreateFromDataType.CLONE) {
         this.canvas.add(createdObject);
-      } else {
+      }
+      if (createFromDataType === CreateFromDataType.RECEIVEDEVENT) {
+        console.log(createFromSource);
+        console.log(
+          'inserting received object at:',
+          (createFromSource as EventObject).canvasObjectId
+        );
         this.canvas.insertAt(
           createdObject,
           (createFromSource as EventObject).canvasObjectId,
