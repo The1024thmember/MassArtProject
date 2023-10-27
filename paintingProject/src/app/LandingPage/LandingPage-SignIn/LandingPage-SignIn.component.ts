@@ -46,13 +46,21 @@ export class GoogleLoginComponent implements OnInit {
     };
     const payload = { token: token };
     this.http
-      .post('http://127.0.0.1:5001/u/verify_token', payload, httpOptions)
+      .post(
+        'https://backend-api.massart.gallery/api/u/verify_token',
+        payload,
+        httpOptions
+      )
       .subscribe((response) => {
         console.log('response:', response);
         this.auth.setSession('123', token);
       });
     this.http
-      .post('http://127.0.0.1:5001/u/test', payload, httpOptions)
+      .post(
+        'https://backend-api.massart.gallery/api/u/test',
+        payload,
+        httpOptions
+      )
       .subscribe((response) => {
         console.log('response:', response);
         this.auth.setSession('123', token);

@@ -5,8 +5,8 @@ import type { EnvironmentConfig } from './environment.types';
 export const environment: EnvironmentConfig = {
   production: false,
   datastoreConfig: {
-    webSocketUrl: 'http://127.0.0.1:5000',
-    RESTAPIUrl: 'http://127.0.0.1:5001',
+    webSocketUrl: 'https://backend-api.massart.gallery/api',
+    RESTAPIUrl: 'https://backend-websocket.massart.gallery/websocket',
     enableStoreFreeze: true,
   },
   googleAccountClientId:
