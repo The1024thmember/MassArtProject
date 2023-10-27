@@ -34,7 +34,8 @@ import { AppComponent } from './app.component';
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              '330531838931-l4lcnk4bc6nlu7fiamr6isvllutnf9iq.apps.googleusercontent.com' // TODO: Adding all this value to environment.ts file
+              //'330531838931-l4lcnk4bc6nlu7fiamr6isvllutnf9iq.apps.googleusercontent.com' // TODO: Adding all this value to environment.ts file
+              'prod-561@massart-auth.iam.gserviceaccount.com'
             ),
           },
         ],
@@ -44,7 +45,7 @@ import { AppComponent } from './app.component';
       provide: AUTH_CONFIG,
       useValue: {
         authHeaderName: 'massArt-auth',
-        baseUrl: 'http://localhost:4200/',
+        baseUrl: 'https://dev.massart.gallery/',
         authHashCookie: 'MASSART_HASH', // JWT token
         userIdCookie: 'MASSART_USER_ID', // UserId
       },
