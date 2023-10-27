@@ -46,8 +46,14 @@ export class SignupModalComponent implements OnInit {
       }),
     };
     const payload = { token: token };
+    // for production use https://backend-api.massart.gallery/api/u/sign_in
+    // for dev use http://127.0.0.1:5001/u/sign_in
     this.http
-      .post('http://127.0.0.1:5001/u/sign_in', payload, httpOptions)
+      .post(
+        'https://backend-api.massart.gallery/api/u/sign_in',
+        payload,
+        httpOptions
+      )
       .subscribe((response: any) => {
         console.log('response:', response);
         const jwtToken = response.jwt;
@@ -61,8 +67,12 @@ export class SignupModalComponent implements OnInit {
           'Authorization',
           `${getJwtToken}`
         );
+        // for production use https://backend-api.massart.gallery/api/u/test
+        // for dev use http://127.0.0.1:5001/u/test
         this.http
-          .post('http://127.0.0.1:5001/u/test', payload, { headers })
+          .post('https://backend-api.massart.gallery/api/u/test', payload, {
+            headers,
+          })
           .subscribe((response: any) => {
             console.log('response:', response);
             const jwtToken = response.jwt;
