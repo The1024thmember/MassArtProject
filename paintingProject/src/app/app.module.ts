@@ -45,6 +45,7 @@ import { AppComponent } from './app.component';
       provide: AUTH_CONFIG,
       useValue: {
         authHeaderName: 'massArt-auth',
+        //baseUrl: 'https://localhost:4200/',
         baseUrl: 'https://dev.massart.gallery/',
         authHashCookie: 'MASSART_HASH', // JWT token
         userIdCookie: 'MASSART_USER_ID', // UserId
