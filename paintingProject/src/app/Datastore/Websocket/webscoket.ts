@@ -70,8 +70,8 @@ export class WebSocketService implements OnDestroy {
   get websocket$(): ObservableWebSocket {
     if (!this._websocket$) {
       this._websocket$ = new ObservableWebSocket(
-        'http://127.0.0.1:8080/exp'
-        // 'https://backend-websocket.massart.gallery/websocket/exp'
+        //'http://127.0.0.1:8080/exp'
+        'https://backend-websocket.massart.gallery/exp'
       );
     }
     console.log('connect websocket');
