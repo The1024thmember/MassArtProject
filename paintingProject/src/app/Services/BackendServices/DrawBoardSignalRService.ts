@@ -17,7 +17,8 @@ export class DrawBoardSocketService {
   private initialize() {
     const jwtToken = sessionStorage.getItem('jwtToken');
     this.socketio = io(
-      'https://backend-websocket.massart.gallery/websocket/exp',
+      'http://127.0.0.1:8080/exp',
+      //'https://backend-websocket.massart.gallery/websocket/exp',
       {
         extraHeaders: {
           Authorization: `${jwtToken}`,

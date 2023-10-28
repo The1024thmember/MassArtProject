@@ -70,8 +70,8 @@ export class WebSocketService implements OnDestroy {
   get websocket$(): ObservableWebSocket {
     if (!this._websocket$) {
       this._websocket$ = new ObservableWebSocket(
-        'https://backend-websocket.massart.gallery/websocket/exp' // temporary, when datastoreConfig is implemented need to use datastoreConfig
-        //this.datastoreConfig.webSocketUrl
+        'http://127.0.0.1:8080/exp'
+        // 'https://backend-websocket.massart.gallery/websocket/exp'
       );
     }
     console.log('connect websocket');

@@ -41,6 +41,7 @@ export class ObservableWebSocket extends Observable<Observable<any>> {
         extraHeaders: {
           Authorization: `${jwtToken}`,
         },
+        transports: ['websocket'],
       });
     } else {
       this.socket = this.webSocketUrlOrSocket;
