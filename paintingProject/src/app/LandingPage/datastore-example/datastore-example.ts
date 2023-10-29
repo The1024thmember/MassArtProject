@@ -70,6 +70,7 @@ export class DatastoreExampleComponent implements OnInit, OnDestroy {
       console.log('exampleDocument deleted:', exampleDocument);
     });
   }
+
   postData() {
     this.datastore
       .createDocument('RESTAPI', 'example', 'new document')

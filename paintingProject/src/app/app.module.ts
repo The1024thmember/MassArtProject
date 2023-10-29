@@ -8,6 +8,7 @@ import {
 } from 'angularx-social-login';
 import { CookieModule } from 'ngx-cookie';
 import { CookieService } from 'ngx-cookie-service';
+import { environment } from '../environments/environment';
 import { DatastoreModule } from './Datastore/datastore.module';
 import { RequestDataModule } from './Datastore/request.module';
 import { AUTH_CONFIG } from './Services/BackendServices/AuthService/Auth.config';
@@ -22,7 +23,7 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     HttpClientModule,
     SocialLoginModule,
-    DatastoreModule,
+    DatastoreModule.initialize(environment.datastoreConfig),
     RequestDataModule, // need to check it its possible to add this inside datastore module
   ],
   providers: [
@@ -34,8 +35,7 @@ import { AppComponent } from './app.component';
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              //'330531838931-l4lcnk4bc6nlu7fiamr6isvllutnf9iq.apps.googleusercontent.com' // TODO: Adding all this value to environment.ts file
-              'prod-561@massart-auth.iam.gserviceaccount.com'
+              environment.googleAccountClientId
             ),
           },
         ],
@@ -45,8 +45,7 @@ import { AppComponent } from './app.component';
       provide: AUTH_CONFIG,
       useValue: {
         authHeaderName: 'massArt-auth',
-        //baseUrl: 'https://localhost:4200/',
-        baseUrl: 'https://dev.massart.gallery/',
+        baseUrl: environment.baseUrl,
         authHashCookie: 'MASSART_HASH', // JWT token
         userIdCookie: 'MASSART_USER_ID', // UserId
       },

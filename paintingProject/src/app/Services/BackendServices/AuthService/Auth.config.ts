@@ -8,3 +8,6 @@ export interface AuthConfig {
 }
 
 export const AUTH_CONFIG = new InjectionToken<AuthConfig>('AuthConfig');
+export const GOOGLE_ACCOUNT_CLIENT_ID = new InjectionToken<string>(
+  'googleAccountClientId'
+);

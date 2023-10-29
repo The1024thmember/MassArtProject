@@ -1,9 +1,12 @@
 export interface EnvironmentConfig {
   production: boolean;
-  datastoreConfig: {
-    webSocketUrl: string;
-    RESTAPIUrl: string;
-    enableStoreFreeze: boolean;
-  };
+  baseUrl: string;
+  datastoreConfig: DatastoreConfig;
   googleAccountClientId: string;
+}
+
+export interface DatastoreConfig {
+  webSocketUrl: string;
+  RESTAPIUrl: string;
+  enableStoreFreeze: boolean;
 }

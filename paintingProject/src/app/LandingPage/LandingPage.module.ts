@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ComponentLibraryModule } from '../ComponentLibrary';
 import { DrawEventsModule, ExampleModule } from '../Datastore/Resource';
 import { DirectivesModule } from '../Directives';
+import { SignUpModalModule } from '../Modals/SignUpModal/signup-modal.module';
 import { LandingPageObjectiveComponent } from './LandingPage-Objective/landingPage-objective.component';
 import { GoogleLoginComponent } from './LandingPage-SignIn/LandingPage-SignIn.component';
 import { DatastoreExampleComponent } from './datastore-example/datastore-example';
@@ -26,6 +27,7 @@ import { LandingPageRoutingModule } from './landingPage.routing.module';
     GoogleSigninButtonModule,
     ExampleModule,
     DrawEventsModule,
+    SignUpModalModule,
   ],
   declarations: [
     LandingPageComponent,

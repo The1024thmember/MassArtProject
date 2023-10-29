@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, delay, map, of, switchMap, withLatestFrom } from 'rxjs';
+import { DatastoreConfig } from 'src/environments/environment.types';
+import { DATASTORE_CONFIG } from './datastore.config';
 
 @Injectable()
 export class StoreBackend implements BackEndInterface {
@@ -15,7 +17,8 @@ export class StoreBackend implements BackEndInterface {
   private baseUrl = 'https://api.publicapis.org';
   constructor(
     private store$: Store<any>,
-    private http: HttpClient //@Inject(DATASTORE_CONFIG) private datastoreConfig: DatastoreConfig,
+    private http: HttpClient,
+    @Inject(DATASTORE_CONFIG) private datastoreConfig: DatastoreConfig
   ) {
     // need to remove this
     localStorage.setItem('id', '0');
@@ -43,7 +46,7 @@ export class StoreBackend implements BackEndInterface {
         return fetch(authUid, params, query); // this is the fetch
       }),
       switchMap((request) => {
-        const actualRequest = `${this.baseUrl}/${request.endpoint}`;
+        const actualRequest = `${this.datastoreConfig.RESTAPIUrl}/${request.endpoint}`;
         const body = {
           params,
         };
@@ -207,7 +210,7 @@ export class StoreBackend implements BackEndInterface {
       // "ExpressionChangedAfterItHasBeenChecked" errors
       delay(0),
       switchMap(({ request, payload }) => {
-        const actualRequest = `${this.baseUrl}/${request.endpoint}`;
+        const actualRequest = `${this.datastoreConfig.RESTAPIUrl}/${request.endpoint}`;
         const body = {
           payload,
         };

@@ -1,8 +1,9 @@
 import type { EnvironmentConfig } from './environment.types';
 export const environment: EnvironmentConfig = {
   production: true,
+  baseUrl: 'https://dev.massart.gallery/',
   datastoreConfig: {
-    webSocketUrl: 'https://backend-websocket.massart.gallery/websocket',
+    webSocketUrl: 'https://backend-websocket.massart.gallery/exp',
     RESTAPIUrl: 'https://backend-api.massart.gallery/api',
     enableStoreFreeze: true,
   },

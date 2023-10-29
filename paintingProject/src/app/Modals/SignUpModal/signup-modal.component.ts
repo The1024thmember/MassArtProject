@@ -1,24 +1,32 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { DATASTORE_CONFIG } from 'src/app/Datastore/datastore.config';
+import { GOOGLE_ACCOUNT_CLIENT_ID } from 'src/app/Services/BackendServices/AuthService';
 import { Auth } from 'src/app/Services/BackendServices/AuthService/Auth.service';
+import { DatastoreConfig } from 'src/environments/environment.types';
 @Component({
   selector: 'signup-modal',
   template: ` <div class="" id="google-button"></div>`,
 })
 export class SignupModalComponent implements OnInit {
+  baseUrl: string;
+
   constructor(
     public dialogRef: MatDialogRef<SignupModalComponent>,
     private http: HttpClient,
-    private auth: Auth
-  ) {}
+    private auth: Auth,
+    @Inject(GOOGLE_ACCOUNT_CLIENT_ID) private googleAccountClientId: string,
+    @Inject(DATASTORE_CONFIG) private datastoreConfig: DatastoreConfig
+  ) {
+    this.baseUrl = this.datastoreConfig.RESTAPIUrl;
+  }
 
   ngOnInit() {
     console.log('dialogRef:', this.dialogRef);
     // @ts-ignore
     google.accounts.id.initialize({
-      client_id:
-        '330531838931-l4lcnk4bc6nlu7fiamr6isvllutnf9iq.apps.googleusercontent.com',
+      client_id: this.googleAccountClientId,
       callback: this.handleCredentialResponse.bind(this),
       auto_select: false,
       cancel_on_tap_outside: true,
@@ -49,11 +57,7 @@ export class SignupModalComponent implements OnInit {
     // for production use https://backend-api.massart.gallery/api/u/sign_in
     // for dev use http://127.0.0.1:5001/u/sign_in
     this.http
-      .post(
-        'https://backend-api.massart.gallery/api/u/sign_in',
-        payload,
-        httpOptions
-      )
+      .post(this.baseUrl + '/u/sign_in', payload, httpOptions)
       .subscribe((response: any) => {
         console.log('response:', response);
         const jwtToken = response.jwt;
@@ -70,7 +74,7 @@ export class SignupModalComponent implements OnInit {
         // for production use https://backend-api.massart.gallery/api/u/test
         // for dev use http://127.0.0.1:5001/u/test
         this.http
-          .post('https://backend-api.massart.gallery/api/u/test', payload, {
+          .post(this.baseUrl + '/api/u/test', payload, {
             headers,
           })
           .subscribe((response: any) => {

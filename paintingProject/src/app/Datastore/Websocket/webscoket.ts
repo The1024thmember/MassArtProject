@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import {
@@ -8,6 +8,8 @@ import {
   Subscription,
   switchMap,
 } from 'rxjs';
+import { DatastoreConfig } from 'src/environments/environment.types';
+import { DATASTORE_CONFIG } from '../datastore.config';
 import { QueueSubject } from './util';
 import { ObservableWebSocket } from './websocket.factory';
 
@@ -37,7 +39,7 @@ export class WebSocketService implements OnDestroy {
   id = 0;
 
   constructor(
-    // @Inject(DATASTORE_CONFIG) private datastoreConfig: DatastoreConfig,
+    @Inject(DATASTORE_CONFIG) private datastoreConfig: DatastoreConfig,
     // @Inject(RECONNECT_CONFIG) private reconnectConfig: ReconnectConfig,
     private store$: Store<any>
   ) {
@@ -68,10 +70,12 @@ export class WebSocketService implements OnDestroy {
   }
 
   get websocket$(): ObservableWebSocket {
+    console.log('-------', this.datastoreConfig.webSocketUrl);
     if (!this._websocket$) {
       this._websocket$ = new ObservableWebSocket(
-        // 'http://127.0.0.1:8080/exp'
-        'https://backend-websocket.massart.gallery/exp'
+        this.datastoreConfig.webSocketUrl
+        // 'http://127.0.0.1:5000/exp'
+        // 'https://backend-websocket.massart.gallery/exp'
       );
     }
     console.log('connect websocket');
