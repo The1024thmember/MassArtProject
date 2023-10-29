@@ -41,7 +41,7 @@ export class ObservableWebSocket extends Observable<Observable<any>> {
         extraHeaders: {
           Authorization: `${jwtToken}`,
         },
-        transports: ['websocket'],
+        transports: ['polling', 'webtransport', 'websocket'], // websocket option doesn't work on local development but works in prod
       });
     } else {
       this.socket = this.webSocketUrlOrSocket;
