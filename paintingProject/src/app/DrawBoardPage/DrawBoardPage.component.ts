@@ -10,7 +10,6 @@ import * as Rx from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { Datastore } from 'src/app/Datastore/datastore';
 import { Margin } from '../Directives/Margin';
-import { DrawBoardSocketService } from '../Services/BackendServices/DrawBoardSignalRService';
 import { DrawingMode, DrawingService } from '../Services/DrawerService';
 import { InteractService } from '../Services/InteractService';
 import { RedoUndoService } from '../Services/RedoUndoService/redoUndoService';
@@ -90,11 +89,7 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
   private _redoUndoService: RedoUndoService;
 
   private socketio: Socket;
-  constructor(
-    private _drawBoardSocketService: DrawBoardSocketService,
-    private dataStore: Datastore,
-    private store: Store<any>
-  ) {}
+  constructor(private dataStore: Datastore, private store: Store<any>) {}
 
   ngOnInit() {
     // Getting the websocket connected
@@ -114,7 +109,6 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       this.emittedRedoEventObject$,
       this.isRedoable$,
       this.isUndoable$,
-      this._drawBoardSocketService,
       this.dataStore
     );
 
@@ -124,7 +118,6 @@ export class DrawBoardPageComponent implements OnInit, OnDestroy {
       this._redoUndoService,
       this.emittedUndoEventObject$,
       this.emittedRedoEventObject$,
-      this._drawBoardSocketService.drawEventsObservable$,
       this.store
     );
 

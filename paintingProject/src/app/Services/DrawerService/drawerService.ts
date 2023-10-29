@@ -39,9 +39,6 @@ export class DrawingService {
   emittedUndoEventObject$: Rx.Subject<EventObject[]>;
   emittedRedoEventObject$: Rx.Subject<EventObject[]>;
 
-  // others draw events
-  receivedEventObject$: Rx.Observable<EventObject[]>;
-
   _redoUndoService: RedoUndoService;
   _canvasToEventObjectCorrelationService: CanvasToEventObjectCorrelationService;
 
@@ -65,7 +62,6 @@ export class DrawingService {
     _redoUndoService: RedoUndoService,
     emittedUndoEventObject$: Rx.Subject<EventObject[]>,
     emittedRedoEventObject$: Rx.Subject<EventObject[]>,
-    receivedEventObject$: Rx.Observable<EventObject[]>,
     store$: Store<any>
   ) {
     // Create the Fabric canvas
@@ -77,7 +73,6 @@ export class DrawingService {
     this.emittedUndoEventObject$ = emittedUndoEventObject$;
     this.emittedRedoEventObject$ = emittedRedoEventObject$;
 
-    this.receivedEventObject$ = receivedEventObject$;
     this.store$ = store$;
 
     // Create a collection of all possible "drawer" classes
@@ -433,7 +428,6 @@ export class DrawingService {
           })
         )
         .subscribe((eventObjects: EventObject[]) => {
-          //this.receivedEventObject$.subscribe((eventObjects: EventObject[]) => {
           // for debugging purpose
           console.log(eventObjects);
           this.sequencePrinter();

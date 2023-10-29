@@ -7,7 +7,6 @@ import {
 import * as Rx from 'rxjs';
 import { Datastore } from 'src/app/Datastore/datastore';
 import { getObjectAbsolutePosition } from 'src/app/Helpers';
-import { DrawBoardSocketService } from '../BackendServices/DrawBoardSignalRService';
 import { ObjectType } from '../DrawerService';
 import { CommandType, EventObject, PropertiesSnapShot } from './types';
 /*
@@ -28,21 +27,17 @@ export class RedoUndoService {
   private redoAction = new Rx.Subject<boolean>();
   private subscription = new Rx.Subscription();
 
-  _drawBoardSocketService: DrawBoardSocketService;
-
   constructor(
     emittedUndoEventObject: Rx.Subject<EventObject[]>,
     emittedRedoEventObject: Rx.Subject<EventObject[]>,
     isRedoable$: Rx.Subject<boolean>,
     isUndoable$: Rx.Subject<boolean>,
-    _drawBoardSocketService: DrawBoardSocketService,
     private datastore: Datastore
   ) {
     this.emittedUndoEventObject$ = emittedUndoEventObject;
     this.emittedRedoEventObject$ = emittedRedoEventObject;
     this.isRedoable$ = isRedoable$;
     this.isUndoable$ = isUndoable$;
-    this._drawBoardSocketService = _drawBoardSocketService;
     this.initializer();
   }
 
@@ -290,9 +285,6 @@ export class RedoUndoService {
 
   public emitEvent(event: EventObject[]) {
     this.eventLisenter.next(event);
-    // send all the event to backend
-    // this._drawBoardSocketService.sendEvent(event);
-
     // send WS draw events use websocket
     this.datastore
       .createDocument('WS', 'drawEvents', event, {

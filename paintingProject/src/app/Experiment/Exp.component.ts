@@ -9,7 +9,6 @@ import { fabric } from 'fabric';
 import * as Rx from 'rxjs';
 import { Datastore } from 'src/app/Datastore/datastore';
 import { Margin } from '../Directives/Margin';
-import { DrawBoardSocketService } from '../Services/BackendServices/DrawBoardSignalRService';
 import { CursorMode, DrawingMode, ToolsType } from '../Services/DrawerService';
 import { DrawingService } from '../Services/DrawerService/drawerService';
 import { InteractService } from '../Services/InteractService';
@@ -114,11 +113,7 @@ export class ExpComponent implements OnInit, OnDestroy {
   private _interactService: InteractService;
   private _redoUndoService: RedoUndoService;
 
-  constructor(
-    private _drawBoardSocketService: DrawBoardSocketService,
-    private dataStore: Datastore,
-    private store: Store<any>
-  ) {}
+  constructor(private dataStore: Datastore, private store: Store<any>) {}
 
   ngOnInit() {
     this._canvas = new fabric.Canvas('fabricSurface', {
@@ -138,7 +133,6 @@ export class ExpComponent implements OnInit, OnDestroy {
       this.emittedRedoEventObject$,
       this.isRedoable$,
       this.isUndoable$,
-      this._drawBoardSocketService,
       this.dataStore
     );
 
@@ -148,7 +142,6 @@ export class ExpComponent implements OnInit, OnDestroy {
       this._redoUndoService,
       this.emittedUndoEventObject$,
       this.emittedRedoEventObject$,
-      this._drawBoardSocketService.drawEventsObservable$,
       this.store
     );
 
